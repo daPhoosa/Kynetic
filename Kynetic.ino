@@ -16,8 +16,19 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-
+#include "config.h"
+#include "Kynetic_pins.h"
 #include "kynetic.h"
+
+#include "motors.h"
+#include "dataStreams.h"
+#include "timers.h"
+#include "motion.h"
+#include "gCode.h"
+
+#include "Machines\cartesian.h"
+#include "Machines\coreXY.h"
+#include "Machines\delta.h"
 
 
 void setup() {
@@ -61,48 +72,6 @@ void loop() {
 
 }
 
-bool streamToBlock(const char & ch)  // returns true when a block is complete
-{
-   static bool blockComplete = false;
-   static bool lineComplete = false;
-   static char field;
-   
-   if(ch == '\r')  // end of line
-   {
-      field = 0;
-      lineComplete = true;
-      return false;
-   }
-   
-   if(field == ';')
-   {
-      return false; // ignore characters after the EOB
-   }
-   
-   switch(ch)
-   {
-      case ';' :      // everything after this point is ignored
-         field = ';';
-         lineComplete = true;
-         break;
-
-      case 'G' :    
-      case 'M' :    
-      case 'X' :    
-      case 'Y' :    
-      case 'Z' :    
-      case 'E' : 
-      case 'F' : 
-      case 'S' : 
-         field = ch;
-         return false;        
-      
-      default :
-         break; 
-   }
-   
-   return false;
-}
 
 
 

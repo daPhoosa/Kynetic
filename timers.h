@@ -16,23 +16,17 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+#include <PollTimer.h>           // https://github.com/daPhoosa/PollTimer                 --instal to libraries diectory
 
 
-// **** GLOBAL VARIABLES ****
+// **** POLL TIMERS ****
+PollTimer motionControl(MOTION_CONTROL_HZ);
+PollTimer buttonsAndUI(BUTTONS_UI_HZ);
+PollTimer maintenance(MAINTENANCE_HZ);
 
-
-
-
-
-
-
-
-// **** STARTUP FUNCTIONS ****
-
-
-
-
-
-
-// **** OTHER FUNCTIONS ****
-
+void startPollTimers()
+{
+   motionControl.start();
+   buttonsAndUI.start();
+   maintenance.start();
+}

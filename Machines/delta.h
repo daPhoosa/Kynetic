@@ -24,7 +24,7 @@
    {
       public:
          
-         void init();
+         //void init();
          
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          
@@ -38,12 +38,28 @@
          bool computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
-         float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
-         float minArmHeightSq, armLengthSq;
+         void homeAxis(int & index, uStepper* motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
+         
+         //float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
+         //float minArmHeightSq, armLengthSq;
+         
+         const float sin60 = 0.86602540378f;
+         const float cos60 = 0.5f;
+         
+         const float A_TowerX = -sin60 * DELTA_ARM_RADIUS;
+         const float A_TowerY = -cos60 * DELTA_ARM_RADIUS;
+         const float B_TowerX =  sin60 * DELTA_ARM_RADIUS;
+         const float B_TowerY = -cos60 * DELTA_ARM_RADIUS;
+         const float C_TowerX =  0.0f;
+         const float C_TowerY =  DELTA_ARM_RADIUS;
+         
+         const float armLengthSq = DELTA_ARM_LENGTH * DELTA_ARM_LENGTH;
+         
+         const float minArmHeightSq = square( sin( DELTA_MIN_ARM_ANGLE * 0.0174533f ) * DELTA_ARM_LENGTH );  // 
 
    } machine;
 
-   
+   /*
    void delta_machine_type::init()
    {
       const float sin60 = 0.86602540378f;
@@ -58,9 +74,9 @@
       
       armLengthSq = DELTA_ARM_LENGTH * DELTA_ARM_LENGTH;
       
-      minArmHeightSq = square( 0.258819f * DELTA_ARM_LENGTH );  // sin(15deg) * armLength
+      minArmHeightSq = square( sin( DELTA_MIN_ARM_ANGLE * 0.0174533f ) * DELTA_ARM_LENGTH );  // 
    }
-   
+   */
    
    void delta_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
    {
@@ -96,42 +112,48 @@
    {
       int static A_index = B_index = C_index = 0;
       
-      if( xHome && !A_index ) A_index = 5; // reset index
-      if( yHome && !B_index ) B_index = 5;
-      if( zHome && !C_index ) C_index = 5;
+      if( (xHome && !A_index) || (yHome && !B_index) || (zHome && !C_index) ) // if any axis gets sent home, all go home
+      {
+         if( !A_index ) A_index = 5; // reset index if at zero
+         if( !B_index ) B_index = 5;
+         if( !C_index ) C_index = 5;
+      }
       
       if( A_index > 3 ) {
-         homeAxis(A_home, A_motor, A_ENDSTOP_PIN, A_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         homeAxis(A_index, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
       }else{
-         homeAxis(A_home, A_motor, A_ENDSTOP_PIN, A_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         homeAxis(A_index, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         if( !A_index ) xHome = false;
       }
 
       if( B_index > 3 ) {
-         homeAxis(B_home, B_motor, B_ENDSTOP_PIN, B_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         homeAxis(B_index, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
       }else{
-         homeAxis(B_home, B_motor, B_ENDSTOP_PIN, B_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         homeAxis(B_index, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         if( !B_index ) yHome = false;
       }
 
       if( C_index > 3 ) {
-         homeAxis(C_home, C_motor, C_ENDSTOP_PIN, C_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         homeAxis(C_index, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
       }else{
-         homeAxis(C_home, C_motor, C_ENDSTOP_PIN, C_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         homeAxis(C_index, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         if( !C_index ) zHome = false;
       }
 
-      if( A_index || B_index || C_index ) return false;
+      if( A_index || B_index || C_index ) return false;  // not done going home until all axis are done
       
       return true; // returns true once all axis are at home
    }
    
    
-   bool delta_machine_type::homeAxis(int & index, uStepper* motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
+   void delta_machine_type::homeAxis(int & index, uStepper* motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
    {
       float speed = motor->getSpeed(); 
       
       switch(index)
       {
-         case 5 :
-         case 3 :
+         case 5 : // fast advance
+         case 3 : // slow adavnce
             if( digitalRead( endStopPin ) == switchNoContact )
             {
                speed += MACHINE_VEL_STEP;
@@ -146,8 +168,8 @@
                index--;
             }
           
-         case 4 :
-         case 2 :
+         case 4 : // fast retract
+         case 2 : // slow retract
             if( motor->getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
                speed -= MACHINE_VEL_STEP;
@@ -161,7 +183,7 @@
                index--;
             }
             
-         case 1 :
+         case 1 : // decelerate to zero after slow retract
             speed += MACHINE_VEL_STEP;
             
             if( speed < 0.0f )
@@ -170,14 +192,10 @@
                break;
             }
 
-         case 0 :
+         case 0 : // hold zero
             motor->setSpeed( 0.0f );
             break;
       }
-
-      if( index ) return false;
-      
-      return true; // home complete 
    }
    
    

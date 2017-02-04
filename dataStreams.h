@@ -16,39 +16,30 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+#include <SdFat.h>               // https://github.com/greiman/SdFat-beta                 --instal to libraries diectory
 
-#ifdef MACHINE_TYPE_CARTESIAN
+
+// **** SD CARD INTERFACE ****
+SdFatSdioEX sdEx;
+File file;
 
 
-   class cartesian_machine_type
+void startSerial()
+{
+   #ifdef SERIAL_PORT
+      SERIAL_PORT.begin(250000);
+      while(!Serial){}
+   #endif
+}
+
+
+void startSD()
+{
+   sdEx.begin();
+
+   file = sdEx.open("print.nc", O_READ);
+   if(!file)
    {
-      public:
-
-         void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
-         
-         void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
-         
-
-      private:
-      
-
-   } machine;
- 
-   
-   void cartesian_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
-   {
-      a = x;
-      b = y;
-      c = z;
-   }
-   
-   
-   void cartesian_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
-   {
-      x = a;
-      y = b;
-      z = c;
-   }
-   
-   
-#endif
+      SERIAL_PORT.println("Open File Failed!");
+   }   
+}

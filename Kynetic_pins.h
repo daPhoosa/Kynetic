@@ -19,33 +19,49 @@
 
 // **** PIN DEFINES FOR TEENSY 3.5/3.6 ****
 
-#define A_MOTOR_STEP_PIN 1
-#define A_MOTOR_DIR_PIN  2
-#define A_MOTOR_ENBL_PIN 3
+#define A_MOTOR_ENBL_PIN 2
+#define A_MOTOR_STEP_PIN 3
+#define A_MOTOR_DIR_PIN  4
 
-#define B_MOTOR_STEP_PIN 1
-#define B_MOTOR_DIR_PIN  2
-#define B_MOTOR_ENBL_PIN 3
+// 5 is intentionally ommitted
 
-#define C_MOTOR_STEP_PIN 1
-#define C_MOTOR_DIR_PIN  2
-#define C_MOTOR_ENBL_PIN 3
+#define B_MOTOR_ENBL_PIN 6
+#define B_MOTOR_STEP_PIN 7
+#define B_MOTOR_DIR_PIN  8
 
-#define D_MOTOR_STEP_PIN 1
-#define D_MOTOR_DIR_PIN  2
-#define D_MOTOR_ENBL_PIN 3
+#define C_MOTOR_ENBL_PIN 23
+#define C_MOTOR_STEP_PIN 22
+#define C_MOTOR_DIR_PIN  21
 
-#define E_MOTOR_STEP_PIN 1
-#define E_MOTOR_DIR_PIN  2
-#define E_MOTOR_ENBL_PIN 3
+#define D_MOTOR_ENBL_PIN 39
+#define D_MOTOR_STEP_PIN 38
+#define D_MOTOR_DIR_PIN  37
 
-#define F_MOTOR_STEP_PIN 1
-#define F_MOTOR_DIR_PIN  2
-#define F_MOTOR_ENBL_PIN 3
+#define E_MOTOR_ENBL_PIN 36
+#define E_MOTOR_STEP_PIN 35
+#define E_MOTOR_DIR_PIN  34
 
-#define A_ENDSTOP_PIN 1
-#define B_ENDSTOP_PIN 2
-#define C_ENDSTOP_PIN 3
-#define D_ENDSTOP_PIN 1
-#define E_ENDSTOP_PIN 2
-#define F_ENDSTOP_PIN 3
+#define F_MOTOR_ENBL_PIN 27
+#define F_MOTOR_STEP_PIN 28
+#define F_MOTOR_DIR_PIN  29
+
+#define X_MAX_ENDSTOP_PIN 24
+#define Y_MAX_ENDSTOP_PIN 25
+#define Z_MAX_ENDSTOP_PIN 26
+#define X_MIN_ENDSTOP_PIN 30
+#define Y_MIN_ENDSTOP_PIN 32
+#define Z_MIN_ENDSTOP_PIN 33
+
+#define BED_HEATER_PWM_PIN 9
+#define EXTRUDER1_PWM_PIN  20
+#define EXTRUDER2_PWM_PIN  30
+
+#define SPI0_CS   10
+#define SPI0_MOSI 11
+#define SPI0_MISO 12
+#define SPI0_SCK  13
+
+#define BED_THERMISTOR       14
+#define EXTRUDER1_THERMISTOR 15
+#define EXTRUDER2_THERMISTOR 16 
+

@@ -23,9 +23,7 @@
    class coreXY_machine_type
    {
       public:
-         
-         void init();
-         
+
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          
          void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );

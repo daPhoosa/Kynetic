@@ -17,38 +17,8 @@
 */
 
 
-#ifdef MACHINE_TYPE_CARTESIAN
+#include <SmoothMove.h>          // https://github.com/daPhoosa/SmoothMove                --instal to libraries diectory
 
 
-   class cartesian_machine_type
-   {
-      public:
-
-         void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
-         
-         void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
-         
-
-      private:
-      
-
-   } machine;
- 
-   
-   void cartesian_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
-   {
-      a = x;
-      b = y;
-      c = z;
-   }
-   
-   
-   void cartesian_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
-   {
-      x = a;
-      y = b;
-      z = c;
-   }
-   
-   
-#endif
+// **** MOVEMENT ENGINE ****
+SmoothMove motion(MACHINE_ACCEL, MAA_VELOCITY);

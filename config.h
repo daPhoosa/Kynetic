@@ -23,7 +23,7 @@
 
 // **** MACHINE SETTINGS ****
 const float MACHINE_ACCEL = 1000.0f;   // mm/s^2
-const float MAA_VELOCITY  = 200.0f;    // mm/s
+const float MAX_VELOCITY  = 200.0f;    // mm/s
 const int   STEPPER_TICK_PERIOD = 10;  // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
@@ -31,22 +31,24 @@ const int MOTION_CONTROL_HZ = 1000; // Hz
 const int BUTTONS_UI_HZ     = 20;   // Hz
 const int MAINTENANCE_HZ    = 1;    // Hz
 
-const float MACHINE_VEL_STEP = 60.0f MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]
+const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]
 
 
-// **** HOME POSITION PARAMETERS ****
-#define FAST_HOME_VEL 20.0f
-#define SLOW_HOME_VEL 5.0f
-#define SLOW_HOME_DIST 5.0f
+// **** HOME POSITION AND ENDSTOP PARAMETERS ****
+#define FAST_HOME_VEL  40.0f     // [mm/s]
+#define SLOW_HOME_VEL  5.0f      // [mm/s]
+#define SLOW_HOME_DIST 5.0f      // [mm]
 
 #define A_MOTOR_HOME_OFFSET 300.0f
 #define B_MOTOR_HOME_OFFSET 300.0f
 #define C_MOTOR_HOME_OFFSET 300.0f
 
-#define A_ENDSTOP_NO_CONTACT HIGH
-#define B_ENDSTOP_NO_CONTACT HIGH
-#define C_ENDSTOP_NO_CONTACT HIGH
-
+#define X_MAX_ENDSTOP_NO_CONTACT HIGH // switch state when not in contact with axis
+#define Y_MAX_ENDSTOP_NO_CONTACT HIGH
+#define Z_MAX_ENDSTOP_NO_CONTACT HIGH
+#define X_MIN_ENDSTOP_NO_CONTACT HIGH
+#define Y_MIN_ENDSTOP_NO_CONTACT HIGH
+#define Z_MIN_ENDSTOP_NO_CONTACT HIGH
 
 // **** MACHINE TRAVEL LIMITS ****
 #define X_TRAVEL_MAX 100
@@ -65,6 +67,7 @@ const float MACHINE_VEL_STEP = 60.0f MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/m
 #ifdef MACHINE_TYPE_DELTA // delta arm geometry configuration
    #define DELTA_ARM_RADIUS 109.0f
    #define DELTA_ARM_LENGTH 207.3f
+   #define DELTA_MIN_ARM_ANGLE 10.0f      // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 #endif
 

@@ -4,6 +4,8 @@ ehthumbs.db
 
 # Folder config file
 Desktop.ini
+*.dropbox
+*.dropbox.attr
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
