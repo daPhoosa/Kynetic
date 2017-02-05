@@ -21,4 +21,4 @@
 
 
 // **** MOVEMENT ENGINE ****
-SmoothMove motion(MACHINE_ACCEL, MAA_VELOCITY);
+SmoothMove motion(MACHINE_ACCEL, MAX_VELOCITY);

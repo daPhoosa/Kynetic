@@ -38,7 +38,7 @@
          bool computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
-         void homeAxis(int & index, uStepper* motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
+         void homeAxis(int & index, uStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
          
          //float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
          //float minArmHeightSq, armLengthSq;
@@ -110,7 +110,9 @@
    
    bool delta_machine_type::home( bool & xHome, bool & yHome, bool & zHome )
    {
-      int static A_index = B_index = C_index = 0;
+      int static A_index = 0;
+      int static B_index = 0; 
+      int static C_index = 0;
       
       if( (xHome && !A_index) || (yHome && !B_index) || (zHome && !C_index) ) // if any axis gets sent home, all go home
       {
@@ -146,9 +148,9 @@
    }
    
    
-   void delta_machine_type::homeAxis(int & index, uStepper* motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
+   void delta_machine_type::homeAxis(int & index, uStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
    {
-      float speed = motor->getSpeed(); 
+      float speed = motor.getSpeed(); 
       
       switch(index)
       {
@@ -159,23 +161,23 @@
                speed += MACHINE_VEL_STEP;
                if( speed > velocity ) speed = velocity;
                
-               motor->setSpeed( speed );  // move toward end stop if no contact is observed
+               motor.setSpeed( speed );  // move toward end stop if no contact is observed
                break;
             }
             else
             {
-               motor->setPosition( homeOffset );
+               motor.setPosition( homeOffset );
                index--;
             }
           
          case 4 : // fast retract
          case 2 : // slow retract
-            if( motor->getPositionMM() > homeOffset - SLOW_HOME_DIST )
+            if( motor.getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
                speed -= MACHINE_VEL_STEP;
                if( speed < -velocity ) speed = -velocity;
                
-               motor->setSpeed( speed );  // back away from first contact
+               motor.setSpeed( speed );  // back away from first contact
                break;
             }
             else
@@ -188,12 +190,12 @@
             
             if( speed < 0.0f )
             {
-               motor->setSpeed( speed );  // decelerate
+               motor.setSpeed( speed );  // decelerate
                break;
             }
 
          case 0 : // hold zero
-            motor->setSpeed( 0.0f );
+            motor.setSpeed( 0.0f );
             break;
       }
    }
