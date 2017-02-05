@@ -18,12 +18,11 @@
 
 
 // **** PIN DEFINES FOR TEENSY 3.5/3.6 ****
+// 5 is intentionally ommitted
 
 #define A_MOTOR_ENBL_PIN 2
 #define A_MOTOR_STEP_PIN 3
 #define A_MOTOR_DIR_PIN  4
-
-// 5 is intentionally ommitted
 
 #define B_MOTOR_ENBL_PIN 6
 #define B_MOTOR_STEP_PIN 7
@@ -48,13 +47,13 @@
 #define X_MAX_ENDSTOP_PIN 24
 #define Y_MAX_ENDSTOP_PIN 25
 #define Z_MAX_ENDSTOP_PIN 26
-#define X_MIN_ENDSTOP_PIN 30
+#define X_MIN_ENDSTOP_PIN 33
 #define Y_MIN_ENDSTOP_PIN 32
-#define Z_MIN_ENDSTOP_PIN 33
+#define Z_MIN_ENDSTOP_PIN 30
 
 #define BED_HEATER_PWM_PIN 9
 #define EXTRUDER1_PWM_PIN  20
-#define EXTRUDER2_PWM_PIN  30
+#define EXTRUDER2_PWM_PIN  
 
 #define SPI0_CS   10
 #define SPI0_MOSI 11
