@@ -155,7 +155,7 @@
       switch(index)
       {
          case 5 : // fast advance
-         case 3 : // slow adavnce
+         case 3 : // slow advance
             if( digitalRead( endStopPin ) == switchNoContact )
             {
                speed += MACHINE_VEL_STEP;
@@ -166,7 +166,7 @@
             }
             else
             {
-               motor.setPosition( homeOffset );
+               motor.setPosition( homeOffset ); // switched has been activated
                index--;
             }
           
@@ -177,7 +177,7 @@
                speed -= MACHINE_VEL_STEP;
                if( speed < -velocity ) speed = -velocity;
                
-               motor.setSpeed( speed );  // back away from first contact
+               motor.setSpeed( speed );  // back away from switch
                break;
             }
             else

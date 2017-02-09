@@ -31,7 +31,7 @@ const int MOTION_CONTROL_HZ = 1000; // Hz
 const int BUTTONS_UI_HZ     = 20;   // Hz
 const int MAINTENANCE_HZ    = 1;    // Hz
 
-const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]
+const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]  max vel change per step at max acceleration
 
 
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
@@ -39,7 +39,7 @@ const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm
 #define SLOW_HOME_VEL  5.0f      // [mm/s]
 #define SLOW_HOME_DIST 5.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 300.0f
+#define A_MOTOR_HOME_OFFSET 300.0f    // axis zero from home position [mm]
 #define B_MOTOR_HOME_OFFSET 300.0f
 #define C_MOTOR_HOME_OFFSET 300.0f
 

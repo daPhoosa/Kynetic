@@ -27,6 +27,43 @@ struct state_machine_t
 } gCode;
 
 
+void readNextLine()
+{
+   bool endOfBlockFound = false;
+   char ch = getNextChar();
+   int32_t number;
+   
+   while( ch != '\r' && ch != 0 )
+   {
+      if( !endOfBlockFound ) // ignore all characters after the EOB until CR
+      {
+         if( ch == ';' )
+         {
+            endOfBlockFound = true;
+         }
+         else
+         {
+            if( ch > 64 )
+            {
+               // Letter
+               
+            }
+            else if( ch > 45 && ch < 58 )
+            {
+               // Number
+               
+            }
+         }
+      {
+      
+      
+      ch = getNextChar();
+   }
+   
+   
+}
+
+
 bool streamToBlock(const char & ch)  // returns true when a block is complete
 {
    static bool blockComplete = false;
