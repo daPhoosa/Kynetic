@@ -18,7 +18,6 @@
 
 #include "config.h"
 #include "Kynetic_pins.h"
-#include "kynetic.h"
 
 #include "motors.h"
 #include "dataStreams.h"
@@ -29,6 +28,8 @@
 #include "Machines\cartesian.h"
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
+
+#include "kynetic.h"
 
 
 void setup() {
@@ -51,7 +52,7 @@ void loop() {
    
    if( motionControl.check() )  // Highest Priority
    {
-      
+      motorController();
    }
    else if( false ) // Read SD card and Parse G code
    {

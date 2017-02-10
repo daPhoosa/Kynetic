@@ -33,6 +33,9 @@ const int MAINTENANCE_HZ    = 1;    // Hz
 
 const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]  max vel change per step at max acceleration
 
+const float motionSmoothingCycles = 3.0f;
+const float motionSmoothingRate   = MOTION_CONTROL_HZ / motionSmoothingCycles;
+
 
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
 #define FAST_HOME_VEL  40.0f     // [mm/s]

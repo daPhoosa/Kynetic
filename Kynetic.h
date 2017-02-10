@@ -36,3 +36,18 @@
 
 // **** OTHER FUNCTIONS ****
 
+void motorController()
+{
+   float x, y, z, a, b, c;
+   
+   motion.advancePostion();
+   
+   motion.getTargetLocation( x, y, z );
+   
+   machine.invKinematics( x, y, z, a, b, c );
+   
+   A_motor.setSpeed( motionSmoothingRate * ( a - A_motor.getPositionMM() ));
+   B_motor.setSpeed( motionSmoothingRate * ( b - B_motor.getPositionMM() ));
+   C_motor.setSpeed( motionSmoothingRate * ( c - C_motor.getPositionMM() ));
+   
+}
