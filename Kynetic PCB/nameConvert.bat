@@ -10,4 +10,7 @@ rename drill PCB_upload.XLN
 del *.csv
 del drillnpt.*
 del *.cad
+del readme.txt
+del sp1
+del *.bat
 pause

@@ -23,6 +23,8 @@
 SdFatSdioEX sdEx;
 File file;
 
+bool endOfFileFound;
+
 
 void startSerial()
 {
@@ -44,9 +46,8 @@ void startSD()
    }   
 }
 
-char getNextChar()
+bool getNextChar( char & ch )
 {
-   char ch = 0;
    
    if( file.available() )
    {

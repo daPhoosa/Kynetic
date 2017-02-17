@@ -17,7 +17,7 @@
 */
 
 
-struct state_machine_t
+struct gCode_state_machine_t
 {
    byte G[17]; // G code groups are 0 - 16
    int M;
@@ -27,13 +27,26 @@ struct state_machine_t
 } gCode;
 
 
+
+char getNextChar()
+{
+   if( file.available() )
+   {
+      char ch;
+      file.read(&ch, 1);
+      return ch;
+   }
+   return 0;
+}
+
+
 void readNextLine()
 {
    bool endOfBlockFound = false;
    char ch = getNextChar();
    int32_t number;
    
-   while( ch != '\r' && ch != 0 )
+   while( ch != '\r' && ch != 0 )  // iterate to end of the line
    {
       if( !endOfBlockFound ) // ignore all characters after the EOB until CR
       {
@@ -43,21 +56,50 @@ void readNextLine()
          }
          else
          {
-            if( ch > 64 )
+            if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
             {
-               // Letter
-               
-            }
-            else if( ch > 45 && ch < 58 )
-            {
-               // Number
-               
+               bool negative = false;
+               float decimal = 1.0f;
+               float number  = 0.0f;
+               char letter   = ch;
+
+               ch = getNextChar();
+
+               if(ch = '-')  // check for negative (only valid if it is the first char after the letter)
+               {
+                  negative = true;
+                  ch = getNextChar();
+               }
+
+               while( ch > 47 && ch < 58 || ch == 46 ) // Get Number (or decimal point )
+               {
+                  if( ch == 46 )
+                  {
+                     decimal = 0.1f;
+                  }
+                  else
+                  {
+                     if( decimal > 0.9f )
+                     {
+                        number = number * 10.0f + float( ch - 48 );  // whole numbers
+                     }
+                     else
+                     {
+                        number += float( ch - 48 ) * decimal; // decimal part
+                        decimal *= 0.1f;
+                     }
+                  }
+
+                  ch = getNextChar();
+               }
+               if( negative ) number *= -1.0f;
+               // assign number to letter address
             }
          }
-      {
       
       
-      ch = getNextChar();
+      
+
    }
    
    
