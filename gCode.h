@@ -59,7 +59,7 @@ void readNextLine()
             if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
             {
                bool negative = false;
-               float decimal = 1.0f;
+               float decimal = 1.0f; // arbitrary number above 0.1
                float number  = 0.0f;
                char letter   = ch;
 
@@ -71,21 +71,28 @@ void readNextLine()
                   ch = getNextChar();
                }
 
-               while( ch > 47 && ch < 58 || ch == 46 ) // Get Number (or decimal point )
+               while( (ch > 47 && ch < 58) || ch == 46 || ch == 44 ) // Get Number (or decimal point )
                {
-                  if( ch == 46 )
+                  if( ch == 46 || ch == 44 )
                   {
-                     decimal = 0.1f;
-                  }
-                  else
-                  {
-                     if( decimal > 0.9f )
+                     if( decimal > 0.11f ) 
                      {
-                        number = number * 10.0f + float( ch - 48 );  // whole numbers
+                        decimal = 0.1f; // only change if a decimal point has not been seen previously
                      }
                      else
                      {
-                        number += float( ch - 48 ) * decimal; // decimal part
+                        // ( in the future multiple decimal points should probably generate an alarm, for now just ignore )
+                     }
+                  }
+                  else
+                  {
+                     if( decimal > 0.11f )
+                     {
+                        number = number * 10.0f + float( ch - 48 );  // int component
+                     }
+                     else
+                     {
+                        number += float( ch - 48 ) * decimal; // decimal component
                         decimal *= 0.1f;
                      }
                   }
@@ -96,13 +103,8 @@ void readNextLine()
                // assign number to letter address
             }
          }
-      
-      
-      
-
+      }
    }
-   
-   
 }
 
 
