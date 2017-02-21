@@ -48,11 +48,16 @@ void readNextLine()
    
    while( ch != '\r' && ch != 0 )  // iterate to end of the line
    {
-      if( !endOfBlockFound ) // ignore all characters after the EOB until CR
+      if( endOfBlockFound ) // ignore all characters after the EOB until CR
+      {
+         ch = getNextChar();
+      }
+      else
       {
          if( ch == ';' )
          {
             endOfBlockFound = true;
+            ch = getNextChar();
          }
          else
          {
@@ -108,45 +113,59 @@ void readNextLine()
 }
 
 
-bool streamToBlock(const char & ch)  // returns true when a block is complete
+void setState( char letter, float number )
 {
-   static bool blockComplete = false;
-   static bool lineComplete = false;
-   static char field;
-   
-   if(ch == '\r')  // end of line
+   if( letter == 'G' )
    {
-      field = 0;
-      lineComplete = true;
-      return false;
-   }
-   
-   if(field == ';')
-   {
-      return false; // ignore characters after the EOB
-   }
-   
-   switch(ch)
-   {
-      case ';' :      // everything after this point is ignored
-         field = ';';
-         lineComplete = true;
-         break;
+      byte num = byte(number);
 
-      case 'G' :    
-      case 'M' :    
-      case 'X' :    
-      case 'Y' :    
-      case 'Z' :    
-      case 'E' : 
-      case 'F' : 
-      case 'S' : 
-         field = ch;
-         return false;        
-      
-      default :
-         break; 
+      switch( num )
+      {
+         case 4 :    // Group 0
+         case 9 :
+         case 28:
+         case 29:
+            gCode.G[0] = num;
+            break;
+
+         case 0 :    // Group 1
+         case 1 :
+         case 2 :
+         case 3 :
+            gCode.G[1] = num;
+            break;
+
+         case 17:    // Group 2
+         case 18:
+         case 19:
+            gCode.G[2] = num;
+            break;        
+
+         case 90:    // Group 3
+         case 91:
+            gCode.G[3] = num;
+            break;
+
+                  // No Group 4
+
+         case 93:    // Group 5
+         case 94:
+         case 95:
+            gCode.G[5] = num;
+            break;
+
+         case 20:    // Group 6
+         case 21:
+            gCode.G[6] = num;
+            break;
+
+         case 40:    // Group 7
+         case 41:
+         case 42:
+            gCode.G[7] = num;
+            break;
+      }
+
+      return;
    }
-   
-   return false;
 }
