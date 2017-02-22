@@ -70,15 +70,15 @@ void readNextLine()
 
                ch = getNextChar();
 
-               if(ch = '-')  // check for negative (only valid if it is the first char after the letter)
+               if(ch == '-')  // check for negative (only valid if it is the first char after the letter)
                {
                   negative = true;
                   ch = getNextChar();
                }
 
-               while( (ch > 47 && ch < 58) || ch == 46 || ch == 44 ) // Get Number (or decimal point )
+               while( (ch > 47 && ch < 58) || ch == '.' || ch == ',' ) // Get Number (or decimal point )
                {
-                  if( ch == 46 || ch == 44 )
+                  if( ch == '.' || ch == ',' )
                   {
                      if( decimal > 0.11f ) 
                      {
@@ -115,6 +115,37 @@ void readNextLine()
 
 void setState( char letter, float number )
 {
+   // list most common letters first to avoid uneeded compares
+   if( letter == 'X' )
+   {
+      gCode.X = number;
+      return;
+   }
+
+   if( letter == 'Y' )
+   {
+      gCode.Y = number;
+      return;
+   }
+
+   if( letter == 'E' )
+   {
+      gCode.E = number;
+      return;
+   }
+
+   if( letter == 'F' )
+   {
+      gCode.F = number;
+      return;
+   }
+
+   if( letter == 'Z' )
+   {
+      gCode.Z = number;
+      return;
+   }
+
    if( letter == 'G' )
    {
       byte num = byte(number);
