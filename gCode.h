@@ -23,6 +23,8 @@ struct gCode_state_machine_t
    int M;
    
    float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
+
+   bool newMove;
    
 } gCode;
 
@@ -80,7 +82,7 @@ void readNextLine()
                {
                   if( ch == '.' || ch == ',' )
                   {
-                     if( decimal > 0.11f ) 
+                     if( decimal > 0.101f ) 
                      {
                         decimal = 0.1f; // only change if a decimal point has not been seen previously
                      }
@@ -91,7 +93,7 @@ void readNextLine()
                   }
                   else
                   {
-                     if( decimal > 0.11f )
+                     if( decimal > 0.101f )
                      {
                         number = number * 10.0f + float( ch - 48 );  // int component
                      }
@@ -105,7 +107,7 @@ void readNextLine()
                   ch = getNextChar();
                }
                if( negative ) number *= -1.0f;
-               // assign number to letter address
+               setState( letter, number );
             }
          }
       }
@@ -115,22 +117,39 @@ void readNextLine()
 
 void setState( char letter, float number )
 {
+   gCode.newMove = false;
+
    // list most common letters first to avoid uneeded compares
    if( letter == 'X' )
    {
-      gCode.X = number;
+      float diff = abs( gCode.X - number );
+      if( diff > 0.0009f )
+      {
+         gCode.newMove = true;
+         gCode.X = number;
+      }
       return;
    }
 
    if( letter == 'Y' )
    {
-      gCode.Y = number;
+      float diff = abs( gCode.Y - number );
+      if( diff > 0.0009f )
+      {
+         gCode.newMove = true;
+         gCode.Y = number;
+      }
       return;
    }
 
    if( letter == 'E' )
    {
-      gCode.E = number;
+      float diff = abs( gCode.E - number );
+      if( diff > 0.0009f )
+      {
+         gCode.newMove = true;
+         gCode.E = number;
+      }
       return;
    }
 
@@ -142,7 +161,12 @@ void setState( char letter, float number )
 
    if( letter == 'Z' )
    {
-      gCode.Z = number;
+      float diff = abs( gCode.Z - number );
+      if( diff > 0.0009f )
+      {
+         gCode.newMove = true;
+         gCode.Z = number;
+      }
       return;
    }
 
@@ -196,7 +220,15 @@ void setState( char letter, float number )
             gCode.G[7] = num;
             break;
       }
-
       return;
    }
+
+   if( letter == 'M' )
+   {
+      int num = int(number);
+
+      gCode.M = num;
+      return;
+   }
+
 }
