@@ -53,7 +53,7 @@ bool readNextProgramLine()
    gCode.startX = gCode.X; // save current location
    gCode.startY = gCode.Y;
    gCode.startZ = gCode.Z;
-   
+
    while( ch != '\r' && ch != 0 )  // iterate to end of the line
    {
       if( endOfBlockFound ) // ignore all characters after the EOB until CR
@@ -127,8 +127,6 @@ bool readNextProgramLine()
 
 void setState( char letter, float number )
 {
-   gCode.newAxisMove = false;
-   gCode.newExtruderMove = false;
 
    // list most common letters first to avoid uneeded compares
 
@@ -357,22 +355,22 @@ void setState( char letter, float number )
 void executeCode()
 {
 
-   if( newAxisMove && newExtruderMove ) // extrude while moving
+   if( gCode.newAxisMove && gCode.newExtruderMove ) // extrude while moving
    {
       addMovementBlock();
       //motion.addExtrude();
    }
-   else if ( newAxisMove ) // move only
+   else if ( gCode.newAxisMove ) // move only
    {
       addMovementBlock();
    }
-   else if ( newExtruderMove ) // extrude only
+   else if ( gCode.newExtruderMove ) // extrude only
    {
       // motion.addExtrudeOnly();
    }
 
-   newAxisMove = false;
-   newExtruderMove = false;
+   gCode.newAxisMove = false;
+   gCode.newExtruderMove = false;
 
    // Non movement commands      
    
