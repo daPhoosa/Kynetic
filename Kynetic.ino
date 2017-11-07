@@ -47,7 +47,7 @@ void setup() {
 void loop() {
    
    // Nested if-else priority scheme
-   // * After any operation completes, operations are given the first opportunity to run
+   // * After any operation completes, higher priority operations are given the first opportunity to run
    // * All operations should run quickly so that higher priority operations are not delayed excessively
    
    if( motionControl.check() )  // Highest Priority

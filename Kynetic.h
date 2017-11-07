@@ -19,8 +19,10 @@
 
 
 // **** GLOBAL VARIABLES ****
-
-
+bool homePositionSet = false;
+bool runProgram = false;
+bool getNextProgramBlock = false;
+bool executeNextBlock = false;
 
 
 
@@ -39,9 +41,7 @@
 void motorController()
 {
    float x, y, z, a, b, c;
-   
-   motion.advancePostion();
-   
+
    motion.getTargetLocation( x, y, z );
    
    machine.invKinematics( x, y, z, a, b, c );

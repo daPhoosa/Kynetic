@@ -24,7 +24,7 @@ struct gCode_state_machine_t
    
    float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
 
-   bool newMove;
+   bool newAxisMove, newExtruderMove;
    
 } gCode;
 
@@ -42,7 +42,7 @@ char getNextChar()
 }
 
 
-void readNextLine()
+bool readNextLine()
 {
    bool endOfBlockFound = false;
    char ch = getNextChar();
@@ -56,7 +56,7 @@ void readNextLine()
       }
       else
       {
-         if( ch == ';' )
+         if( ch == ';' || ch == '(' )
          {
             endOfBlockFound = true;
             ch = getNextChar();
@@ -112,12 +112,17 @@ void readNextLine()
          }
       }
    }
+
+   if( ch == 0) return false; // return false if at end of file
+   
+   return true;
 }
 
 
 void setState( char letter, float number )
 {
-   gCode.newMove = false;
+   gCode.newAxisMove = false;
+   gCode.newExtruderMove = false;
 
    // list most common letters first to avoid uneeded compares
 
@@ -126,7 +131,7 @@ void setState( char letter, float number )
       float diff = abs( gCode.X - number );
       if( diff > 0.0009f )
       {
-         gCode.newMove = true;
+         gCode.newAxisMove = true;
          gCode.X = number;
       }
       return;
@@ -137,7 +142,7 @@ void setState( char letter, float number )
       float diff = abs( gCode.Y - number );
       if( diff > 0.0009f )
       {
-         gCode.newMove = true;
+         gCode.newAxisMove = true;
          gCode.Y = number;
       }
       return;
@@ -148,7 +153,7 @@ void setState( char letter, float number )
       float diff = abs( gCode.E - number );
       if( diff > 0.0009f )
       {
-         gCode.newMove = true;
+         gCode.newExtruderMove = true;
          gCode.E = number;
       }
       return;
@@ -165,7 +170,7 @@ void setState( char letter, float number )
       float diff = abs( gCode.Z - number );
       if( diff > 0.0009f )
       {
-         gCode.newMove = true;
+         gCode.newAxisMove = true;
          gCode.Z = number;
       }
       return;
@@ -223,20 +228,120 @@ void setState( char letter, float number )
       }
       return;
    }
-<<<<<<< HEAD
 
    if( letter == 'M' )
    {
       int num = int(number);
 
-=======
-
-   if( letter == 'M' )
-   {
-      int num = int(number);
-
->>>>>>> de66c7874c72af2fd892ad60c3ad157eb8d5a71b
       gCode.M = num;
+      return;
+   }
+
+   if( letter == 'P' )
+   {
+      gCode.P = num;
+      return;
+   }
+   
+   if( letter == 'I' )
+   {
+      gCode.I = num;
+      return;
+   }
+   
+   if( letter == 'J' )
+   {
+      gCode.J = num;
+      return;
+   }
+   
+   if( letter == 'K' )
+   {
+      gCode.K = num;
+      return;
+   }
+
+   if( letter == 'A' )
+   {
+      gCode.A = num;
+      return;
+   }
+   
+   if( letter == 'B' )
+   {
+      gCode.B = num;
+      return;
+   }
+   
+   if( letter == 'C' )
+   {
+      gCode.C = num;
+      return;
+   }
+
+   if( letter == 'U' )
+   {
+      gCode.U = num;
+      return;
+   }
+   
+   if( letter == 'V' )
+   {
+      gCode.V = num;
+      return;
+   }
+   
+   if( letter == 'W' )
+   {
+      gCode.W = num;
+      return;
+   }
+  
+   if( letter == 'D' )
+   {
+      gCode.D = num;
+      return;
+   }
+   
+   if( letter == 'H' )
+   {
+      gCode.H = num;
+      return;
+   }
+
+   if( letter == 'L' )
+   {
+      gCode.L = num;
+      return;
+   }
+
+   if( letter == 'N' )
+   {
+      gCode.N = num;
+      return;
+   }
+   
+   if( letter == 'Q' )
+   {
+      gCode.Q = num;
+      return;
+   }
+   
+   if( letter == 'R' )
+   {
+      gCode.R = num;
+      return;
+   }
+  
+   if( letter == 'S' )
+   {
+      gCode.S = num;
+      return;
+   }
+   
+   if( letter == 'T' )
+   {
+      gCode.T = num;
       return;
    }
 

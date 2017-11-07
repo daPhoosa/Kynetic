@@ -45,15 +45,3 @@ void startSD()
       SERIAL_PORT.println("Open File Failed!");
    }   
 }
-
-bool getNextChar( char & ch )
-{
-   
-   if( file.available() )
-   {
-      char ch;
-      file.read(&ch, 1);
-   }
-   
-   return ch;
-}

@@ -6,6 +6,7 @@ ehthumbs.db
 Desktop.ini
 *.dropbox
 *.dropbox.attr
+*.vscode
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
