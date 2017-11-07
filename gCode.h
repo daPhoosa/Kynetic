@@ -24,6 +24,8 @@ struct gCode_state_machine_t
    
    float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
 
+   float startX, startY, startZ;
+
    bool newAxisMove, newExtruderMove;
    
 } gCode;
@@ -42,11 +44,15 @@ char getNextChar()
 }
 
 
-bool readNextLine()
+bool readNextProgramLine()
 {
    bool endOfBlockFound = false;
    char ch = getNextChar();
    int32_t number;
+
+   gCode.startX = gCode.X; // save current location
+   gCode.startY = gCode.Y;
+   gCode.startZ = gCode.Z;
    
    while( ch != '\r' && ch != 0 )  // iterate to end of the line
    {
@@ -345,4 +351,55 @@ void setState( char letter, float number )
       return;
    }
 
+}
+
+
+void executeCode()
+{
+
+   if( newAxisMove && newExtruderMove ) // extrude while moving
+   {
+      addMovementBlock();
+      //motion.addExtrude();
+   }
+   else if ( newAxisMove ) // move only
+   {
+      addMovementBlock();
+   }
+   else if ( newExtruderMove ) // extrude only
+   {
+      // motion.addExtrudeOnly();
+   }
+
+   newAxisMove = false;
+   newExtruderMove = false;
+
+   // Non movement commands      
+   
+
+}
+
+
+void addMovementBlock()
+{
+     float arcCenterX, arcCenterY;
+
+      switch (gCode.G[1])
+      {
+         case 0:
+            motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
+            break;
+
+         case 1:
+            motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
+            break;
+
+         case 2:
+         case 3:
+            arcCenterX = gCode.startX + gCode.I;
+            arcCenterY = gCode.startY + gCode.J;
+            motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.Z, gCode.F, arcCenterX, arcCenterY);
+            break;
+
+      }   
 }

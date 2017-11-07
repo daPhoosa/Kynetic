@@ -54,13 +54,17 @@ void loop() {
    {
       motorController();
    }
-   else if( false ) // Read SD card and Parse G code
+   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
-      
+      // do nothing
    }
-   else if( false ) // Execute G code
+   else if( motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
    {
-      
+      executeCode();
+   }
+   else if( getNextProgramBlock ) // Read SD card and Parse G code
+   {
+      readNextProgramLine();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
