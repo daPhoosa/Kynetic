@@ -52,7 +52,7 @@ void readNextLine()
    {
       if( endOfBlockFound ) // ignore all characters after the EOB until CR
       {
-         ch = getNextChar();
+         ch = getNextChar(); // throw away
       }
       else
       {
@@ -120,6 +120,7 @@ void setState( char letter, float number )
    gCode.newMove = false;
 
    // list most common letters first to avoid uneeded compares
+
    if( letter == 'X' )
    {
       float diff = abs( gCode.X - number );
@@ -222,11 +223,19 @@ void setState( char letter, float number )
       }
       return;
    }
+<<<<<<< HEAD
 
    if( letter == 'M' )
    {
       int num = int(number);
 
+=======
+
+   if( letter == 'M' )
+   {
+      int num = int(number);
+
+>>>>>>> de66c7874c72af2fd892ad60c3ad157eb8d5a71b
       gCode.M = num;
       return;
    }
