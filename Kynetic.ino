@@ -39,6 +39,10 @@ void setup() {
    startSD();
 
    startStepperTickISR();
+
+   setPins();
+
+   armMotors();
   
    startPollTimers();
 }
@@ -52,26 +56,43 @@ void loop() {
    
    if( motionControl.check() )  // Highest Priority
    {
-      motorController();
+      //motorController();
+
+      if( homeAllMotors )
+      {
+         if( machine.home( true, true, true ) )
+         {
+            homeAllMotors = false;
+         }
+      }
    }
-   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
+   else if( false && motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
-   else if( motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
+   else if( false && motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
    {
-      executeCode();
+      //executeCode();
    }
-   else if( getNextProgramBlock ) // Read SD card and Parse G code
+   else if( false && getNextProgramBlock ) // Read SD card and Parse G code
    {
-      readNextProgramLine();
+      //readNextProgramLine();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
-      
+      if( !digitalRead(SELECT_BUTTON_PIN) )
+      {
+         homeAllMotors = true;
+      }
    }
    else if( maintenance.check() ) // Lowest Priority
    {
+      /*
+      SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
+      SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
+      SERIAL_PORT.println( C_motor.getPositionMM() );
+      */
+      SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
       
    }   
 

@@ -29,6 +29,14 @@ uStepper C_motor( C_MOTOR_STEP_PER_MM, C_MOTOR_DIRECTION, STEPPER_TICK_HZ, C_MOT
 uStepper D_motor( D_MOTOR_STEP_PER_MM, D_MOTOR_DIRECTION, STEPPER_TICK_HZ, D_MOTOR_STEP_PIN, D_MOTOR_DIR_PIN, D_MOTOR_ENBL_PIN);
 
 
+void armMotors()
+{
+   A_motor.enable();
+   B_motor.enable();
+   C_motor.enable();
+   D_motor.enable();
+}
+
 void MotorTickISR() 
 {
    A_motor.step();

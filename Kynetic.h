@@ -23,6 +23,7 @@ bool homePositionSet = false;
 bool runProgram = false;
 bool getNextProgramBlock = false;
 bool executeNextBlock = false;
+bool homeAllMotors = true;
 
 
 
@@ -30,7 +31,20 @@ bool executeNextBlock = false;
 
 
 // **** STARTUP FUNCTIONS ****
+void setPins()
+{
+   pinMode( X_MAX_ENDSTOP_PIN, INPUT_PULLUP );
+   pinMode( Y_MAX_ENDSTOP_PIN, INPUT_PULLUP );
+   pinMode( Z_MAX_ENDSTOP_PIN, INPUT_PULLUP );
 
+   pinMode( X_MIN_ENDSTOP_PIN, INPUT_PULLUP );
+   pinMode( Y_MIN_ENDSTOP_PIN, INPUT_PULLUP );
+   pinMode( Z_MIN_ENDSTOP_PIN, INPUT_PULLUP );
+
+   pinMode( SELECT_BUTTON_PIN, INPUT_PULLUP );
+   pinMode( UP_BUTTON_PIN, INPUT_PULLUP );
+   pinMode( DOWN_BUTTON_PIN, INPUT_PULLUP );
+}
 
 
 

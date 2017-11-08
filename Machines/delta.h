@@ -30,7 +30,7 @@
          
          //void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
          
-         bool home( bool & xHome, bool & yHome, bool & zHome );
+         bool home( bool xHome, bool yHome, bool zHome );
          
 
       private:
@@ -108,7 +108,7 @@
    }
    */
    
-   bool delta_machine_type::home( bool & xHome, bool & yHome, bool & zHome )
+   bool delta_machine_type::home( bool xHome, bool yHome, bool zHome )
    {
       int static A_index = 0;
       int static B_index = 0; 
@@ -143,7 +143,7 @@
       }
 
       if( A_index || B_index || C_index ) return false;  // not done going home until all axis are done
-      
+
       return true; // returns true once all axis are at home
    }
    

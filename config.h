@@ -32,7 +32,7 @@ const int MOTION_CONTROL_HZ = 1000; // Hz
 const int BUTTONS_UI_HZ     = 20;   // Hz
 const int MAINTENANCE_HZ    = 1;    // Hz
 
-const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/min]  max vel change per step at max acceleration
+const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]  max vel change per step at max acceleration
 
 
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
@@ -44,12 +44,12 @@ const float MACHINE_VEL_STEP = 60.0f * MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm
 #define B_MOTOR_HOME_OFFSET 100.0f
 #define C_MOTOR_HOME_OFFSET 100.0f
 
-#define X_MAX_ENDSTOP_NO_CONTACT HIGH // switch state when not in contact with axis
-#define Y_MAX_ENDSTOP_NO_CONTACT HIGH
-#define Z_MAX_ENDSTOP_NO_CONTACT HIGH
-#define X_MIN_ENDSTOP_NO_CONTACT HIGH
-#define Y_MIN_ENDSTOP_NO_CONTACT HIGH
-#define Z_MIN_ENDSTOP_NO_CONTACT HIGH
+#define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
+#define Y_MAX_ENDSTOP_NO_CONTACT LOW
+#define Z_MAX_ENDSTOP_NO_CONTACT LOW
+#define X_MIN_ENDSTOP_NO_CONTACT LOW
+#define Y_MIN_ENDSTOP_NO_CONTACT LOW
+#define Z_MIN_ENDSTOP_NO_CONTACT LOW
 
 // **** MACHINE TRAVEL LIMITS ****
 #define X_TRAVEL_MAX 100
