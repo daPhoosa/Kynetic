@@ -38,7 +38,11 @@
          bool computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
+         bool startHome( bool xHome, bool yHome, bool zHome );
          void homeAxis(int & index, uStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
+
+         int A_homeIndex, B_homeIndex, C_homeIndex;
+         bool homingActive = false;
          
          //float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
          //float minArmHeightSq, armLengthSq;
@@ -107,43 +111,50 @@
       // todo...
    }
    */
-   
-   bool delta_machine_type::home( bool xHome, bool yHome, bool zHome )
+
+
+   bool delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
-      int static A_index = 0;
-      int static B_index = 0; 
-      int static C_index = 0;
+      A_homeIndex = 5; // for delta, allways home all motors at once
+      B_homeIndex = 5;
+      C_homeIndex = 5;
+      homingActive = true;
+   }
+
+
+   bool delta_machine_type::executeHome()
+   {
       
-      if( (xHome && !A_index) || (yHome && !B_index) || (zHome && !C_index) ) // if any axis gets sent home, all go home
+      if(homingActive)
       {
-         if( !A_index ) A_index = 5; // reset index if at zero
-         if( !B_index ) B_index = 5;
-         if( !C_index ) C_index = 5;
-      }
-      
-      if( A_index > 3 ) {
-         homeAxis(A_index, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
-      }else{
-         homeAxis(A_index, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
-         if( !A_index ) xHome = false;
-      }
+         if( A_homeIndex > 3 ) {
+            homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         }else{
+            homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         }
 
-      if( B_index > 3 ) {
-         homeAxis(B_index, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
-      }else{
-         homeAxis(B_index, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
-         if( !B_index ) yHome = false;
+         if( B_homeIndex > 3 ) {
+            homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         }else{
+            homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         }
+
+         if( C_homeIndex > 3 ) {
+            homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+         }else{
+            homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+         }
+
+         if( A_homeIndex || B_homeIndex || C_homeIndex ) // not done going home until all axis are done
+         {
+              return false; // not at home
+         }
+         else
+         {
+            homingActive = false;
+         }
       }
-
-      if( C_index > 3 ) {
-         homeAxis(C_index, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
-      }else{
-         homeAxis(C_index, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
-         if( !C_index ) zHome = false;
-      }
-
-      if( A_index || B_index || C_index ) return false;  // not done going home until all axis are done
-
+ 
       return true; // returns true once all axis are at home
    }
    

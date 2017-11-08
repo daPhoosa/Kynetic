@@ -54,7 +54,7 @@ void setPins()
 
 void motorController()
 {
-   float x, y, z, a, b, c;
+   static float x, y, z, a, b, c;
 
    motion.getTargetLocation( x, y, z );
    

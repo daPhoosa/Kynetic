@@ -56,14 +56,13 @@ void loop() {
    
    if( motionControl.check() )  // Highest Priority
    {
-      //motorController();
-
-      if( homeAllMotors )
+      if( runProgram )
       {
-         if( machine.home( true, true, true ) )
-         {
-            homeAllMotors = false;
-         }
+         motorController();
+      }
+      else
+      {
+         machine.executeHome();
       }
    }
    else if( false && motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
@@ -82,7 +81,7 @@ void loop() {
    {
       if( !digitalRead(SELECT_BUTTON_PIN) )
       {
-         homeAllMotors = true;
+         machine.startHome( true, true, true );
       }
    }
    else if( maintenance.check() ) // Lowest Priority
