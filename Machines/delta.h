@@ -27,10 +27,11 @@
          //void init();
          
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
-         
          //void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
          
-         bool home( bool xHome, bool yHome, bool zHome );
+         bool startHome( bool xHome, bool yHome, bool zHome );
+         bool abortHome();
+         bool executeHome();
          
 
       private:
@@ -38,7 +39,6 @@
          bool computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
-         bool startHome( bool xHome, bool yHome, bool zHome );
          void homeAxis(int & index, uStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
 
          int A_homeIndex, B_homeIndex, C_homeIndex;
@@ -115,12 +115,19 @@
 
    bool delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
-      A_homeIndex = 5; // for delta, allways home all motors at once
-      B_homeIndex = 5;
-      C_homeIndex = 5;
+      if( !A_homeIndex ) A_homeIndex = 5; // for delta, allways home all motors at once.  Don't reset motors that are already homing
+      if( !B_homeIndex ) B_homeIndex = 5;
+      if( !C_homeIndex ) C_homeIndex = 5;
       homingActive = true;
    }
 
+   bool delta_machine_type::abortHome()
+   {
+      A_homeIndex = 0; // for delta, allways home all motors at once.  Don't reset motors that are already homing
+      B_homeIndex = 0;
+      C_homeIndex = 0;
+      homingActive = true; // set to true to force a final execute that sets the motors to zero vel
+   }
 
    bool delta_machine_type::executeHome()
    {

@@ -51,8 +51,8 @@ void setup() {
 void loop() {
    
    // Nested if-else priority scheme
-   // * After any operation completes, higher priority operations are given the first opportunity to run
-   // * All operations should run quickly so that higher priority operations are not delayed excessively
+   //  * After any operation completes, higher priority operations are given the first opportunity to run
+   //  * All operations should run quickly so that higher priority operations are not delayed excessively
    
    if( motionControl.check() )  // Highest Priority
    {
@@ -65,21 +65,21 @@ void loop() {
          machine.executeHome();
       }
    }
-   else if( false && motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
+   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
-   else if( false && motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
+   else if( motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
    {
-      //executeCode();
+      // executeCode();
    }
-   else if( false && getNextProgramBlock ) // Read SD card and Parse G code
+   else if( getNextProgramBlock ) // Read SD card and Parse G code
    {
-      //readNextProgramLine();
+      // readNextProgramLine();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
-      if( !digitalRead(SELECT_BUTTON_PIN) )
+      if( digitalRead(SELECT_BUTTON_PIN) == SELECT_BUTTON_PRESSED )
       {
          machine.startHome( true, true, true );
       }

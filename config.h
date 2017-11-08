@@ -20,22 +20,32 @@
 
 #define SERIAL_PORT Serial
 
-
+// **************************
 // **** MACHINE SETTINGS ****
-const float MACHINE_ACCEL = 1000.0f;   // mm/s^2
-const float MAX_VELOCITY  = 200.0f;    // mm/s
-const float CORNER_ROUNDING = 0.1f;    // mm
-const int   STEPPER_TICK_PERIOD = 10;  // us
+// **************************
+const float MACHINE_ACCEL       = 1000.0f; // mm/s^2
+const float MAX_VELOCITY        = 200.0f;  // mm/s
+const float CORNER_ROUNDING     = 0.1f;    // mm
+const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
-const int MOTION_CONTROL_HZ = 1000; // Hz
-const int BUTTONS_UI_HZ     = 20;   // Hz
-const int MAINTENANCE_HZ    = 1;    // Hz
+const int MOTION_CONTROL_HZ     = 1000;    // Hz
+const int BUTTONS_UI_HZ         = 20;      // Hz
+const int MAINTENANCE_HZ        = 1;       // Hz
 
 const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]  max vel change per step at max acceleration
 
+// *************************
+// **** BUTTON SETTINGS ****
+// *************************
+#define SELECT_BUTTON_PRESSED 0
+#define UP_BUTTON_PRESSED     0
+#define DOWN_BUTTON_PRESSED   0
 
+
+// **********************************************
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
+// **********************************************
 #define FAST_HOME_VEL  40.0f     // [mm/s]
 #define SLOW_HOME_VEL  5.0f      // [mm/s]
 #define SLOW_HOME_DIST 4.0f      // [mm]
@@ -51,12 +61,22 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 #define Y_MIN_ENDSTOP_NO_CONTACT LOW
 #define Z_MIN_ENDSTOP_NO_CONTACT LOW
 
+
+// *******************************
 // **** MACHINE TRAVEL LIMITS ****
-#define X_TRAVEL_MAX 100
-#define X_TRAVEL_MIN 100
+// *******************************
+#define X_TRAVEL_MAX  100.0f
+#define X_TRAVEL_MIN -100.0f
+#define Y_TRAVEL_MAX  100.0f
+#define Y_TRAVEL_MIN -100.0f
+#define Z_TRAVEL_MAX  100.0f
+#define Z_TRAVEL_MIN    0.0f
 
 
+
+// ***********************
 // **** MACHINE TYPES ****
+// ***********************
 // ( Only enable one type of machine )
 
 //#define MACHINE_TYPE_CARTESIAN
@@ -64,11 +84,10 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 //#define MACHINE_TYPE_COREXY
 
 #define MACHINE_TYPE_DELTA
-
-#ifdef MACHINE_TYPE_DELTA // delta arm geometry configuration
-   #define DELTA_ARM_RADIUS 109.0f
-   #define DELTA_ARM_LENGTH 207.3f
-   #define DELTA_MIN_ARM_ANGLE 10.0f      // [deg]
+#ifdef  MACHINE_TYPE_DELTA // delta arm geometry configuration
+   #define DELTA_ARM_RADIUS         109.0f
+   #define DELTA_ARM_LENGTH         207.3f
+   #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 #endif
 
