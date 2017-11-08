@@ -48,7 +48,7 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 // **********************************************
 #define FAST_HOME_VEL  40.0f     // [mm/s]
 #define SLOW_HOME_VEL  5.0f      // [mm/s]
-#define SLOW_HOME_DIST 4.0f      // [mm]
+#define SLOW_HOME_DIST 1.0f      // [mm]
 
 #define A_MOTOR_HOME_OFFSET 100.0f    // axis zero from home position [mm]
 #define B_MOTOR_HOME_OFFSET 100.0f

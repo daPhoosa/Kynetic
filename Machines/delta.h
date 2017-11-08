@@ -63,6 +63,7 @@
 
    } machine;
 
+
    /*
    void delta_machine_type::init()
    {
@@ -82,6 +83,7 @@
    }
    */
    
+
    void delta_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
    {
       // an axis that is asked to go to an unreachable location will fail silently and remain at its old location
@@ -102,15 +104,43 @@
       {
          c = result;
       }
-
    }
    
+
    /*
    void delta_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
    {
       // todo...
    }
    */
+
+
+   bool delta_machine_type::computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result )
+   {
+      // returns true if the requested location is reachable
+      
+      float dx_Sq, dy_Sq, dz_Sq;
+      
+      dx_Sq = square( x1 - x2 );
+      
+      dy_Sq = square( y1 - y2 );
+      
+      dz_Sq = armLengthSq - ( dx_Sq + dy_Sq );
+      
+      if( dz_Sq > minArmHeightSq )
+      {
+         result = sqrt( dz_Sq ) + z;
+         return true;
+      }
+
+      return false; // location outside of reachable area
+   }
+
+
+   float delta_machine_type::square( float x )
+   {
+      return x * x;
+   }   
 
 
    bool delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
@@ -121,13 +151,15 @@
       homingActive = true;
    }
 
+
    bool delta_machine_type::abortHome()
    {
-      A_homeIndex = 0; // for delta, allways home all motors at once.  Don't reset motors that are already homing
+      A_homeIndex = 0;
       B_homeIndex = 0;
       C_homeIndex = 0;
       homingActive = true; // set to true to force a final execute that sets the motors to zero vel
    }
+
 
    bool delta_machine_type::executeHome()
    {
@@ -193,7 +225,7 @@
             if( motor.getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
                speed -= MACHINE_VEL_STEP;
-               if( speed < -velocity ) speed = -velocity;
+               if( speed < -MAX_VELOCITY ) speed = -MAX_VELOCITY;
                
                motor.setSpeed( speed );  // back away from switch
                break;
@@ -211,40 +243,15 @@
                motor.setSpeed( speed );  // decelerate
                break;
             }
+            else
+            {
+               index = 0;
+            }
 
          case 0 : // hold zero
             motor.setSpeed( 0.0f );
             break;
       }
    }
-   
-   
-   bool delta_machine_type::computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result )
-   {
-      // returns true if the requested location is reachable
-      
-      static float dx_Sq, dy_Sq, dz_Sq;
-      
-      dx_Sq = square( x1 - x2 );
-      
-      dy_Sq = square( y1 - y2 );
-      
-      dz_Sq = armLengthSq - ( dx_Sq + dy_Sq );
-      
-      if( dz_Sq > minArmHeightSq )
-      {
-         result = sqrt( dz_Sq ) + z;
-         return true;
-      }
-
-      return false; // location outside of reachable area
-   }
-
-
-   float delta_machine_type::square( float x )
-   {
-      return x * x;
-   }   
-
    
 #endif
