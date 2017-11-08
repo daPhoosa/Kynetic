@@ -44,87 +44,6 @@ char getNextChar()
 }
 
 
-bool readNextProgramLine()
-{
-   bool endOfBlockFound = false;
-   char ch = getNextChar();
-   int32_t number;
-
-   gCode.startX = gCode.X; // save current location
-   gCode.startY = gCode.Y;
-   gCode.startZ = gCode.Z;
-
-   while( ch != '\r' && ch != 0 )  // iterate to end of the line
-   {
-      if( endOfBlockFound ) // ignore all characters after the EOB until CR
-      {
-         ch = getNextChar(); // throw away
-      }
-      else
-      {
-         if( ch == ';' || ch == '(' )
-         {
-            endOfBlockFound = true;
-            ch = getNextChar();
-         }
-         else
-         {
-            if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
-            {
-               bool negative = false;
-               float decimal = 1.0f; // arbitrary number above 0.1
-               float number  = 0.0f;
-               char letter   = ch;
-
-               ch = getNextChar();
-
-               if(ch == '-')  // check for negative (only valid if it is the first char after the letter)
-               {
-                  negative = true;
-                  ch = getNextChar();
-               }
-
-               while( (ch > 47 && ch < 58) || ch == '.' || ch == ',' ) // Get Number (or decimal point )
-               {
-                  if( ch == '.' || ch == ',' )
-                  {
-                     if( decimal > 0.101f ) 
-                     {
-                        decimal = 0.1f; // only change if a decimal point has not been seen previously
-                     }
-                     else
-                     {
-                        // ( in the future multiple decimal points should probably generate an alarm, for now just ignore )
-                     }
-                  }
-                  else
-                  {
-                     if( decimal > 0.101f )
-                     {
-                        number = number * 10.0f + float( ch - 48 );  // int component
-                     }
-                     else
-                     {
-                        number += float( ch - 48 ) * decimal; // decimal component
-                        decimal *= 0.1f;
-                     }
-                  }
-
-                  ch = getNextChar();
-               }
-               if( negative ) number *= -1.0f;
-               setState( letter, number );
-            }
-         }
-      }
-   }
-
-   if( ch == 0) return false; // return false if at end of file
-   
-   return true;
-}
-
-
 void setState( char letter, float number )
 {
 
@@ -243,112 +162,217 @@ void setState( char letter, float number )
 
    if( letter == 'P' )
    {
-      gCode.P = num;
+      gCode.P = number;
       return;
    }
    
    if( letter == 'I' )
    {
-      gCode.I = num;
+      gCode.I = number;
       return;
    }
    
    if( letter == 'J' )
    {
-      gCode.J = num;
+      gCode.J = number;
       return;
    }
    
    if( letter == 'K' )
    {
-      gCode.K = num;
+      gCode.K = number;
       return;
    }
 
    if( letter == 'A' )
    {
-      gCode.A = num;
+      gCode.A = number;
       return;
    }
    
    if( letter == 'B' )
    {
-      gCode.B = num;
+      gCode.B = number;
       return;
    }
    
    if( letter == 'C' )
    {
-      gCode.C = num;
+      gCode.C = number;
       return;
    }
 
    if( letter == 'U' )
    {
-      gCode.U = num;
+      gCode.U = number;
       return;
    }
    
    if( letter == 'V' )
    {
-      gCode.V = num;
+      gCode.V = number;
       return;
    }
    
    if( letter == 'W' )
    {
-      gCode.W = num;
+      gCode.W = number;
       return;
    }
   
    if( letter == 'D' )
    {
-      gCode.D = num;
+      gCode.D = number;
       return;
    }
    
    if( letter == 'H' )
    {
-      gCode.H = num;
+      gCode.H = number;
       return;
    }
 
    if( letter == 'L' )
    {
-      gCode.L = num;
+      gCode.L = number;
       return;
    }
 
    if( letter == 'N' )
    {
-      gCode.N = num;
+      gCode.N = number;
       return;
    }
    
    if( letter == 'Q' )
    {
-      gCode.Q = num;
+      gCode.Q = number;
       return;
    }
    
    if( letter == 'R' )
    {
-      gCode.R = num;
+      gCode.R = number;
       return;
    }
   
    if( letter == 'S' )
    {
-      gCode.S = num;
+      gCode.S = number;
       return;
    }
    
    if( letter == 'T' )
    {
-      gCode.T = num;
+      gCode.T = number;
       return;
    }
 
+}
+
+
+bool readNextProgramLine()
+{
+   bool endOfBlockFound = false;
+   char ch = getNextChar();
+
+   gCode.startX = gCode.X; // save current location
+   gCode.startY = gCode.Y;
+   gCode.startZ = gCode.Z;
+
+   while( ch != '\r' && ch != 0 )  // iterate to end of the line
+   {
+      if( endOfBlockFound ) // ignore all characters after the EOB until CR
+      {
+         ch = getNextChar(); // throw away
+      }
+      else
+      {
+         if( ch == ';' || ch == '(' )
+         {
+            endOfBlockFound = true;
+            ch = getNextChar();
+         }
+         else
+         {
+            if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
+            {
+               bool negative = false;
+               float decimal = 1.0f; // arbitrary number above 0.1
+               float number  = 0.0f;
+               char letter   = ch;
+
+               ch = getNextChar();
+
+               if(ch == '-')  // check for negative (only valid if it is the first char after the letter)
+               {
+                  negative = true;
+                  ch = getNextChar();
+               }
+
+               while( (ch > 47 && ch < 58) || ch == '.' || ch == ',' ) // Get Number (or decimal point )
+               {
+                  if( ch == '.' || ch == ',' )
+                  {
+                     if( decimal > 0.101f ) 
+                     {
+                        decimal = 0.1f; // only change if a decimal point has not been seen previously
+                     }
+                     else
+                     {
+                        // ( in the future multiple decimal points should probably generate an alarm, for now just ignore )
+                     }
+                  }
+                  else
+                  {
+                     if( decimal > 0.101f )
+                     {
+                        number = number * 10.0f + float( ch - 48 );  // int component
+                     }
+                     else
+                     {
+                        number += float( ch - 48 ) * decimal; // decimal component
+                        decimal *= 0.1f;
+                     }
+                  }
+
+                  ch = getNextChar();
+               }
+               if( negative ) number *= -1.0f;
+               setState( letter, number );
+            }
+         }
+      }
+   }
+
+   if( ch == 0) return false; // return false if at end of file
+   
+   return true;
+}
+
+
+void addMovementBlock()
+{
+     float arcCenterX, arcCenterY;
+
+      switch (gCode.G[1])
+      {
+         case 0:
+            motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
+            break;
+
+         case 1:
+            motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
+            break;
+
+         case 2:
+         case 3:
+            arcCenterX = gCode.startX + gCode.I;
+            arcCenterY = gCode.startY + gCode.J;
+            motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
+            break;
+
+      }   
 }
 
 
@@ -378,26 +402,4 @@ void executeCode()
 }
 
 
-void addMovementBlock()
-{
-     float arcCenterX, arcCenterY;
 
-      switch (gCode.G[1])
-      {
-         case 0:
-            motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
-            break;
-
-         case 1:
-            motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
-            break;
-
-         case 2:
-         case 3:
-            arcCenterX = gCode.startX + gCode.I;
-            arcCenterY = gCode.startY + gCode.J;
-            motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.Z, gCode.F, arcCenterX, arcCenterY);
-            break;
-
-      }   
-}

@@ -46,8 +46,8 @@ void motorController()
    
    machine.invKinematics( x, y, z, a, b, c );
    
-   A_motor.setSpeed( motionSmoothingRate * ( a - A_motor.getPositionMM() ));
-   B_motor.setSpeed( motionSmoothingRate * ( b - B_motor.getPositionMM() ));
-   C_motor.setSpeed( motionSmoothingRate * ( c - C_motor.getPositionMM() ));
+   A_motor.setSpeed( MOTION_CONTROL_HZ * ( a - A_motor.getPositionMM() ));
+   B_motor.setSpeed( MOTION_CONTROL_HZ * ( b - B_motor.getPositionMM() ));
+   C_motor.setSpeed( MOTION_CONTROL_HZ * ( c - C_motor.getPositionMM() ));
    
 }
