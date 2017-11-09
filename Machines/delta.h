@@ -43,6 +43,7 @@
 
          int A_homeIndex, B_homeIndex, C_homeIndex;
          bool homingActive = false;
+         bool homingComplete = false;
          
          //float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
          //float minArmHeightSq, armLengthSq;
@@ -149,15 +150,20 @@
       if( !B_homeIndex ) B_homeIndex = 5;
       if( !C_homeIndex ) C_homeIndex = 5;
       homingActive = true;
+      homingComplete = false;
    }
 
 
    void delta_machine_type::abortHome()
    {
-      A_homeIndex = 0;
-      B_homeIndex = 0;
-      C_homeIndex = 0;
-      homingActive = true; // set to true to force a final execute that sets the motors to zero vel
+      if( A_homeIndex || B_homeIndex || C_homeIndex ) // only abort if at least one axis is homing
+      {
+         A_homeIndex = 0;
+         B_homeIndex = 0;
+         C_homeIndex = 0;
+         homingActive = true; // set to true to force a final execute that sets the motors to zero vel
+         homingComplete = false;
+      }
    }
 
 
@@ -191,10 +197,10 @@
          else
          {
             homingActive = false;
+            return true; // returns true once all axis are at home
          }
       }
- 
-      return true; // returns true once all axis are at home
+      return false;
    }
    
    

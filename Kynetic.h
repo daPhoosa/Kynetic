@@ -23,6 +23,8 @@ bool homePositionSet = false;
 bool runProgram = false;
 bool getNextProgramBlock = false;
 bool executeNextBlock = false;
+bool fileComplete = true;
+
 
 
 

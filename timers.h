@@ -21,6 +21,8 @@
 
 // **** POLL TIMERS ****
 PollTimer motionControl(MOTION_CONTROL_HZ);
+PollTimer blockExecute(BLOCK_EXECUTE_HZ);
+PollTimer readProgram(READ_PROGRAM_HZ);
 PollTimer buttonsAndUI(BUTTONS_UI_HZ);
 PollTimer maintenance(MAINTENANCE_HZ);
 

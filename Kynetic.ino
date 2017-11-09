@@ -62,20 +62,31 @@ void loop() {
       }
       else
       {
-         machine.executeHome();
+         if( machine.executeHome() )
+         {
+            runProgram = true;
+            motion.startMoving( 0.0f, 0.0f, 100.0f );  // need to compute real start location
+         }
       }
    }
    else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
-   else if( runProgram && motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
+   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
-      // executeCode();
+      if( runProgram && motion.bufferVacancy() )
+      {
+         executeCode();
+      }
    }
-   else if( runProgram && getNextProgramBlock ) // Read SD card and Parse G code
+   else if( readProgram.check() ) // Read SD card and Parse G code
    {
-      // readNextProgramLine();
+      // runProgram && getNextProgramBlock 
+      if( !readNextProgramLine() )
+      {
+         fileComplete = true;
+      }
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {

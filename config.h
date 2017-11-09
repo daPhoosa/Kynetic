@@ -30,6 +30,8 @@ const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
 const int MOTION_CONTROL_HZ     = 1000;    // Hz
+const int BLOCK_EXECUTE_HZ      = 200;     // Hz
+const int READ_PROGRAM_HZ       = 100;     // Hz
 const int BUTTONS_UI_HZ         = 20;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 
@@ -50,9 +52,9 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 #define SLOW_HOME_VEL  5.0f      // [mm/s]
 #define SLOW_HOME_DIST 2.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 100.0f    // axis zero from home position [mm]
-#define B_MOTOR_HOME_OFFSET 100.0f
-#define C_MOTOR_HOME_OFFSET 100.0f
+#define A_MOTOR_HOME_OFFSET 125.0f    // axis zero from home position [mm]
+#define B_MOTOR_HOME_OFFSET 125.0f
+#define C_MOTOR_HOME_OFFSET 125.0f
 
 #define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
 #define Y_MAX_ENDSTOP_NO_CONTACT LOW

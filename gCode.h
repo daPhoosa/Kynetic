@@ -345,7 +345,7 @@ bool readNextProgramLine()
       }
    }
 
-   if( ch == 0) return false; // return false if at end of file
+   if( ch == 0 ) return false; // return false if at end of file
    
    return true;
 }
