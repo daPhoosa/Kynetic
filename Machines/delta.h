@@ -108,12 +108,47 @@
    }
    
 
-   /*
-   void delta_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
+
+   void delta_machine_type::fwdKinematics( const float & A_Actuator, const float & B_Actuator, const float & C_Actuator, float & x, float & y, float & z )
    {
-      // todo...
+      // adapted from https://github.com/Smoothieware/Smoothieware/blob/master/src/modules/robot/arm_solutions/LinearDeltaSolution.cpp
+      // from http://en.wikipedia.org/wiki/Circumscribed_circle#Barycentric_coordinates_from_cross-_and_dot-products
+      // based on https://github.com/ambrop72/aprinter/blob/2de69a/aprinter/printer/DeltaTransform.h#L81
+
+      Vec3 tower1 = VectorSet( A_TowerX, A_TowerY, A_Actuator );
+      Vec3 tower2 = VectorSet( B_TowerX, B_TowerY, B_Actuator );
+      Vec3 tower3 = VectorSet( C_TowerX, C_TowerY, C_Actuator );
+
+      Vec3 s12 = VectorSub( tower1, tower2 );
+      Vec3 s23 = VectorSub( tower2, tower3 );
+      Vec3 s13 = VectorSub( tower1, tower3 );
+
+      Vec3 normal = VecCrossProd( s12, s23 );
+
+      float magsq_s12 = VectorMagSq( s12 );
+      float magsq_s23 = VectorMagSq( s23 );
+      float magsq_s13 = VectorMagSq( s13 );
+
+      float inv_nmag_sq = 1.0F / VectorMagSq( normal );
+      float q = 0.5F * inv_nmag_sq;
+
+      float a = q * magsq_s23 * VecDotProd( s12, s13 );
+      float b = q * magsq_s13 * VecDotProd( s12, s23 ) * -1.0F; // negate because we use s12 instead of s21
+      float c = q * magsq_s12 * VecDotProd( s13, s23 );
+
+      Vec3 circumcenter = VectorSet( A_TowerX   * a + B_TowerX   * b + C_TowerX   * c,
+                                     A_TowerY   * a + B_TowerY   * b + C_TowerY   * c,
+                                     A_Actuator * a + B_Actuator * b + C_Actuator * c );
+
+      float r_sq = 0.5F * q * magsq_s12 * magsq_s23 * magsq_s13;
+      float dist = sqrtf(inv_nmag_sq * (armLengthSq - r_sq));
+
+      Vec3 cartesian = VectorSub( circumcenter, VectorMul( normal, dist ));
+
+      x = cartesian.x;
+      y = cartesian.y;
+      z = cartesian.z;
    }
-   */
 
 
    bool delta_machine_type::computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result )

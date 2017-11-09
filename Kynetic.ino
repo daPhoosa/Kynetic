@@ -25,6 +25,7 @@
 #include "motion.h"
 #include "gCode.h"
 
+#include "3DMath.h"
 #include "Machines\cartesian.h"
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
