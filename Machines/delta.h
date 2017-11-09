@@ -36,7 +36,7 @@
 
       private:
       
-         bool computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
+         bool actuatorPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
          void homeAxis(int & index, uStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
@@ -90,23 +90,40 @@
       // an axis that is asked to go to an unreachable location will fail silently and remain at its old location
 
       float result;
-      
-      if( computeDeltaPos( A_TowerX, A_TowerY, x, y, z, result ) )
+
+      if( actuatorPos( A_TowerX, A_TowerY, x, y, z, result ) )
       {
          a = result;
       }
 
-      if( computeDeltaPos( B_TowerX, B_TowerY, x, y, z, result ) )
+      if( actuatorPos( B_TowerX, B_TowerY, x, y, z, result ) )
       {
          b = result;
       }
 
-      if( computeDeltaPos( B_TowerX, B_TowerY, x, y, z, result ) )
+      if( actuatorPos( B_TowerX, B_TowerY, x, y, z, result ) )
       {
          c = result;
       }
    }
    
+
+   bool delta_machine_type::actuatorPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result )
+   {
+      // returns true if the requested location is reachable
+      
+      float dx_Sq = square( x1 - x2 );
+      float dy_Sq = square( y1 - y2 );
+      float dz_Sq = armLengthSq - ( dx_Sq + dy_Sq );
+      
+      if( dz_Sq > minArmHeightSq )
+      {
+         result = sqrtf( dz_Sq ) + z;
+         return true;
+      }
+
+      return false; // location outside of reachable area
+   }
 
 
    void delta_machine_type::fwdKinematics( const float & A_Actuator, const float & B_Actuator, const float & C_Actuator, float & x, float & y, float & z )
@@ -148,28 +165,6 @@
       x = cartesian.x;
       y = cartesian.y;
       z = cartesian.z;
-   }
-
-
-   bool delta_machine_type::computeDeltaPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result )
-   {
-      // returns true if the requested location is reachable
-      
-      float dx_Sq, dy_Sq, dz_Sq;
-      
-      dx_Sq = square( x1 - x2 );
-      
-      dy_Sq = square( y1 - y2 );
-      
-      dz_Sq = armLengthSq - ( dx_Sq + dy_Sq );
-      
-      if( dz_Sq > minArmHeightSq )
-      {
-         result = sqrt( dz_Sq ) + z;
-         return true;
-      }
-
-      return false; // location outside of reachable area
    }
 
 
