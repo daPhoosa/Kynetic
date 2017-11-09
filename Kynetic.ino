@@ -69,11 +69,11 @@ void loop() {
    {
       // do nothing
    }
-   else if( motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
+   else if( runProgram && motion.bufferVacancy() ) // Execute G code, feed blocks to the motion controller 
    {
       // executeCode();
    }
-   else if( getNextProgramBlock ) // Read SD card and Parse G code
+   else if( runProgram && getNextProgramBlock ) // Read SD card and Parse G code
    {
       // readNextProgramLine();
    }
@@ -91,7 +91,7 @@ void loop() {
       SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
       SERIAL_PORT.println( C_motor.getPositionMM() );
       */
-      SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
+      //SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
       
    }   
 

@@ -29,8 +29,8 @@
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          //void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
          
-         bool startHome( bool xHome, bool yHome, bool zHome );
-         bool abortHome();
+         void startHome( bool xHome, bool yHome, bool zHome );
+         void abortHome();
          bool executeHome();
          
 
@@ -143,7 +143,7 @@
    }   
 
 
-   bool delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
+   void delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
       if( !A_homeIndex ) A_homeIndex = 5; // for delta, allways home all motors at once.  Don't reset motors that are already homing
       if( !B_homeIndex ) B_homeIndex = 5;
@@ -152,7 +152,7 @@
    }
 
 
-   bool delta_machine_type::abortHome()
+   void delta_machine_type::abortHome()
    {
       A_homeIndex = 0;
       B_homeIndex = 0;
@@ -186,7 +186,7 @@
 
          if( A_homeIndex || B_homeIndex || C_homeIndex ) // not done going home until all axis are done
          {
-              return false; // not at home
+            return false; // not at home
          }
          else
          {
@@ -225,7 +225,7 @@
             if( motor.getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
                speed -= MACHINE_VEL_STEP;
-               if( speed < -MAX_VELOCITY ) speed = -MAX_VELOCITY;
+               if( speed < -velocity ) speed = -velocity;
                
                motor.setSpeed( speed );  // back away from switch
                break;
