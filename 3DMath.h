@@ -27,7 +27,7 @@ struct Vec3
 
 Vec3 VectorSet( float x, float y, float z )
 {
-   Vec3 = a;
+   Vec3 a;
    a.x = x;
    a.y = y;
    a.z = z;
@@ -60,7 +60,34 @@ float VecMagSq(const Vec3& vec)
 }
 
 
-float VecDotProd(const Quat& L, const Quat& R)
+float VecDotProd(const Vec3& L, const Vec3& R)
 {
-    return L.w * R.w + L.x * R.x + L.y * R.y + L.z * R.z;
+    return L.x * R.x + L.y * R.y + L.z * R.z;
+}
+
+
+Vec3 VectorMul( Vec3 v, const float& f )
+{
+    v.x *= f;
+    v.y *= f;
+    v.z *= f;
+    return v;
+}
+
+
+void display(const Vec3& v)
+{
+    #ifdef SERIAL_PORT
+        String outputBuffer;
+        
+        outputBuffer  = "X: ";
+        outputBuffer += String(v.x, 4);
+        outputBuffer += "    Y: ";
+        outputBuffer += String(v.y, 4);
+        outputBuffer += "    Z: ";
+        outputBuffer += String(v.z, 4);
+        outputBuffer += '\n';
+    
+        SERIAL_PORT.print(outputBuffer);
+    #endif         
 }

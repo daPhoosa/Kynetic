@@ -27,7 +27,7 @@
          //void init();
          
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
-         //void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
+         void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
          
          void startHome( bool xHome, bool yHome, bool zHome );
          void abortHome();
@@ -142,11 +142,11 @@
 
       Vec3 normal = VecCrossProd( s12, s23 );
 
-      float magsq_s12 = VectorMagSq( s12 );
-      float magsq_s23 = VectorMagSq( s23 );
-      float magsq_s13 = VectorMagSq( s13 );
+      float magsq_s12 = VecMagSq( s12 );
+      float magsq_s23 = VecMagSq( s23 );
+      float magsq_s13 = VecMagSq( s13 );
 
-      float inv_nmag_sq = 1.0F / VectorMagSq( normal );
+      float inv_nmag_sq = 1.0F / VecMagSq( normal );
       float q = 0.5F * inv_nmag_sq;
 
       float a = q * magsq_s23 * VecDotProd( s12, s13 );
