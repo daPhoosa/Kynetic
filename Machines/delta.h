@@ -101,7 +101,7 @@
          b = result;
       }
 
-      if( actuatorPos( B_TowerX, B_TowerY, x, y, z, result ) )
+      if( actuatorPos( C_TowerX, C_TowerY, x, y, z, result ) )
       {
          c = result;
       }
