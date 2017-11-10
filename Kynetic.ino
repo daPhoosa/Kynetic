@@ -65,8 +65,15 @@ void loop() {
       {
          if( machine.executeHome() )
          {
+            float x, y, z;
+
+            machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), x, y, z );
+            Serial.print(x, 3); Serial.print("\t");
+            Serial.print(y, 3); Serial.print("\t");
+            Serial.println(z, 3);
+            //motion.startMoving( 0.0f, 0.0f, 100.0f );  // need to compute real start location
+
             runProgram = true;
-            motion.startMoving( 0.0f, 0.0f, 100.0f );  // need to compute real start location
          }
       }
    }
@@ -98,11 +105,11 @@ void loop() {
    }
    else if( maintenance.check() ) // Lowest Priority
    {
-      /*
+      
       SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
       SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
       SERIAL_PORT.println( C_motor.getPositionMM() );
-      */
+      
       //SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
       
    }   

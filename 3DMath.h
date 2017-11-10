@@ -56,7 +56,7 @@ Vec3 VecCrossProd(const Vec3& L, const Vec3& R) // cross product of 3D vectors
 
 float VecMagSq(const Vec3& vec)
 {
-   return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
+   return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
 }
 
 
