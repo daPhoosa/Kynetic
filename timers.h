@@ -29,6 +29,8 @@ PollTimer maintenance(MAINTENANCE_HZ);
 void startPollTimers()
 {
    motionControl.start();
+   blockExecute.start();
+   readProgram.start();
    buttonsAndUI.start();
    maintenance.start();
 }

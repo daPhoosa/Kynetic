@@ -81,11 +81,11 @@ void display(const Vec3& v)
         String outputBuffer;
         
         outputBuffer  = "X: ";
-        outputBuffer += String(v.x, 4);
+        outputBuffer += String(v.x, 3);
         outputBuffer += "    Y: ";
-        outputBuffer += String(v.y, 4);
+        outputBuffer += String(v.y, 3);
         outputBuffer += "    Z: ";
-        outputBuffer += String(v.z, 4);
+        outputBuffer += String(v.z, 3);
         outputBuffer += '\n';
     
         SERIAL_PORT.print(outputBuffer);

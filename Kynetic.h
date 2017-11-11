@@ -56,14 +56,19 @@ void setPins()
 
 void motorController()
 {
-   static float x, y, z, a, b, c;
+   Vec3 cart, motor;
 
-   motion.getTargetLocation( x, y, z );
+   motion.getTargetLocation( cart.x, cart.y, cart.z );
    
-   machine.invKinematics( x, y, z, a, b, c );
+   machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
    
-   A_motor.setSpeed( MOTION_CONTROL_HZ * ( a - A_motor.getPositionMM() ));
-   B_motor.setSpeed( MOTION_CONTROL_HZ * ( b - B_motor.getPositionMM() ));
-   C_motor.setSpeed( MOTION_CONTROL_HZ * ( c - C_motor.getPositionMM() ));
-   
+   A_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.x - A_motor.getPositionMM() ));
+   B_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.y - B_motor.getPositionMM() ));
+   C_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.z - C_motor.getPositionMM() ));
+
+   display(cart);
+   //display(motor);
+   //display(VectorSet(A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM()));
+
+   //runProgram = false;
 }

@@ -31,6 +31,14 @@ struct gCode_state_machine_t
 } gCode;
 
 
+void gCodeSetPosition(float x, float y, float z, float e)
+{
+   gCode.X = x;
+   gCode.Y = y;
+   gCode.Z = z;
+   gCode.E = e;
+}
+
 
 char getNextChar()
 {
@@ -38,6 +46,7 @@ char getNextChar()
    {
       char ch;
       file.read(&ch, 1);
+      //Serial.print(ch);
       return ch;
    }
    return 0;
@@ -48,6 +57,7 @@ void setState( char letter, float number )
 {
 
    // list most common letters first to avoid uneeded compares
+   //Serial.print(letter);Serial.println(number);
 
    if( letter == 'X' )
    {
@@ -387,6 +397,7 @@ void executeCode()
    else if ( gCode.newAxisMove ) // move only
    {
       addMovementBlock();
+      Serial.println("!");
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {

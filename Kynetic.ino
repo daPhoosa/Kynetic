@@ -65,35 +65,45 @@ void loop() {
       {
          if( machine.executeHome() )
          {
-            float x, y, z;
+            Vec3 cart;
 
-            machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), x, y, z );
-            Serial.print(x, 3); Serial.print("\t");
-            Serial.print(y, 3); Serial.print("\t");
-            Serial.println(z, 3);
-            //motion.startMoving( 0.0f, 0.0f, 100.0f );  // need to compute real start location
+            machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
+
+            display(cart);
 
             runProgram = true;
+
+            gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
+
+            motion.startMoving( cart.x, cart.y, cart.z );
+
+            startPollTimers();
          }
       }
    }
-   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
+   else if( false && motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
-   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+   else if( runProgram && blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
-      if( runProgram && motion.bufferVacancy() )
+      if( motion.bufferVacancy() )
       {
          executeCode();
+         //Serial.println("*");
       }
    }
-   else if( readProgram.check() ) // Read SD card and Parse G code
+   else if( runProgram && readProgram.check() ) // Read SD card and Parse G code
    {
       // runProgram && getNextProgramBlock 
       if( !readNextProgramLine() )
       {
          fileComplete = true;
+         //Serial.println("1");
+      }
+      else
+      {
+         //Serial.println("0");
       }
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
