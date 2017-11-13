@@ -44,8 +44,8 @@ void setPins()
    pinMode( Z_MIN_ENDSTOP_PIN, INPUT_PULLUP );
 
    pinMode( SELECT_BUTTON_PIN, INPUT_PULLUP );
-   pinMode( UP_BUTTON_PIN, INPUT_PULLUP );
-   pinMode( DOWN_BUTTON_PIN, INPUT_PULLUP );
+   pinMode( UP_BUTTON_PIN,     INPUT_PULLUP );
+   pinMode( DOWN_BUTTON_PIN,   INPUT_PULLUP );
 }
 
 
@@ -61,14 +61,17 @@ void motorController()
    motion.getTargetLocation( cart.x, cart.y, cart.z );
    
    machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
-   
-   A_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.x - A_motor.getPositionMM() ));
-   B_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.y - B_motor.getPositionMM() ));
-   C_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.z - C_motor.getPositionMM() ));
 
-   //display(cart);
-   //display(motor);
-   //display(VectorSet(A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM()));
+   float A_delta, B_delta, C_delta;
+   A_delta = motor.x - A_motor.getPositionMM();
+   B_delta = motor.y - B_motor.getPositionMM();
+   C_delta = motor.z - C_motor.getPositionMM();
 
-   //runProgram = false;
+   if( abs(A_delta) < EXACT_STOP_TOL ) A_delta = 0.0f;
+   if( abs(B_delta) < EXACT_STOP_TOL ) B_delta = 0.0f;
+   if( abs(C_delta) < EXACT_STOP_TOL ) C_delta = 0.0f;
+
+   A_motor.setSpeed( MOTION_CONTROL_HZ * ( A_delta ));
+   B_motor.setSpeed( MOTION_CONTROL_HZ * ( B_delta ));
+   C_motor.setSpeed( MOTION_CONTROL_HZ * ( C_delta ));
 }

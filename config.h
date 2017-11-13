@@ -25,7 +25,8 @@
 // **************************
 const float MACHINE_ACCEL       = 1000.0f; // mm/s^2
 const float MAX_VELOCITY        = 200.0f;  // mm/s
-const float CORNER_ROUNDING     = 0.1f;    // mm
+const float CORNER_ROUNDING     = 0.100f;  // mm
+const float EXACT_STOP_TOL      = 0.015f;  // mm
 const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 

@@ -118,11 +118,21 @@ void loop() {
          {
             machine.startHome( true, true, true );
          }
-         
       }
+   }
+   else if( motionUpdate.check() )
+   {
+      // update tick rate to account for unexpected ISR call rates at high Hz
+      static uint32_t previousTickRate = STEPPER_TICK_HZ; // start at expected value
+      previousTickRate += (stepperTickCount - previousTickRate) >> 3; // low pass filter to reduce the effect of jitter
+      stepperTickCount = 0;
+      motion.setTickRateHz( previousTickRate );
+      SERIAL_PORT.println( previousTickRate );
+      // this might not be needed, but some frequencies are not available, so this will mitigate the error
    }
    else if( maintenance.check() ) // Lowest Priority
    {
+
       
       //SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
       //SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
