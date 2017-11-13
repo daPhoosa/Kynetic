@@ -306,6 +306,8 @@ bool readNextProgramLine()
          }
          else
          {
+            if( ch > 96 && ch < 123 ) ch -= 32; // to upper
+
             if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
             {
                bool negative = false;
