@@ -90,10 +90,11 @@ void loop() {
       if( motion.bufferVacancy() )
       {
          executeCode();
+         getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
          //Serial.println("*");
       }
    }
-   else if( runProgram && readProgram.check() ) // Read SD card and Parse G code
+   else if( getNextProgramBlock ) // Read SD card and Parse G code
    {
       // runProgram && getNextProgramBlock 
       if( !readNextProgramLine() )
@@ -105,6 +106,7 @@ void loop() {
       {
          //Serial.println("0");
       }
+      getNextProgramBlock = false;
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
