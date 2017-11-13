@@ -29,8 +29,8 @@ const float CORNER_ROUNDING     = 0.1f;    // mm
 const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
-const int MOTION_CONTROL_HZ     = 500;    // Hz
-const int BLOCK_EXECUTE_HZ      = 200;     // Hz
+const int MOTION_CONTROL_HZ     = 1000;    // Hz
+const int BLOCK_EXECUTE_HZ      = 100;     // Hz
 const int READ_PROGRAM_HZ       = 100;     // Hz
 const int BUTTONS_UI_HZ         = 20;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz

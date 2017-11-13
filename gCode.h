@@ -46,7 +46,7 @@ char getNextChar()
    {
       char ch;
       file.read(&ch, 1);
-      Serial.print(ch);
+      Serial.print(" ");Serial.print(int(ch));
       return ch;
    }
    return 0;
@@ -290,11 +290,12 @@ bool readNextProgramLine()
    gCode.startY = gCode.Y;
    gCode.startZ = gCode.Z;
 
-   while( ch != 10 && ch != 13 && ch != 0 )  // iterate to end of the line
+   while( ch != 10 && ch != 0 )  // iterate to end of the line
    {
       if( endOfBlockFound ) // ignore all characters after the EOB until CR
       {
          ch = getNextChar(); // throw away
+         //Serial.print(".");
       }
       else
       {
@@ -363,26 +364,38 @@ bool readNextProgramLine()
 
 void addMovementBlock()
 {
-     float arcCenterX, arcCenterY;
+   float arcCenterX, arcCenterY;
 
-      switch (gCode.G[1])
-      {
-         case 0:
-            motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
-            break;
+   switch (gCode.G[1])
+   {
+      case 0:
+         motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
+         Serial.print("   G0 ");
+         break;
 
-         case 1:
-            motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
-            break;
+      case 1:
+         motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
+         Serial.print("   G1 ");
+         break;
 
-         case 2:
-         case 3:
-            arcCenterX = gCode.startX + gCode.I;
-            arcCenterY = gCode.startY + gCode.J;
-            motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
-            break;
+      case 2:
+      case 3:
+         arcCenterX = gCode.startX + gCode.I;
+         arcCenterY = gCode.startY + gCode.J;
+         motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
+         break;
+   }
+   Serial.print(gCode.X);Serial.print(" ");
+   Serial.print(gCode.Y);Serial.print(" ");
+   Serial.println(gCode.Z);
 
-      }   
+   gCode.newAxisMove = false;
+
+}
+
+void addExtruderMove()
+{
+   gCode.newExtruderMove = false;
 }
 
 
@@ -392,7 +405,7 @@ void executeCode()
    if( gCode.newAxisMove && gCode.newExtruderMove ) // extrude while moving
    {
       addMovementBlock();
-      //motion.addExtrude();
+      addExtruderMove();
    }
    else if ( gCode.newAxisMove ) // move only
    {
@@ -401,11 +414,10 @@ void executeCode()
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {
-      // motion.addExtrudeOnly();
+      addExtruderMove();
    }
 
-   gCode.newAxisMove = false;
-   gCode.newExtruderMove = false;
+
 
    // Non movement commands      
    
