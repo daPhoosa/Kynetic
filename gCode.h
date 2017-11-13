@@ -46,7 +46,7 @@ char getNextChar()
    {
       char ch;
       file.read(&ch, 1);
-      //Serial.print(ch);
+      Serial.print(ch);
       return ch;
    }
    return 0;
@@ -290,7 +290,7 @@ bool readNextProgramLine()
    gCode.startY = gCode.Y;
    gCode.startZ = gCode.Z;
 
-   while( ch != '\r' && ch != 0 )  // iterate to end of the line
+   while( ch != 10 && ch != 13 && ch != 0 )  // iterate to end of the line
    {
       if( endOfBlockFound ) // ignore all characters after the EOB until CR
       {
@@ -397,7 +397,7 @@ void executeCode()
    else if ( gCode.newAxisMove ) // move only
    {
       addMovementBlock();
-      Serial.println("!");
+      //Serial.println("!");
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {

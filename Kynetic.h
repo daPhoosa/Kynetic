@@ -66,7 +66,7 @@ void motorController()
    B_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.y - B_motor.getPositionMM() ));
    C_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.z - C_motor.getPositionMM() ));
 
-   display(cart);
+   //display(cart);
    //display(motor);
    //display(VectorSet(A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM()));
 

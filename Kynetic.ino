@@ -110,15 +110,23 @@ void loop() {
    {
       if( digitalRead(SELECT_BUTTON_PIN) == SELECT_BUTTON_PRESSED )
       {
-         machine.startHome( true, true, true );
+         if( runProgram )
+         {
+            runProgram = false;
+         }
+         else
+         {
+            machine.startHome( true, true, true );
+         }
+         
       }
    }
    else if( maintenance.check() ) // Lowest Priority
    {
       
-      SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
-      SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
-      SERIAL_PORT.println( C_motor.getPositionMM() );
+      //SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
+      //SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
+      //    SERIAL_PORT.println( C_motor.getPositionMM() );
       
       //SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
       
