@@ -372,12 +372,12 @@ void addMovementBlock()
    {
       case 0:
          motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
-         Serial.print("   G0 ");
+         //Serial.print("   G0 ");
          break;
 
       case 1:
          motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
-         Serial.print("   G1 ");
+         //Serial.print("   G1 ");
          break;
 
       case 2:

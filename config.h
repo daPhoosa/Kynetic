@@ -23,8 +23,8 @@
 // **************************
 // **** MACHINE SETTINGS ****
 // **************************
-const float MACHINE_ACCEL       = 4000.0f; // mm/s^2
-const float MAX_VELOCITY        = 300.0f;  // mm/s
+const float MACHINE_ACCEL       = 5000.0f; // mm/s^2
+const float MAX_VELOCITY        = 250.0f;  // mm/s
 const float CORNER_ROUNDING     = 0.100f;  // mm
 const float EXACT_STOP_TOL      = 0.007f;  // mm
 const int   STEPPER_TICK_PERIOD = 10;      // us
@@ -53,9 +53,9 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 #define SLOW_HOME_VEL  5.0f      // [mm/s]
 #define SLOW_HOME_DIST 2.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 250.0f    // axis zero from home position [mm]
-#define B_MOTOR_HOME_OFFSET 250.0f
-#define C_MOTOR_HOME_OFFSET 250.0f
+#define A_MOTOR_HOME_OFFSET 300.0f    // axis zero from home position [mm]
+#define B_MOTOR_HOME_OFFSET 300.0f
+#define C_MOTOR_HOME_OFFSET 300.0f
 
 #define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
 #define Y_MAX_ENDSTOP_NO_CONTACT LOW
