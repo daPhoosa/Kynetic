@@ -23,7 +23,7 @@
 // **** MOVEMENT ENGINE ****
 SmoothMove motion(MACHINE_ACCEL, MAX_VELOCITY, CORNER_ROUNDING);
 
-void configMotion
+void configMotion()
 {
       
 }

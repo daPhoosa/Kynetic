@@ -46,7 +46,7 @@ char getNextChar()
    {
       char ch;
       file.read(&ch, 1);
-      Serial.print(" ");Serial.print(int(ch));
+      //Serial.print(" ");Serial.print(int(ch));
       return ch;
    }
    return 0;
@@ -387,9 +387,9 @@ void addMovementBlock()
          motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
          break;
    }
-   Serial.print(gCode.X);Serial.print(" ");
-   Serial.print(gCode.Y);Serial.print(" ");
-   Serial.println(gCode.Z);
+   //Serial.print(gCode.X);Serial.print(" ");
+   //Serial.print(gCode.Y);Serial.print(" ");
+   //Serial.println(gCode.Z);
 
    gCode.newAxisMove = false;
 

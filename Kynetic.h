@@ -62,16 +62,17 @@ void motorController()
    
    machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
 
-   float A_delta, B_delta, C_delta;
-   A_delta = motor.x - A_motor.getPositionMM();
-   B_delta = motor.y - B_motor.getPositionMM();
-   C_delta = motor.z - C_motor.getPositionMM();
+   if( motion.getSpeed() > MACHINE_VEL_STEP )
+   {
+      A_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.x - A_motor.getPositionMM() ));
+      B_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.y - B_motor.getPositionMM() ));
+      C_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.z - C_motor.getPositionMM() ));
+   }
+   else // force stop to avoid stepper "chatter"
+   {
+      A_motor.setSpeed( 0.0f );
+      B_motor.setSpeed( 0.0f );
+      C_motor.setSpeed( 0.0f );
+   }
 
-   if( abs(A_delta) < EXACT_STOP_TOL ) A_delta = 0.0f;
-   if( abs(B_delta) < EXACT_STOP_TOL ) B_delta = 0.0f;
-   if( abs(C_delta) < EXACT_STOP_TOL ) C_delta = 0.0f;
-
-   A_motor.setSpeed( MOTION_CONTROL_HZ * ( A_delta ));
-   B_motor.setSpeed( MOTION_CONTROL_HZ * ( B_delta ));
-   C_motor.setSpeed( MOTION_CONTROL_HZ * ( C_delta ));
 }

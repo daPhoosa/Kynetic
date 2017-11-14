@@ -125,11 +125,12 @@ void loop() {
    else if( motionUpdate.check() )
    {
       // update tick rate to account for unexpected ISR call rates at high Hz
-      static uint32_t previousTickRate = STEPPER_TICK_HZ; // start at expected value
-      previousTickRate += (stepperTickCount - previousTickRate) >> 3; // low pass filter to reduce the effect of jitter
-      stepperTickCount = 0;
-      motion.setTickRateHz( previousTickRate );
-      SERIAL_PORT.println( previousTickRate );
+      //static uint32_t previousTickRate = STEPPER_TICK_HZ; // start at expected value
+      //previousTickRate += (previousTickRate - stepperTickCount) >> 3; // low pass filter to reduce the effect of jitter
+      //stepperTickCount = 0;
+      stepperTickCount = stepperTickCount >> 1;
+      //motion.setTickRateHz( previousTickRate );
+      //SERIAL_PORT.println( stepperTickCount );
       // this might not be needed, but some frequencies are not available, so this will mitigate the error
    }
    else if( maintenance.check() ) // Lowest Priority
