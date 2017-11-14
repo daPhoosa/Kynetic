@@ -125,24 +125,25 @@ void loop() {
    else if( motionUpdate.check() )
    {
       // update tick rate to account for unexpected ISR call rates at high Hz
-      //static uint32_t previousTickRate = STEPPER_TICK_HZ; // start at expected value
-      //previousTickRate += (previousTickRate - stepperTickCount) >> 3; // low pass filter to reduce the effect of jitter
-      //stepperTickCount = 0;
-      stepperTickCount = stepperTickCount >> 1;
-      //motion.setTickRateHz( previousTickRate );
-      //SERIAL_PORT.println( stepperTickCount );
       // this might not be needed, but some frequencies are not available, so this will mitigate the error
+
+      static uint32_t startTime;
+      uint32_t timeNow = micros();
+      uint32_t elapsedTime = timeNow - startTime;
+      startTime = timeNow;
+
+      if( elapsedTime < 1100000UL && elapsedTime > 900000UL ) // don't update if excessively delayed/early
+      {
+         float scaleFactor = 1000000.0f / float(elapsedTime);
+         stepperTickCount = scaleFactor * float(stepperTickCount) + 0.5f;
+         //motion.setTickRateHz( stepperTickCount );
+         SERIAL_PORT.println( stepperTickCount );
+      }
+      stepperTickCount = 0;
    }
    else if( maintenance.check() ) // Lowest Priority
    {
 
-      
-      //SERIAL_PORT.print( A_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
-      //SERIAL_PORT.print( B_motor.getPositionMM() ); SERIAL_PORT.print( "\t" );
-      //    SERIAL_PORT.println( C_motor.getPositionMM() );
-      
-      //SERIAL_PORT.println( digitalRead(SELECT_BUTTON_PIN) );
-      
    }   
 
 }
