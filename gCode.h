@@ -26,7 +26,28 @@ struct gCode_state_machine_t
 
    float startX, startY, startZ;
 
-   bool newAxisMove, newExtruderMove;
+   bool newAxisMove, newExtruderMove, newMcode;
+
+   // Set initial values
+   G[0] = 0;
+   G[1] = 0;
+   G[2] = 17;
+   G[3] = 90;
+   // no group 4
+   G[5] = 94;
+   G[6] = 21;
+   G[7] = 40;
+   G[8] = 49;
+   G[9] = 80;
+   G[10] = 98;
+   G[11] = 50;
+   G[12] = 54;
+   G[13] = 0;
+   G[14] = 0;
+   G[15] = 64;
+   G[16] = 69;
+
+   
    
 } gCode;
 
@@ -65,7 +86,14 @@ void setState( char letter, float number )
       if( diff > 0.0009f )
       {
          gCode.newAxisMove = true;
-         gCode.X = number;
+         if( gCode.G[3] == 90 )
+         {
+            gCode.X = number; // absolute
+         }
+         else if( gCode.G[3] == 91 )
+         {
+            gCode.X = gCode.startX + number; // incremental
+         }
       }
       return;
    }
@@ -76,7 +104,14 @@ void setState( char letter, float number )
       if( diff > 0.0009f )
       {
          gCode.newAxisMove = true;
-         gCode.Y = number;
+         if( gCode.G[3] == 90 )
+         {
+            gCode.Y = number; // absolute
+         }
+         else if( gCode.G[3] == 91 )
+         {
+            gCode.Y = gCode.startY + number; // incremental
+         }
       }
       return;
    }
@@ -104,7 +139,14 @@ void setState( char letter, float number )
       if( diff > 0.0009f )
       {
          gCode.newAxisMove = true;
-         gCode.Z = number;
+         if( gCode.G[3] == 90 )
+         {
+            gCode.Z = number; // absolute
+         }
+         else if( gCode.G[3] == 91 )
+         {
+            gCode.Z = gCode.startZ + number; // incremental
+         }
       }
       return;
    }
@@ -167,6 +209,7 @@ void setState( char letter, float number )
       int num = int(number);
 
       gCode.M = num;
+      newMcode = true;
       return;
    }
 
@@ -417,6 +460,50 @@ void executeCode()
    else if ( gCode.newExtruderMove ) // extrude only
    {
       addExtruderMove();
+   }
+
+   if( gCode.newMcode )
+   {
+      switch(gCode.M)
+      {
+         case 0:     // Stop
+            break;
+         
+         case 1:     // Optional Stop
+            break;
+         
+         case 2:     // Program End
+            break;
+         
+         case 3:     // Spindle Start CW
+            break;
+         
+         case 4:     // Spindle Start CCW
+            break;
+
+         case 5:     // Spindle Stop
+            break;
+
+         case 6:     // Tool Change
+            break;
+         
+         case 7:     // Shower Coolant
+            break;
+
+         case 8:     // Coolant On
+            break;
+
+         case 9:     // Coolant Off
+            break;
+
+         case 30:    // Program end, reset
+            break;
+
+         default:
+            break;
+
+      }
+      gCode.newMcode = false;
    }
 
 
