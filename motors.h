@@ -54,3 +54,28 @@ void startStepperTickISR()
    FrequencyTimer2::setOnOverflow(MotorTickISR);
 }
 
+void setMotorTickRate()
+{
+   // update tick rate to account for unexpected ISR call rates at high Hz
+   // this might not be needed, but some frequencies are not available, so this will mitigate the error
+
+   static uint32_t startTime;
+   uint32_t timeNow = micros();
+   uint32_t elapsedTime = timeNow - startTime;
+   startTime = timeNow;
+
+   if( elapsedTime < 1100000UL && elapsedTime > 900000UL ) // don't update if excessively delayed/early
+   {
+      float scaleFactor = 1000000.0f / float(elapsedTime);
+      uint32_t tickCount = scaleFactor * float(stepperTickCount) + 0.5f;
+
+      A_motor.setTickRateHz( tickCount );
+      B_motor.setTickRateHz( tickCount );
+      C_motor.setTickRateHz( tickCount );
+      D_motor.setTickRateHz( tickCount );
+
+      SERIAL_PORT.println( tickCount );
+      SERIAL_PORT.println( scaleFactor, 6 );
+   }
+   stepperTickCount = 0;
+}

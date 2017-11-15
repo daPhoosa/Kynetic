@@ -60,6 +60,7 @@ void loop() {
       if( runProgram )
       {
          motorController();
+         motionControl.collectStats();
       }
       else
       {
@@ -69,7 +70,7 @@ void loop() {
 
             machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-            display(cart);
+            //display(cart);
 
             runProgram = true;
 
@@ -80,8 +81,9 @@ void loop() {
             startPollTimers();
          }
       }
+      
    }
-   else if( false && motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
+   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
@@ -124,25 +126,11 @@ void loop() {
    }
    else if( motionUpdate.check() )
    {
-      // update tick rate to account for unexpected ISR call rates at high Hz
-      // this might not be needed, but some frequencies are not available, so this will mitigate the error
-
-      static uint32_t startTime;
-      uint32_t timeNow = micros();
-      uint32_t elapsedTime = timeNow - startTime;
-      startTime = timeNow;
-
-      if( elapsedTime < 1100000UL && elapsedTime > 900000UL ) // don't update if excessively delayed/early
-      {
-         float scaleFactor = 1000000.0f / float(elapsedTime);
-         stepperTickCount = scaleFactor * float(stepperTickCount) + 0.5f;
-         //motion.setTickRateHz( stepperTickCount );
-         SERIAL_PORT.println( stepperTickCount );
-      }
-      stepperTickCount = 0;
+      setMotorTickRate();
    }
    else if( maintenance.check() ) // Lowest Priority
    {
+         motionControl.displayStats();
 
    }   
 

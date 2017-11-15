@@ -19,7 +19,7 @@
 
 struct gCode_state_machine_t
 {
-   byte G[17]; // G code groups are 0 - 16
+   byte G[17] = {0, 0, 17, 90, 0, 94, 21, 40, 49, 80, 98, 50, 54, 0, 0, 64, 69}; // G code groups are 0 - 16
    int M;
    
    float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
@@ -27,28 +27,7 @@ struct gCode_state_machine_t
    float startX, startY, startZ;
 
    bool newAxisMove, newExtruderMove, newMcode;
-
-   // Set initial values
-   G[0] = 0;
-   G[1] = 0;
-   G[2] = 17;
-   G[3] = 90;
-   // no group 4
-   G[5] = 94;
-   G[6] = 21;
-   G[7] = 40;
-   G[8] = 49;
-   G[9] = 80;
-   G[10] = 98;
-   G[11] = 50;
-   G[12] = 54;
-   G[13] = 0;
-   G[14] = 0;
-   G[15] = 64;
-   G[16] = 69;
-
-   
-   
+ 
 } gCode;
 
 
@@ -209,7 +188,7 @@ void setState( char letter, float number )
       int num = int(number);
 
       gCode.M = num;
-      newMcode = true;
+      gCode.newMcode = true;
       return;
    }
 
