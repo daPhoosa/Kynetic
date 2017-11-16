@@ -17,27 +17,8 @@
 */
 
 
-struct gCode_state_machine_t
-{
-   byte G[17] = {0, 0, 17, 90, 0, 94, 21, 40, 49, 80, 98, 50, 54, 0, 0, 64, 69}; // G code groups are 0 - 16
-   int M;
-   
-   float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
-
-   float startX, startY, startZ;
-
-   bool newAxisMove, newExtruderMove, newMcode;
- 
-} gCode;
-
-
-void gCodeSetPosition(float x, float y, float z, float e)
-{
-   gCode.X = x;
-   gCode.Y = y;
-   gCode.Z = z;
-   gCode.E = e;
-}
+#include "gCodeStructure.h"
+#include "gCodeOperations.h"
 
 
 char getNextChar()
@@ -386,104 +367,38 @@ bool readNextProgramLine()
 }
 
 
-void addMovementBlock()
-{
-   float arcCenterX, arcCenterY;
-
-   switch (gCode.G[1])
-   {
-      case 0:
-         motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
-         //Serial.print("   G0 ");
-         break;
-
-      case 1:
-         motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
-         //Serial.print("   G1 ");
-         break;
-
-      case 2:
-      case 3:
-         arcCenterX = gCode.startX + gCode.I;
-         arcCenterY = gCode.startY + gCode.J;
-         motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
-         break;
-   }
-   //Serial.print(gCode.X);Serial.print(" ");
-   //Serial.print(gCode.Y);Serial.print(" ");
-   //Serial.println(gCode.Z);
-
-   gCode.newAxisMove = false;
-
-}
-
-void addExtruderMove()
-{
-   gCode.newExtruderMove = false;
-}
-
-
 void executeCode()
 {
 
-   if( gCode.newAxisMove && gCode.newExtruderMove ) // extrude while moving
-   {
-      addMovementBlock();
-      addExtruderMove();
-   }
-   else if ( gCode.newAxisMove ) // move only
-   {
-      addMovementBlock();
-      //Serial.println("!");
-   }
-   else if ( gCode.newExtruderMove ) // extrude only
-   {
-      addExtruderMove();
-   }
+   movementOperations();
 
-   if( gCode.newMcode )
-   {
-      switch(gCode.M)
-      {
-         case 0:     // Stop
-            break;
-         
-         case 1:     // Optional Stop
-            break;
-         
-         case 2:     // Program End
-            break;
-         
-         case 3:     // Spindle Start CW
-            break;
-         
-         case 4:     // Spindle Start CCW
-            break;
+   Group0();
 
-         case 5:     // Spindle Stop
-            break;
+   Group2();
 
-         case 6:     // Tool Change
-            break;
-         
-         case 7:     // Shower Coolant
-            break;
+   Group3();
 
-         case 8:     // Coolant On
-            break;
+   Group5();
 
-         case 9:     // Coolant Off
-            break;
+   Group6();
 
-         case 30:    // Program end, reset
-            break;
+   Group7();
 
-         default:
-            break;
+   Group8();
 
-      }
-      gCode.newMcode = false;
-   }
+   Group9();
+
+   Group10();
+
+   Group11();
+
+   Group12();
+
+   Group15();
+
+   Group16();
+
+   mCodes();
 
 
 
