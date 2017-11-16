@@ -9,7 +9,7 @@ Required Libraries:
 
 <uStepper.h>            // https://github.com/daPhoosa/uStepper                  --instal to libraries diectory
 
-<SdFat.h>               // https://github.com/greiman/SdFat-beta                 --instal to libraries diectory
+<SdFat.h>               // https://github.com/greiman/SdFat                      --instal to libraries diectory
 
 <PollTimer.h>           // https://github.com/daPhoosa/PollTimer                 --instal to libraries diectory
 
