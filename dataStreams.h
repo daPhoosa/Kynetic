@@ -37,11 +37,29 @@ void startSerial()
 
 void startSD()
 {
-   sdEx.begin();
-
-   file = sdEx.open("print.nc", O_READ);
-   if(!file)
+   if( sdEx.begin() )
    {
-      SERIAL_PORT.println("Open File Failed!");
-   }   
+      file = sdEx.open("print.nc", O_READ);
+      if(!file)
+      {
+         SERIAL_PORT.println("Open File Failed!");
+      }   
+   }
+   else
+   {
+      SERIAL_PORT.println("Start SD Failed!");
+   }
+}
+
+
+void restartSD()
+{
+   if( file )
+   {
+      file.rewind(); // rewind if the file is already open
+   }
+   else
+   {
+      startSD();
+   }
 }

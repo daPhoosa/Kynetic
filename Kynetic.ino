@@ -33,7 +33,8 @@
 #include "kynetic.h"
 
 
-void setup() {
+void setup() 
+{
 
    startSerial();
 
@@ -49,7 +50,8 @@ void setup() {
 }
 
 
-void loop() {
+void loop() 
+{
    
    // Nested if-else priority scheme
    //  * After any operation completes, higher priority operations are given the first opportunity to run
@@ -57,72 +59,24 @@ void loop() {
    
    if( motionControl.check() )  // Highest Priority
    {
-      if( runProgram )
-      {
-         motorController();
-         motionControl.collectStats();
-      }
-      else
-      {
-         if( machine.executeHome() )
-         {
-            Vec3 cart;
-
-            machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
-
-            //display(cart);
-
-            runProgram = true;
-
-            gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
-
-            motion.startMoving( cart.x, cart.y, cart.z );
-
-            startPollTimers();
-         }
-      }
-      
+      criticalMotionControl();
    }
    else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // do nothing
    }
-   else if( runProgram && blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
-      if( motion.bufferVacancy() )
-      {
-         executeCode();
-         getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
-         //Serial.println("*");
-      }
+      blockFeeder();
    }
    else if( getNextProgramBlock ) // Read SD card and Parse G code
    {
-      // runProgram && getNextProgramBlock 
-      if( !readNextProgramLine() )
-      {
-         fileComplete = true;
-         //Serial.println("1");
-      }
-      else
-      {
-         //Serial.println("0");
-      }
-      getNextProgramBlock = false;
+      programReader();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
-      if( digitalRead(SELECT_BUTTON_PIN) == SELECT_BUTTON_PRESSED )
-      {
-         if( runProgram )
-         {
-            runProgram = false;
-         }
-         else
-         {
-            machine.startHome( true, true, true );
-         }
-      }
+      buttons();
+      display();
    }
    else if( motionUpdate.check() )
    {
@@ -130,7 +84,7 @@ void loop() {
    }
    else if( maintenance.check() ) // Lowest Priority
    {
-         motionControl.displayStats();
+      motionControl.displayStats();
 
    }   
 

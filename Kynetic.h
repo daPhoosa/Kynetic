@@ -16,7 +16,7 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-
+#include <uButton.h>
 
 // **** GLOBAL VARIABLES ****
 bool homePositionSet = false;
@@ -24,10 +24,14 @@ bool runProgram = false;
 bool getNextProgramBlock = false;
 bool executeNextBlock = false;
 bool fileComplete = true;
+bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 
 
 
-
+// **** BUTTONS ****
+uButton SelectBtn(SELECT_BUTTON_PIN, SELECT_BUTTON_PRESSED);
+uButton UpBtn(    UP_BUTTON_PIN,     UP_BUTTON_PRESSED);
+uButton DnBtn(    DOWN_BUTTON_PIN,   DOWN_BUTTON_PRESSED);
 
 
 
@@ -74,5 +78,84 @@ void motorController()
       B_motor.setSpeed( 0.0f );
       C_motor.setSpeed( 0.0f );
    }
+
+}
+
+
+void criticalMotionControl()
+{
+   if( runProgram )
+   {
+      motorController();
+      motionControl.collectStats();
+   }
+   else
+   {
+      if( machine.executeHome() )
+      {
+         Vec3 cart;
+
+         machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
+
+         //display(cart);
+
+         runProgram = true;
+
+         gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
+
+         motion.startMoving( cart.x, cart.y, cart.z );
+
+         startPollTimers();
+      }
+   }
+         
+}
+
+
+void blockFeeder()
+{
+   if( runProgram && motion.bufferVacancy() )
+   {
+      executeCode();
+      getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
+      //Serial.println("*");
+   }
+}
+
+
+programReader()
+{
+   if( !readNextProgramLine() )
+   {
+      fileComplete = true;
+      //Serial.println("1");
+   }
+   else
+   {
+      //Serial.println("0");
+   }
+   getNextProgramBlock = false;   
+}
+
+
+void buttons()
+{
+   if( SelectBtn.check() )
+   {
+      if( runProgram )
+      {
+         runProgram = false;
+      }
+      else
+      {
+         machine.startHome( true, true, true );
+         restartSD();
+      }
+   }
+}
+
+
+void display()
+{
 
 }

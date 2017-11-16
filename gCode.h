@@ -399,12 +399,7 @@ void executeCode()
    Group16();
 
    mCodes();
-
-
-
-   // Non movement commands      
    
-
 }
 
 
