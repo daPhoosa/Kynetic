@@ -46,10 +46,6 @@ void setPins()
    pinMode( X_MIN_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Y_MIN_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Z_MIN_ENDSTOP_PIN, INPUT_PULLUP );
-
-   pinMode( SELECT_BUTTON_PIN, INPUT_PULLUP );
-   pinMode( UP_BUTTON_PIN,     INPUT_PULLUP );
-   pinMode( DOWN_BUTTON_PIN,   INPUT_PULLUP );
 }
 
 
