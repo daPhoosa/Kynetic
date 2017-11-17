@@ -23,7 +23,7 @@
 // **************************
 // **** MACHINE SETTINGS ****
 // **************************
-const float MACHINE_ACCEL       = 5000.0f; // mm/s^2
+const float MACHINE_ACCEL       = 4000.0f; // mm/s^2
 const float MAX_VELOCITY        = 250.0f;  // mm/s
 const float CORNER_ROUNDING     = 0.100f;  // mm
 const float EXACT_STOP_TOL      = 0.007f;  // mm
@@ -36,7 +36,7 @@ const int HEATER_CONTROL_HZ     = 50;      // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 
-const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]  max vel change per step at max acceleration
+const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ + 1; // [mm/s*step]  max vel change per step at max acceleration
 
 // *************************
 // **** BUTTON SETTINGS ****

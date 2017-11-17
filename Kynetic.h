@@ -96,18 +96,19 @@ void motionRunner()
 
          machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-         //display(cart);
-
-         runProgram = true;
-
          gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
 
-         motion.startMoving( cart.x, cart.y, cart.z );
+         motion.addLinear_Block(1, cart.x, cart.y, cart.z, 0.1); 
+
+         homePositionSet = true;
 
          startPollTimers();
+      
+         runProgram = true;
+
+         motion.startMoving( cart.x, cart.y, cart.z );
       }
-   }
-         
+   }   
 }
 
 
@@ -155,6 +156,16 @@ void buttonWatcher()
       else
       {
          machine.startHome( true, true, true );
+         /*
+         if( !homePositionSet )
+         {
+            machine.startHome( true, true, true );
+         }
+         else
+         {
+            runProgram = true;
+         }
+         */
          restartSD();
       }
    }
