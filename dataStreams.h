@@ -56,10 +56,8 @@ void restartSD()
 {
    if( file )
    {
-      file.rewind(); // rewind if the file is already open
+      file.close(); // close if the file is already open
    }
-   else
-   {
-      startSD();
-   }
+  
+   startSD();
 }

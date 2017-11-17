@@ -314,6 +314,7 @@ bool readNextProgramLine()
             if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
             {
                bool negative = false;
+               bool validNum = false;
                float decimal = 1.0f; // arbitrary number above 0.1
                float number  = 0.0f;
                char letter   = ch;
@@ -341,6 +342,7 @@ bool readNextProgramLine()
                   }
                   else
                   {
+                     validNum = true; // at least one digit after the letter
                      if( decimal > 0.101f )
                      {
                         number = number * 10.0f + float( ch - 48 );  // int component
@@ -354,12 +356,24 @@ bool readNextProgramLine()
 
                   ch = getNextChar();
                }
-               if( negative ) number *= -1.0f;
-               setState( letter, number );
+
+               if( validNum )
+               {
+                  if( negative ) number *= -1.0f;
+                  setState( letter, number );
+               }
+               else
+               {
+                  ch = getNextChar(); // if number is invalid, keep moving forward
+               } 
+            }
+            else
+            {
+               ch = getNextChar(); // if letter is invalid, keep moving forward
             }
          }
       }
-   }
+   } // end of main while loop
 
    if( ch == 0 ) return false; // return false if at end of file
    
@@ -367,39 +381,43 @@ bool readNextProgramLine()
 }
 
 
-void executeCode()
+void executeCodeNow()
 {
+   Group3();  // Abs/Inc selection
 
-   movementOperations();
+   Group5();  // Feed Mode
 
-   Group0();
+   Group6();  // Inch/Metric
 
-   Group2();
+   Group7();  // Cutter comp
 
-   Group3();
+   Group8();  // Tool length comp
 
-   Group5();
+   Group10();  // Return plane select
 
-   Group6();
+   Group11();  // Scaling
 
-   Group7();
+   Group12();  // Work coordinate
 
-   Group8();
+   Group15();  // Exact stop mode
 
-   Group9();
+   Group16();  // Rotation
 
-   Group10();
+   movementOperations();  // group 1 -- placed last to allow modification by other G codes on the same line
 
-   Group11();
+   Group0();  // dwell
+}
 
-   Group12();
 
-   Group15();
+void executeCodeDelayed()
+{
+   Group2();  // Plane Selection
 
-   Group16();
+   Group9();  // Canned cycles
+    
+   mCodes();  // miscellaneous
 
-   mCodes();
-   
+   delayedExecute = false;
 }
 
 

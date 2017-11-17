@@ -116,9 +116,18 @@ void blockFeeder()
 {
    if( runProgram && motion.bufferVacancy() )
    {
-      executeCode();
-      getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
-      //Serial.println("*");
+      if( delayedExecute ) 
+      {
+         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
+         {
+            executeCodeDelayed();
+         }
+      }
+      else  
+      {
+         executeCodeNow();
+         getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
+      }
    }
 }
 
