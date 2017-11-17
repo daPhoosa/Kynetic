@@ -22,15 +22,18 @@
 // **** POLL TIMERS ****
 PollTimer motionControl(MOTION_CONTROL_HZ);
 PollTimer blockExecute(BLOCK_EXECUTE_HZ);
+PollTimer heaterControl(HEATER_CONTROL_HZ);
 PollTimer buttonsAndUI(BUTTONS_UI_HZ);
 PollTimer motionUpdate(1); // must be 1Hz, always
 PollTimer maintenance(MAINTENANCE_HZ);
 
+
 void startPollTimers()
 {
    motionControl.start();
-   blockExecute.start();
-   buttonsAndUI.start();
-   motionUpdate.start();
-   maintenance.start();
+   blockExecute.start(10);
+   heaterControl.start(15);
+   buttonsAndUI.start(20);
+   motionUpdate.start(25);
+   maintenance.start(30);
 }

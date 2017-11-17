@@ -46,6 +46,9 @@ void setPins()
    pinMode( X_MIN_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Y_MIN_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Z_MIN_ENDSTOP_PIN, INPUT_PULLUP );
+
+   pinMode( BED_HEATER_PWM_PIN, OUTPUT );
+   pinMode( EXTRUDER1_PWM_PIN,  OUTPUT );
 }
 
 
@@ -78,7 +81,7 @@ void motorController()
 }
 
 
-void criticalMotionControl()
+void motionRunner()
 {
    if( runProgram )
    {
@@ -119,7 +122,7 @@ void blockFeeder()
 }
 
 
-programReader()
+void programReader()
 {
    if( !readNextProgramLine() )
    {
@@ -134,10 +137,17 @@ programReader()
 }
 
 
-void buttons()
+void heaterManager()
+{
+   // do cool things... ha ha
+}
+
+
+void buttonWatcher()
 {
    if( SelectBtn.check() )
    {
+      Serial.println("SELECT BUTTON");
       if( runProgram )
       {
          runProgram = false;
@@ -151,7 +161,7 @@ void buttons()
 }
 
 
-void display()
+void displayDriver()
 {
 
 }

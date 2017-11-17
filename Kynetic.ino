@@ -59,11 +59,11 @@ void loop()
    
    if( motionControl.check() )  // Highest Priority
    {
-      criticalMotionControl();
+      motionRunner();
    }
    else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
-      // do nothing
+      // timeWaster  --  do nothing
    }
    else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
@@ -73,10 +73,14 @@ void loop()
    {
       programReader();
    }
+   else if( heaterControl.check() )
+   {
+      heaterManager();
+   }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
-      buttons();
-      display();
+      buttonWatcher();
+      displayDriver();
    }
    else if( motionUpdate.check() )
    {
@@ -84,7 +88,14 @@ void loop()
    }
    else if( maintenance.check() ) // Lowest Priority
    {
-      motionControl.displayStats();
+      //motionControl.displayStats();
+      static int bed, tip;
+      bed = !bed;
+
+      digitalWrite(BED_HEATER_PWM_PIN, bed);
+      digitalWrite(EXTRUDER1_PWM_PIN,  tip);
+
+      tip = ! tip;
 
    }   
 

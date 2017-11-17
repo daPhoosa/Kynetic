@@ -32,8 +32,8 @@ const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
 const int MOTION_CONTROL_HZ     = 2000;    // Hz
 const int BLOCK_EXECUTE_HZ      = 200;     // Hz
-const int READ_PROGRAM_HZ       = 100;     // Hz
-const int BUTTONS_UI_HZ         = 20;      // Hz
+const int HEATER_CONTROL_HZ     = 50;      // Hz
+const int BUTTONS_UI_HZ         = 50;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 
 const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]  max vel change per step at max acceleration
@@ -41,9 +41,9 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ; // [mm/s*step]
 // *************************
 // **** BUTTON SETTINGS ****
 // *************************
-#define SELECT_BUTTON_PRESSED 0
-#define UP_BUTTON_PRESSED     0
-#define DOWN_BUTTON_PRESSED   0
+#define SELECT_BUTTON_PRESSED 1
+#define UP_BUTTON_PRESSED     1
+#define DOWN_BUTTON_PRESSED   1
 
 
 // **********************************************

@@ -74,8 +74,8 @@ void setMotorTickRate()
       C_motor.setTickRateHz( tickCount );
       D_motor.setTickRateHz( tickCount );
 
-      SERIAL_PORT.println( tickCount );
-      SERIAL_PORT.println( scaleFactor, 6 );
+      //SERIAL_PORT.println( tickCount );
+      //SERIAL_PORT.println( scaleFactor, 6 );
    }
    stepperTickCount = 0;
 }
