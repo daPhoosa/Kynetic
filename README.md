@@ -13,7 +13,7 @@ Arduino IDE 1.8.5       // https://www.arduino.cc/en/Main/Software
 
 Teensyduino             // https://www.pjrc.com/teensy/teensyduino.html
 
-###Required Libraries:
+### Required Libraries:
 
 <FrequencyTimer2.h>     // https://github.com/PaulStoffregen/FrequencyTimer2     --included with teensyduino
 
