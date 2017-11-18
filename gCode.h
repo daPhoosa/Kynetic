@@ -16,7 +16,7 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-
+bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 #include "gCodeStructure.h"
 #include "gCodeOperations.h"
 
@@ -181,18 +181,21 @@ void setState( char letter, float number )
    
    if( letter == 'I' )
    {
+      gCode.newAxisMove = true;
       gCode.I = number;
       return;
    }
    
    if( letter == 'J' )
    {
+      gCode.newAxisMove = true;
       gCode.J = number;
       return;
    }
    
    if( letter == 'K' )
    {
+      gCode.newAxisMove = true;
       gCode.K = number;
       return;
    }

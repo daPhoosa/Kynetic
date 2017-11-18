@@ -24,7 +24,6 @@ bool runProgram = false;
 bool getNextProgramBlock = false;
 bool executeNextBlock = false;
 bool fileComplete = true;
-bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 
 
 
@@ -86,28 +85,25 @@ void motionRunner()
    if( runProgram )
    {
       motorController();
-      motionControl.collectStats();
+      //motionControl.collectStats();
    }
-   else
+   else if( machine.executeHome() )
    {
-      if( machine.executeHome() )
-      {
-         Vec3 cart;
+      Vec3 cart;
 
-         machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
+      machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-         gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
+      gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
 
-         motion.addLinear_Block(1, cart.x, cart.y, cart.z, 0.1); 
+      motion.addLinear_Block(1, cart.x, cart.y, cart.z, 0.1); 
 
-         homePositionSet = true;
+      homePositionSet = true;
 
-         startPollTimers();
-      
-         runProgram = true;
+      startPollTimers();
 
-         motion.startMoving( cart.x, cart.y, cart.z );
-      }
+      runProgram = true;
+
+      motion.startMoving( cart.x, cart.y, cart.z );
    }   
 }
 
@@ -157,24 +153,16 @@ void buttonWatcher()
 {
    if( SelectBtn.check() )
    {
-      Serial.println("SELECT BUTTON");
+      Serial.print("SELECT BUTTON - ");
       if( runProgram )
       {
+         Serial.println("STOP");
          runProgram = false;
       }
       else
       {
+         Serial.println("START");
          machine.startHome( true, true, true );
-         /*
-         if( !homePositionSet )
-         {
-            machine.startHome( true, true, true );
-         }
-         else
-         {
-            runProgram = true;
-         }
-         */
          restartSD();
       }
    }

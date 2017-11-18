@@ -54,10 +54,12 @@ void startSD()
 
 void restartSD()
 {
+      /*
    if( file )
    {
       file.close(); // close if the file is already open
    }
+   */
   
    startSD();
 }

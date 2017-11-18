@@ -89,6 +89,7 @@ void loop()
    else if( maintenance.check() ) // Lowest Priority
    {
       //motionControl.displayStats();
+
       static int bed, tip;
       bed = !bed;
 
