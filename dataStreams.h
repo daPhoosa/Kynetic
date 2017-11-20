@@ -30,7 +30,7 @@ void startSerial()
 {
    #ifdef SERIAL_PORT
       SERIAL_PORT.begin(250000);
-      while(!Serial){}
+      //while(!Serial){}
    #endif
 }
 

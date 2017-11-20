@@ -90,14 +90,6 @@ void loop()
    {
       //motionControl.displayStats();
 
-      static int bed, tip;
-      bed = !bed;
-
-      digitalWrite(BED_HEATER_PWM_PIN, bed);
-      digitalWrite(EXTRUDER1_PWM_PIN,  tip);
-
-      tip = ! tip;
-
    }   
 
 }

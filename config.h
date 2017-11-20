@@ -23,7 +23,7 @@
 // **************************
 // **** MACHINE SETTINGS ****
 // **************************
-const float MACHINE_ACCEL       = 4000.0f; // mm/s^2
+const float MACHINE_ACCEL       = 10000.0f; // mm/s^2
 const float MAX_VELOCITY        = 250.0f;  // mm/s
 const float CORNER_ROUNDING     = 0.100f;  // mm
 const float EXACT_STOP_TOL      = 0.007f;  // mm
