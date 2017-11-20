@@ -24,6 +24,7 @@
 #include "timers.h"
 #include "motion.h"
 #include "gCode.h"
+#include "slowPWM.h"
 
 #include "3DMath.h"
 #include "Machines\cartesian.h"
