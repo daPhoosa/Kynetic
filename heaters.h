@@ -16,24 +16,34 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include <PollTimer.h>           // https://github.com/daPhoosa/PollTimer                 --instal to libraries diectory
+
+#include "slowPWM.h"
+#include "heaterPID.h"
+
+heaterPID extruder1_PID( HEATER_CONTROL_HZ, EXTRUDER1_PID );
+slowPWM   extruder1_PWM( MIN_HEATER_PERIOD );
+
+heaterPID bed_PID( HEATER_CONTROL_HZ, BED_HEATER_PID );
+slowPWM   bed_PWM( MIN_HEATER_PERIOD );
 
 
-// **** POLL TIMERS ****
-PollTimer motionControl(MOTION_CONTROL_HZ);
-PollTimer blockExecute(BLOCK_EXECUTE_HZ);
-PollTimer heaterControl(HEATER_CONTROL_HZ);
-PollTimer heaterMonitor(HEATER_MONITOR_HZ);
-PollTimer buttonsAndUI(BUTTONS_UI_HZ);
-PollTimer maintenance(MAINTENANCE_HZ);
 
-
-void startPollTimers()
+void heaterController()  // set heater PWM based off of PID results
 {
-   motionControl.start(00);   // number indicates microsecond offset
-   blockExecute.start( 10);
-   heaterControl.start(15);
-   heaterMonitor.start(20);
-   buttonsAndUI.start( 25);
-   maintenance.start(  35);
+   
+
 }
+
+
+void heaterManager()  // operate heaters
+{
+   // do cool things... ha ha
+   static int bed, tip;
+   bed = !bed;
+
+   digitalWrite(BED_HEATER_PWM_PIN, bed);
+   digitalWrite(EXTRUDER1_PWM_PIN,  tip);
+
+   tip = ! tip;
+}
+

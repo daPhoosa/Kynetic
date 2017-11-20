@@ -20,38 +20,37 @@
 
 #define SERIAL_PORT Serial
 
-// **************************
-// **** MACHINE SETTINGS ****
-// **************************
+// **********************************
+// **** MACHINE MOTION SETTINGS ****
+// ********************************
 const float MACHINE_ACCEL       = 10000.0f; // mm/s^2
 const float MAX_VELOCITY        = 250.0f;  // mm/s
 const float CORNER_ROUNDING     = 0.100f;  // mm
-const float EXACT_STOP_TOL      = 0.007f;  // mm
-const int   STEPPER_TICK_PERIOD = 10;      // us
-const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
-const int MOTION_CONTROL_HZ     = 2000;    // Hz
-const int BLOCK_EXECUTE_HZ      = 200;     // Hz
-const int HEATER_CONTROL_HZ     = 50;      // Hz
-const int BUTTONS_UI_HZ         = 50;      // Hz
-const int MAINTENANCE_HZ        = 1;       // Hz
 
-const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ + 1; // [mm/s*step]  max vel change per step at max acceleration
+// **************************
+// **** HEATER SETTINGS ****
+// ************************
+const int MIN_HEATER_PERIOD = 100;  // ms
 
-// *************************
+#define EXTRUDER1_PID  10.0f,0.0f,0.0f
+#define BED_HEATER_PID 10.0f,0.0f,0.0f
+
+
+// **************************
 // **** BUTTON SETTINGS ****
-// *************************
+// ************************
 #define SELECT_BUTTON_PRESSED 1
 #define UP_BUTTON_PRESSED     1
 #define DOWN_BUTTON_PRESSED   1
 
 
-// **********************************************
+// ***********************************************
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
-// **********************************************
+// *********************************************
 #define FAST_HOME_VEL  40.0f     // [mm/s]
-#define SLOW_HOME_VEL  5.0f      // [mm/s]
-#define SLOW_HOME_DIST 2.0f      // [mm]
+#define SLOW_HOME_VEL  4.0f      // [mm/s]
+#define SLOW_HOME_DIST 3.0f      // [mm]
 
 #define A_MOTOR_HOME_OFFSET 350.0f    // axis zero from home position [mm]
 #define B_MOTOR_HOME_OFFSET 350.0f
@@ -65,9 +64,9 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ + 1; // [mm/s*s
 #define Z_MIN_ENDSTOP_NO_CONTACT LOW
 
 
-// *******************************
+// ********************************
 // **** MACHINE TRAVEL LIMITS ****
-// *******************************
+// ******************************
 #define X_TRAVEL_MAX  100.0f
 #define X_TRAVEL_MIN -100.0f
 #define Y_TRAVEL_MAX  100.0f
@@ -77,9 +76,9 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ + 1; // [mm/s*s
 
 
 
-// ***********************
+// ************************
 // **** MACHINE TYPES ****
-// ***********************
+// **********************
 // ( Only enable one type of machine )
 
 //#define MACHINE_TYPE_CARTESIAN

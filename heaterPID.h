@@ -21,108 +21,69 @@ class heaterPID
 {
    public:
    
-      heaterPID( float Hz );
+      heaterPID( int Hz, float p, float i, float d );
       
-      void setFwdGain( float fGain );
-      void setProGain( float pGain );
-      void setIntGain( float iGain );
-      void setDrvGain( float dGain );
-      void setAllGain( float fGain, float pGain, float iGain, float dGain );
+      void setGain( float p, float i, float d );
       
-      void in( float setTemp, float probeTemp, float ambTemp);
-      int  out();
+      int in( float setTemp, float probeTemp );
+      int out();
    
    
    private:
    
-      float fwdGain, proGain, intGain, drvGain;
+      float pGain, iGain, dGain;
       
-      float intBucket;
-      
-      float fwdComponent;
+      float iBucket;
       
       float sampleRateHz;
       
-      float lastTemp, setPointTemp;
+      float lastError, setPointTemp;
+
+      const float outputMax = 255.0f;
+      const float outputMin =   0.0f;
       
       int output;
 
 }
 
 
-void heaterPID::heaterPID( float Hz )
+heaterPID::heaterPID( int Hz, float p, float i, float d )
 {
    sampleRateHz = Hz;
+   setGain( p, i, d );
 }
 
 
-void heaterPID::setFwdGain( float fGain )
+void heaterPID::setGain( float p, float i, float d )
 {
-   fwdGain = fGain;
+   pGain = p;
+   iGain = i / sampleRateHz;
+   dGain = d * sampleRateHz;
 }
 
 
-void heaterPID::setProGain( float pGain )
+int heaterPID::in( float setTemp, float probeTemp )
 {
-   proGain = pGain;
-}
-
-
-void heaterPID::setIntGain( float iGain )
-{
-   intGain = iGain / sampleRateHz;
-}
-
-
-void heaterPID::setDrvGain( float dGain )
-{
-   drvGain = dGain * sampleRateHz;
-}
-
-
-void heaterPID::setAllGain( float fGain, float pGain, float iGain, float dGain )
-{
-   setFwdGain( fGain );
-   setProGain( pGain );
-   setIntGain( iGain );
-   setDrvGain( dGain );
-}
-
-
-void heaterPID::setPoint( float setTemp, float ambTemp)
-{
-   setPointTemp = setTemp;
+   float result;
+   float error = setTemp - probeTemp;
    
-   // Feed forward component scales with the square of the temperature delta
-   float delta = setTemp - ambTemp;
-   fwdComponent = fwdGain * delta * delta;
-}
+   result  = pGain * error;                   // proportional component
+   result += dGain * ( error - lastError );   // derivative component
+   result  = constrain( result, outputMin, outputMax );
+   
+   iBucket += iGain * error;
+   iBucket  = constrain( iBucket, -result, outputMax - result );  // prevent bucket from accumulating past saturation point
+   result  += iBucket;
 
+   lastError = error;
 
-void heaterPID::in( float probeTemp )
-{
-   float result, error;
-   
-   result = fwdComponent;
-   
-   // PID components
-   error = setTemp - probeTemp;
-   
-   result += proGain * error;                      // proportional component
-   result += drvGain * ( lastTemp - probeTemp );   // derivative component
-   result  = constrain( result, 0.0f, 100.0f );
-   
-   intBucket += intGain * error;
-   intBucket  = constrain( intBucket, -result, 100.0f - result );  // prevent bucket from accumulating past saturation point
-   result    += intBucket;
-
-   lastTemp = probeTemp;
-   
+   output = int( result );
+   return output;
 }
 
 
 int  heaterPID::out()
 {
-   
+   return output;
 }
 

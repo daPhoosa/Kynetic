@@ -17,6 +17,7 @@
 */
 
 #include "config.h"
+#include "config_adv.h"
 #include "Kynetic_pins.h"
 
 #include "motors.h"
@@ -24,7 +25,7 @@
 #include "timers.h"
 #include "motion.h"
 #include "gCode.h"
-#include "slowPWM.h"
+#include "heaters.h"
 
 #include "3DMath.h"
 #include "Machines\cartesian.h"
@@ -55,8 +56,8 @@ void loop()
 {
    
    // Nested if-else priority scheme
-   //  * After any operation completes, higher priority operations are given the first opportunity to run
-   //  * All operations should run quickly so that higher priority operations are not delayed excessively
+   //  * After any operation completes, higher priority operations are given the first opportunity to run.
+   //  * All operations should run quickly so that higher priority operations are not delayed excessively.
    
    if( motionControl.check() )  // Highest Priority
    {
@@ -74,21 +75,20 @@ void loop()
    {
       programReader();
    }
-   else if( heaterControl.check() )
+   else if( heaterManager.check() )
    {
-      heaterManager();
+      if( heaterControl.check() ) heaterController();   // update PWM setting
+      
+      heaterManager();     // operate heaters
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
       buttonWatcher();
       displayDriver();
    }
-   else if( motionUpdate.check() )
-   {
-      setMotorTickRate();
-   }
    else if( maintenance.check() ) // Lowest Priority
    {
+      setMotorTickRate();
       //motionControl.displayStats();
 
    }   
