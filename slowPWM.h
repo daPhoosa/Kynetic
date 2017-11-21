@@ -48,7 +48,7 @@ class slowPWM
 };
 
 
-void slowPWM::slowPWM( int periodMS )
+slowPWM::slowPWM( int periodMS )
 {
    minPeriod = abs(periodMS);
 }
