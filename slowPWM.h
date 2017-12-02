@@ -96,7 +96,6 @@ bool slowPWM::check()
       {
          onNow   = false;
          offTime = timeNow;
-         return false;
       }
    }
    else
@@ -106,9 +105,9 @@ bool slowPWM::check()
       {
          onNow  = true;
          onTime = timeNow;
-         return true;
       }
    }
+   return onNow;
 }
 
 

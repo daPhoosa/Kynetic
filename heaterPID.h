@@ -44,7 +44,7 @@ class heaterPID
       
       int output;
 
-}
+};
 
 
 heaterPID::heaterPID( int Hz, float p, float i, float d )

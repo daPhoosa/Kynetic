@@ -23,7 +23,7 @@
 PollTimer motionControl(MOTION_CONTROL_HZ);
 PollTimer blockExecute(BLOCK_EXECUTE_HZ);
 PollTimer heaterControl(HEATER_CONTROL_HZ);
-PollTimer heaterMonitor(HEATER_MONITOR_HZ);
+PollTimer heaterManager(HEATER_MANAGER_HZ);
 PollTimer buttonsAndUI(BUTTONS_UI_HZ);
 PollTimer maintenance(MAINTENANCE_HZ);
 
@@ -33,7 +33,7 @@ void startPollTimers()
    motionControl.start(00);   // number indicates microsecond offset
    blockExecute.start( 10);
    heaterControl.start(15);
-   heaterMonitor.start(20);
+   heaterManager.start(20);
    buttonsAndUI.start( 25);
    maintenance.start(  35);
 }

@@ -35,7 +35,7 @@ void heaterController()  // set heater PWM based off of PID results
 }
 
 
-void heaterManager()  // operate heaters
+void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha
    static int bed, tip;

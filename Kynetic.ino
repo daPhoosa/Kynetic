@@ -79,7 +79,7 @@ void loop()
    {
       if( heaterControl.check() ) heaterController();   // update PWM setting
       
-      heaterManager();     // operate heaters
+      heaterOperator();     // operate heaters
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
