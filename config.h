@@ -33,8 +33,12 @@ const float CORNER_ROUNDING     = 0.100f;   // mm
 // ************************
 const int MIN_HEATER_PERIOD = 100;  // ms
 
+#define EXTRUDER1_TYPE 1
+
 #define EXTRUDER1_PID  10.0f,0.0f,0.0f
 #define BED_HEATER_PID 10.0f,0.0f,0.0f
+
+#define OVER_SAMPLE_CNT 4
 
 
 // **************************

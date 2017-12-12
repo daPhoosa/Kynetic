@@ -17,114 +17,39 @@
 */
 
 
-class tempSensor
+#include "thermistorTables.h"
+
+
+float tempConvert( int type, int reading )
 {
-   public:
+   switch(type)
+   {
+      case 1 :
+        return EPCOS_100k_47K_8304(reading);
 
-      tempSensor( int periodMS );
+      case 5 :
+         return ATC_GT1042_100k_47K(reading);
 
-      float check( int ADC_reading );
-
-
-   private:
-
-
-
-};
-
-
-tempSensor::tempSensor( int sensorType )
-{
-
+      default :
+         return 999.9f;
+   }
 }
 
-float tempConvert(int reading)
+
+float getExtruder1Temp( int sensorReading )
 {
-   const int sense = 0;
-   const int temp  = 1;
-   const int16_t table[][2] = {{183,300},     // EPCOS 100k with 4.7k pull-up
-                              {195,295},
-                              {209,290},
-                              {224,285},
-                              {241,280},
-                              {259,275},
-                              {278,270},
-                              {299,265},
-                              {323,260},
-                              {348,255},
-                              {376,250},
-                              {407,245},
-                              {440,240},
-                              {477,235},
-                              {518,230},
-                              {562,225},
-                              {611,220},
-                              {665,215},
-                              {725,210},
-                              {790,205},
-                              {862,200},
-                              {942,195},
-                              {1030,190},
-                              {1126,185},
-                              {1232,180},
-                              {1349,175},
-                              {1477,170},
-                              {1618,165},
-                              {1771,160},
-                              {1939,155},
-                              {2121,150},
-                              {2318,145},
-                              {2531,140},
-                              {2758,135},
-                              {3002,130},
-                              {3259,125},
-                              {3530,120},
-                              {3812,115},
-                              {4103,110},
-                              {4402,105},
-                              {4704,100},
-                              {5006,95},
-                              {5306,90},
-                              {5599,85},
-                              {5881,80},
-                              {6151,75},
-                              {6405,70},
-                              {6640,65},
-                              {6857,60},
-                              {7053,55},
-                              {7229,50},
-                              {7384,45},
-                              {7520,40},
-                              {7638,35},
-                              {7739,30},
-                              {7824,25},
-                              {7896,20},
-                              {7956,15},
-                              {8005,10},
-                              {8045,5},
-                              {8078,0},
-                              {8104,-5},
-                              {8125,-10},
-                              {8141,-15},
-                              {8154,-20},
-                              {8163,-25},
-                              {8171,-30},
-                              {8177,-35},
-                              {8181,-40},
-                              {8184,-45},
-                              {8186,-50},
-                              {8188,-55}};
+   static int tempList[OVER_SAMPLE_CNT];
+   static int listIndex = 0;
 
-   int const maxIndex = sizeof(table) / ( 2 * sizeof(table[0][0]) ) - 1;
-   int lowIndex = 1;
-   while( table[lowIndex][sense] < reading && lowIndex < maxIndex) lowIndex++;
+   tempList[listIndex] = sensorReading;
+   listIndex++;
+   if( listIndex == OVER_SAMPLE_CNT) listIndex = 0;
 
-   int highIndex = lowIndex - 1;
+   int sampleSum = 0;
+   for( int i = 0; i < OVER_SAMPLE_CNT, i++ )
+   {
+      sampleSum += tempList[i];
+   }
 
-   float slope = float( table[lowIndex][temp] - table[highIndex][temp] ) / float( table[lowIndex][sense] - table[highIndex][sense] );
-
-   float temperature = table[highIndex][temp] + slope * float( reading - table[highIndex][sense] );
-
-   return temperature;
+   return tempConvert( EXTRUDER1_TYPE, sampleSum );
 }
-
