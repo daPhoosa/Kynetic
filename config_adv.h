@@ -27,7 +27,7 @@ const int HEATER_CONTROL_HZ     = 1;       // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 
-const float MACHINE_VEL_STEP = MACHINE_ACCEL / MOTION_CONTROL_HZ + 1; // [mm/s*step]  max vel change per step at max acceleration
+const float MACHINE_VEL_STEP = MACHINE_ACCEL / float(MOTION_CONTROL_HZ); // [mm/s*step]  max vel change per step at max acceleration
 
 
 // ***********************************

@@ -77,8 +77,6 @@ void loop()
    }
    else if( heaterManager.check() )
    {
-      if( heaterControl.check() ) heaterController();   // update PWM setting
-      
       heaterOperator();     // operate heaters
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
@@ -90,6 +88,10 @@ void loop()
    {
       setMotorTickRate();
       //motionControl.displayStats();
+
+      Serial.print(analogRead(EXTRUDER1_THERMISTOR));
+      Serial.print("   ");
+      Serial.println(analogRead(BED_THERMISTOR));
 
    }   
 

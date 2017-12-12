@@ -28,22 +28,39 @@ slowPWM   bed_PWM( MIN_HEATER_PERIOD );
 
 
 
-void heaterController()  // set heater PWM based off of PID results
+void heaterPWM()  // set heater PWM based off of PID results
 {
-   
-
+   extruder1_PWM.set( extruder1_PID.in( 128, 128 ) );
+   bed_PWM.set( bed_PID.in( 128, 128 ) );
 }
 
 
 void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha
-   static int bed, tip;
-   bed = !bed;
+ 
+   if( heaterControl.check() )
+   {
+      heaterPWM();   // update PWM setting
+   } 
 
-   digitalWrite(BED_HEATER_PWM_PIN, bed);
-   digitalWrite(EXTRUDER1_PWM_PIN,  tip);
+   if( extruder1_PWM.check() )
+   {
+      digitalWrite(EXTRUDER1_PWM_PIN, HIGH);
+   }
+   else
+   {
+      digitalWrite(EXTRUDER1_PWM_PIN, LOW);
+   }
 
-   tip = ! tip;
+   if( bed_PWM.check() )
+   {
+      digitalWrite(BED_HEATER_PWM_PIN, HIGH);
+   }
+   else
+   {
+      digitalWrite(BED_HEATER_PWM_PIN, LOW);
+   }
+ 
 }
 

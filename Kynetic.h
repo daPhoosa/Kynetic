@@ -48,6 +48,8 @@ void setPins()
 
    pinMode( BED_HEATER_PWM_PIN, OUTPUT );
    pinMode( EXTRUDER1_PWM_PIN,  OUTPUT );
+
+   analogReadResolution(13);
 }
 
 
@@ -66,15 +68,15 @@ void motorController()
 
    if( motion.getSpeed() > MACHINE_VEL_STEP )
    {
-      A_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.x - A_motor.getPositionMM() ));
-      B_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.y - B_motor.getPositionMM() ));
-      C_motor.setSpeed( MOTION_CONTROL_HZ * ( motor.z - C_motor.getPositionMM() ));
+      A_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.x - A_motor.getPositionMM() ));
+      B_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.y - B_motor.getPositionMM() ));
+      C_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.z - C_motor.getPositionMM() ));
    }
    else // force stop to avoid stepper "chatter"
    {
-      A_motor.setSpeed( 0.0f );
-      B_motor.setSpeed( 0.0f );
-      C_motor.setSpeed( 0.0f );
+      A_motor.setSpeed( 0 );
+      B_motor.setSpeed( 0 );
+      C_motor.setSpeed( 0 );
    }
 
 }
