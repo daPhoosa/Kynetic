@@ -90,9 +90,9 @@ void loop()
       setMotorTickRate();
       //motionControl.displayStats();
 
-      Serial.print(analogRead(EXTRUDER1_THERMISTOR));
+      Serial.print( getExtruder1Temp() );
       Serial.print("   ");
-      Serial.println(analogRead(BED_THERMISTOR));
+      Serial.println( getBedTemp() );
 
    }   
 

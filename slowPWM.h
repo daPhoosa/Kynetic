@@ -42,6 +42,7 @@ class slowPWM
       uint32_t offPeriod;
 
       uint32_t minPeriod; // [ms]
+      uint32_t minPeriodx256; // [ms]
 
       bool onNow;
 
@@ -51,6 +52,7 @@ class slowPWM
 slowPWM::slowPWM( int periodMS )
 {
    minPeriod = abs(periodMS);
+   minPeriodx256 = minPeriod << 8;
 }
 
 
@@ -74,14 +76,13 @@ void slowPWM::set(int rate)
    if( rate < 128 )  // less than 50%
    {
       onPeriod  = minPeriod;
-      offPeriod = ( minPeriod << 8 ) / rate - minPeriod;
+      offPeriod = minPeriodx256 / rate - minPeriod;
    }
    else              // over 50%
    {
       offPeriod = minPeriod;
-      onPeriod  = ( minPeriod << 8 ) / (255 - rate) - minPeriod;
+      onPeriod  = minPeriodx256 / (255 - rate) - minPeriod;
    }
-
 }
 
 

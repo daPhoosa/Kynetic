@@ -36,20 +36,43 @@ float tempConvert( int type, int reading )
 }
 
 
-float getExtruder1Temp( int sensorReading )
+float getExtruder1Temp()
 {
    static int tempList[OVER_SAMPLE_CNT];
    static int listIndex = 0;
+
+   int sensorReading = analogRead(EXTRUDER1_THERMISTOR);
 
    tempList[listIndex] = sensorReading;
    listIndex++;
    if( listIndex == OVER_SAMPLE_CNT) listIndex = 0;
 
    int sampleSum = 0;
-   for( int i = 0; i < OVER_SAMPLE_CNT, i++ )
+   for( int i = 0; i < OVER_SAMPLE_CNT; i++ )
    {
       sampleSum += tempList[i];
    }
 
-   return tempConvert( EXTRUDER1_TYPE, sampleSum );
+   return tempConvert( EXTRUDER1_SENSOR_TYPE, sampleSum );
+}
+
+
+float getBedTemp()
+{
+   static int tempList[OVER_SAMPLE_CNT];
+   static int listIndex = 0;
+
+   int sensorReading = analogRead(BED_THERMISTOR);
+
+   tempList[listIndex] = sensorReading;
+   listIndex++;
+   if( listIndex == OVER_SAMPLE_CNT) listIndex = 0;
+
+   int sampleSum = 0;
+   for( int i = 0; i < OVER_SAMPLE_CNT; i++ )
+   {
+      sampleSum += tempList[i];
+   }
+
+   return tempConvert( BED_SENSOR_TYPE, sampleSum );
 }
