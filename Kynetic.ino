@@ -25,6 +25,7 @@
 #include "timers.h"
 #include "motion.h"
 #include "gCode.h"
+#include "temperatureSensor.h"
 #include "heaters.h"
 
 #include "3DMath.h"
