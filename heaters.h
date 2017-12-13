@@ -31,8 +31,8 @@ float Extruder1Temp;
 void heaterPWM()  // set heater PWM based off of PID results
 {
    Extruder1Temp = getExtruder1Temp();
-   extruder1_PWM.set( extruder1_PID.in( 00, Extruder1Temp ) );
-   bed_PWM.set( bed_PID.in( 128, 128 ) );
+   extruder1_PWM.set( extruder1_PID.in( 100, Extruder1Temp ) );
+   //bed_PWM.set( bed_PID.in( 128, 128 ) );
 }
 
 
