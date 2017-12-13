@@ -20,17 +20,18 @@
 #include "slowPWM.h"
 #include "heaterPID.h"
 
-heaterPID extruder1_PID( HEATER_CONTROL_HZ, EXTRUDER1_PID );
+heaterPID extruder1_PID( HEATER_MANAGER_HZ, EXTRUDER1_PID );
 slowPWM   extruder1_PWM( MIN_HEATER_PERIOD );
 
-heaterPID bed_PID( HEATER_CONTROL_HZ, BED_HEATER_PID );
+heaterPID bed_PID( HEATER_MANAGER_HZ, BED_HEATER_PID );
 slowPWM   bed_PWM( MIN_HEATER_PERIOD );
 
-
+float Extruder1Temp;
 
 void heaterPWM()  // set heater PWM based off of PID results
 {
-   extruder1_PWM.set( extruder1_PID.in( 128, 128 ) );
+   Extruder1Temp = getExtruder1Temp();
+   extruder1_PWM.set( extruder1_PID.in( 00, Extruder1Temp ) );
    bed_PWM.set( bed_PID.in( 128, 128 ) );
 }
 
@@ -39,10 +40,7 @@ void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha
  
-   if( heaterControl.check() )
-   {
-      heaterPWM();   // update PWM setting
-   } 
+   heaterPWM();   // update PWM setting
 
    if( extruder1_PWM.check() )
    {

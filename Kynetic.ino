@@ -90,10 +90,11 @@ void loop()
       setMotorTickRate();
       //motionControl.displayStats();
 
-      Serial.print( getExtruder1Temp() );
+      Serial.print( Extruder1Temp );
       Serial.print("   ");
-      Serial.println( getBedTemp() );
-
+      Serial.print( 20 );
+      Serial.print("   ");
+      Serial.println( 100 );
    }   
 
 }
