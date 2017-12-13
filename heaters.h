@@ -28,20 +28,8 @@ slowPWM   bed_PWM( MIN_HEATER_PERIOD );
 
 float Extruder1Temp;
 
-void heaterPWM()  // set heater PWM based off of PID results
+void heaterPWM()  // toogle heaters to get desired duty cycle
 {
-   Extruder1Temp = getExtruder1Temp();
-   extruder1_PWM.set( extruder1_PID.in( 100, Extruder1Temp ) );
-   //bed_PWM.set( bed_PID.in( 128, 128 ) );
-}
-
-
-void heaterOperator()  // operate heaters
-{
-   // do cool things... ha ha
- 
-   heaterPWM();   // update PWM setting
-
    if( extruder1_PWM.check() )
    {
       digitalWrite(EXTRUDER1_PWM_PIN, HIGH);
@@ -59,6 +47,18 @@ void heaterOperator()  // operate heaters
    {
       digitalWrite(BED_HEATER_PWM_PIN, LOW);
    }
+}
+
+
+void heaterOperator()  // operate heaters
+{
+   // do cool things... ha ha
+ 
+   Extruder1Temp = getExtruder1Temp();
+   extruder1_PWM.set( extruder1_PID.in( 100, Extruder1Temp ) );
+   //bed_PWM.set( bed_PID.in( 128, 128 ) );
+
+
  
 }
 

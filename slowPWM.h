@@ -62,13 +62,13 @@ void slowPWM::set(int rate)
    if( rate < 1 )  // full off
    {
       onPeriod  = 0;
-      offPeriod = 4.29e9;
+      offPeriod = 4.19e6;
       return;
    }
 
    if( rate > 254 )  // full on
    {
-      onPeriod  = 4.29e9;
+      onPeriod  = 4.19e6;
       offPeriod = 0;
       return;
    }

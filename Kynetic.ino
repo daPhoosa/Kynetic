@@ -76,6 +76,10 @@ void loop()
    {
       programReader();
    }
+   else if( softPWM.check() )
+   {
+      heaterPWM();     // modulate heater power
+   }
    else if( heaterManager.check() )
    {
       heaterOperator();     // operate heaters
