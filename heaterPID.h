@@ -28,6 +28,7 @@ class heaterPID
       int in( float setTemp, float probeTemp );
       int out();
    
+      float p_Out, i_Out, d_Out;
    
    private:
    
@@ -64,30 +65,17 @@ void heaterPID::setGain( float p, float i, float d )
 
 int heaterPID::in( float setTemp, float probeTemp )
 {
-   float result;
    float error = setTemp - probeTemp;
-   
-   result = pGain * error;                   // proportional component
 
-   if( abs(error) < 10.0f )
-   {
-      result -= dGain * ( lastError - error );   // derivative component
-      result  = constrain( result, outputMin, outputMax );
-      
-      iBucket += iGain * error;
-      //iBucket  = constrain( iBucket, -result, outputMax - result );  // prevent bucket from accumulating past saturation point
-      iBucket  = constrain( iBucket, -outputMax, outputMax );
-      result  += iBucket;
-   }
-   else
-   {
-      iBucket = 0.0f;
-   }
+   p_Out = pGain * error;                   // proportional component
 
+   iBucket = constrain(iBucket + iGain * error, -outputMax, outputMax );
+   i_Out = iBucket;      // integral component   
 
+   d_Out = constrain(dGain * ( error - lastError ), -outputMax, outputMax );   // derivative component
    lastError = error;
-
-   output = int( result );
+   
+   output = int( p_Out + i_Out + d_Out );
    return output;
 }
 
