@@ -67,12 +67,24 @@ int heaterPID::in( float setTemp, float probeTemp )
 {
    float error = setTemp - probeTemp;
 
-   p_Out = pGain * error;                   // proportional component
+   p_Out = pGain * error;       // proportional component
 
-   iBucket = constrain(iBucket + iGain * error, -outputMax, outputMax );
-   i_Out = iBucket;      // integral component   
+   if( abs(p_Out) < outputMax ) // only add I+D when P is not saturated
+   {
+      float scaleFactor = (outputMax - abs(p_Out)) / outputMax; // soft I+D effect at extreme error
+      
+      iBucket = iBucket + iGain * error * scaleFactor;     // integral component 
+      iBucket = constrain(iBucket, -outputMax, outputMax );
+      i_Out = iBucket;        
 
-   d_Out = constrain(dGain * ( error - lastError ), -outputMax, outputMax );   // derivative component
+      d_Out = dGain * ( error - lastError ) * scaleFactor; // derivative component
+      d_Out = constrain( d_Out, -outputMax, outputMax );
+   }
+   else
+   {
+      iBucket = i_Out = d_Out = 0.0f;
+   }
+
    lastError = error;
    
    output = int( p_Out + i_Out + d_Out );
