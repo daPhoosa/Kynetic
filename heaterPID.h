@@ -74,7 +74,7 @@ int heaterPID::in( float setTemp, float probeTemp )
       float scaleFactor = (outputMax - abs(p_Out)) / outputMax; // soft I+D effect at extreme error
       
       iBucket = iBucket + iGain * error * scaleFactor;     // integral component 
-      iBucket = constrain(iBucket, -outputMax, outputMax );
+      iBucket = constrain( iBucket, -outputMax, outputMax );
       i_Out = iBucket;        
 
       d_Out = dGain * ( error - lastError ) * scaleFactor; // derivative component

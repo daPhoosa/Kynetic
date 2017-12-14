@@ -99,6 +99,14 @@ void loop()
       Serial.print( 20 );
       Serial.print("   ");
       Serial.println( 100 );
+      Serial.print("   ");
+      Serial.println( extruder1_PID.p_Out );
+      Serial.print("   ");
+      Serial.println( extruder1_PID.i_Out );
+      Serial.print("   ");
+      Serial.println( extruder1_PID.d_Out );
+      Serial.print("   ");
+      Serial.println( extruder1_PID.out() );
    }   
 
 }
