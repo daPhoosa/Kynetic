@@ -26,7 +26,6 @@ slowPWM   extruder1_PWM( MIN_HEATER_PERIOD );
 heaterPID bed_PID( HEATER_MANAGER_HZ, BED_HEATER_PID );
 slowPWM   bed_PWM( MIN_HEATER_PERIOD );
 
-float Extruder1Temp;
 
 void heaterPWM()  // toogle heaters to get desired duty cycle
 {
@@ -54,9 +53,8 @@ void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha
  
-   Extruder1Temp = getExtruder1Temp();
-   extruder1_PWM.set( extruder1_PID.in( 100, Extruder1Temp ) );
-   //bed_PWM.set( bed_PID.in( 128, 128 ) );
+   extruder1_PWM.set( extruder1_PID.in( 100, getExtruder1Temp() ) );
+   bed_PWM.set( bed_PID.in( 128, 128 ) );
 
 
  

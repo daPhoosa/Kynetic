@@ -27,13 +27,18 @@ class heaterPID
       
       int in( float setTemp, float probeTemp );
       int out();
+
+      void  display();
    
-      float p_Out, i_Out, d_Out;
-   
+
    private:
+
+      float setTemp, probeTemp;
    
       float pGain, iGain, dGain;
       
+      float p_Out, i_Out, d_Out;
+         
       float iBucket;
       
       float sampleRateHz;
@@ -63,8 +68,11 @@ void heaterPID::setGain( float p, float i, float d )
 }
 
 
-int heaterPID::in( float setTemp, float probeTemp )
+int heaterPID::in( float set, float probe )
 {
+   setTemp = set;
+   probeTemp = probe;
+
    float error = setTemp - probeTemp;
 
    p_Out = pGain * error;       // proportional component
@@ -97,3 +105,18 @@ int  heaterPID::out()
    return output;
 }
 
+
+void  heaterPID::display()
+{
+   SERIAL_PORT.print( setTemp );
+   SERIAL_PORT.print(" ");
+   SERIAL_PORT.print( probeTemp );
+   SERIAL_PORT.print(" ");
+   SERIAL_PORT.print( p_Out );
+   SERIAL_PORT.print(" ");
+   SERIAL_PORT.print( i_Out );
+   SERIAL_PORT.print(" ");
+   SERIAL_PORT.print( d_Out );
+   SERIAL_PORT.print(" ");
+   SERIAL_PORT.println( out() );
+}
