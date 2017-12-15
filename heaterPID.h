@@ -127,5 +127,7 @@ void  heaterPID::display()
    SERIAL_PORT.print(" ");
    SERIAL_PORT.print( d_Out );
    SERIAL_PORT.print(" ");
+   SERIAL_PORT.print( fwd_Out );
+   SERIAL_PORT.print(" ");
    SERIAL_PORT.println( out() );
 }
