@@ -21,9 +21,10 @@ class heaterPID
 {
    public:
    
-      heaterPID( int Hz, float p, float i, float d );
+      heaterPID( int Hz, float p, float i, float d, float f );
       
-      void setGain( float p, float i, float d );
+      void setGain( float p, float i, float d, float f );
+      void setAmbTemp( float t );
       
       int in( float setTemp, float probeTemp );
       int out();
@@ -33,13 +34,11 @@ class heaterPID
 
    private:
 
-      float setTemp, probeTemp;
+      float setTemp, probeTemp, ambTemp;
    
-      float pGain, iGain, dGain;
+      float pGain, iGain, dGain, fwdGain;
       
-      float p_Out, i_Out, d_Out;
-         
-      float iBucket;
+      float p_Out, i_Out, d_Out, fwd_Out;
       
       float sampleRateHz;
       
@@ -53,18 +52,26 @@ class heaterPID
 };
 
 
-heaterPID::heaterPID( int Hz, float p, float i, float d )
+heaterPID::heaterPID( int Hz, float p, float i, float d, float f )
 {
    sampleRateHz = Hz;
-   setGain( p, i, d );
+   setGain( p, i, d, f );
+   setAmbTemp( 22.0f );
 }
 
 
-void heaterPID::setGain( float p, float i, float d )
+void heaterPID::setGain( float p, float i, float d, float f )
 {
    pGain = p;
    iGain = i / sampleRateHz;
    dGain = d * sampleRateHz;
+   fwdGain = f;
+}
+
+
+void heaterPID::setAmbTemp( float t )
+{
+   ambTemp = t;
 }
 
 
@@ -73,17 +80,18 @@ int heaterPID::in( float set, float probe )
    setTemp = set;
    probeTemp = probe;
 
+   fwd_Out = fwdGain * ( setTemp - ambTemp );
+
    float error = setTemp - probeTemp;
 
-   p_Out = constrain( pGain * error, -outputMax, outputMax );       // proportional component
+   p_Out = constrain( pGain * error, -outputMax, outputMax );   // proportional component
 
    if( abs(p_Out) < outputMax ) // only add I+D when P is not saturated
    {
       float scaleFactor = (outputMax - abs(p_Out)) / outputMax; // soft I+D effect at extreme error
-      
-      iBucket = iBucket + iGain * error * scaleFactor;     // integral component 
-      iBucket = constrain( iBucket, -outputMax, outputMax );
-      i_Out = iBucket;        
+
+      i_Out += iGain * error * scaleFactor;     // integral component 
+      i_Out = constrain( i_Out, -outputMax, outputMax );     
 
       d_Out += dGain * ( error - lastError ) * scaleFactor; // derivative component
       d_Out *= 0.5f;
@@ -96,7 +104,7 @@ int heaterPID::in( float set, float probe )
 
    lastError = error;
    
-   output = int( p_Out + i_Out + d_Out );
+   output = int( p_Out + i_Out + d_Out + fwd_Out );
    return output;
 }
 
