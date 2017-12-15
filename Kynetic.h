@@ -149,15 +149,15 @@ void buttonWatcher()
 {
    if( SelectBtn.check() )
    {
-      Serial.print("SELECT BUTTON - ");
+      //Serial.print("SELECT BUTTON - ");
       if( runProgram )
       {
-         Serial.println("STOP");
+         //Serial.println("STOP");
          runProgram = false;
       }
       else
       {
-         Serial.println("START");
+         //Serial.println("START");
          machine.startHome( true, true, true );
          restartSD();
       }

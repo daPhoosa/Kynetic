@@ -96,7 +96,7 @@ void loop()
 
       Serial.print( 0 );
       Serial.print(" ");
-      extruder1_PID.display() );
+      extruder1_PID.display();
    }   
 
 }
