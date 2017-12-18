@@ -36,8 +36,8 @@ const int MIN_HEATER_PERIOD = 100;  // ms
 #define EXTRUDER1_SENSOR_TYPE 1
 #define BED_SENSOR_TYPE 1
 
-#define EXTRUDER1_PID  20.0f,2.0f,50.0f,0.72f
-#define BED_HEATER_PID 10.0f,0.0f,0.0f
+#define EXTRUDER1_PID   20.0f,0.50f,50.0f,0.72f   // Prorotional, Integral, Derivative, FeedForward
+#define BED_HEATER_PID 100.0f,0.25f,50.0f,0.94f
 
 #define OVER_SAMPLE_CNT 4
 

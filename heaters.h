@@ -54,7 +54,7 @@ void heaterOperator()  // operate heaters
    // do cool things... ha ha
  
    extruder1_PWM.set( extruder1_PID.in( 210, getExtruder1Temp() ) );
-   bed_PWM.set( bed_PID.in( 128, 128 ) );
+   bed_PWM.set( bed_PID.in( 50, getBedTemp() ) );
 
 
  

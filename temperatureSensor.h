@@ -18,6 +18,10 @@
 
 
 #include "thermistorTables.h"
+#include <MedianFilter.h>
+
+MedianFilter extrude1Filter( 9, 1000);
+MedianFilter bedFilter( 9, 1000);
 
 
 float tempConvert( int type, int reading )
@@ -41,7 +45,7 @@ float getExtruder1Temp()
    static int tempList[OVER_SAMPLE_CNT];
    static int listIndex = 0;
 
-   int sensorReading = analogRead(EXTRUDER1_THERMISTOR);
+   int sensorReading = extrude1Filter.in(analogRead(EXTRUDER1_THERMISTOR));
 
    tempList[listIndex] = sensorReading;
    listIndex++;
@@ -62,7 +66,7 @@ float getBedTemp()
    static int tempList[OVER_SAMPLE_CNT];
    static int listIndex = 0;
 
-   int sensorReading = analogRead(BED_THERMISTOR);
+   int sensorReading = bedFilter.in(analogRead(BED_THERMISTOR));
 
    tempList[listIndex] = sensorReading;
    listIndex++;

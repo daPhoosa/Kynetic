@@ -83,6 +83,11 @@ void loop()
    else if( heaterManager.check() )
    {
       heaterOperator();     // operate heaters
+
+      Serial.print( 0 );
+      Serial.print(" ");
+      //extruder1_PID.display();
+      bed_PID.display();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
@@ -94,9 +99,7 @@ void loop()
       setMotorTickRate();
       //motionControl.displayStats();
 
-      Serial.print( 0 );
-      Serial.print(" ");
-      extruder1_PID.display();
+     
    }   
 
 }

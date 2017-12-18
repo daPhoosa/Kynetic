@@ -23,7 +23,7 @@
 const int MOTION_CONTROL_HZ     = 2000;    // Hz
 const int BLOCK_EXECUTE_HZ      = 400;     // Hz
 const int SOFT_PWM_HZ           = 100;     // Hz
-const int HEATER_MANAGER_HZ     = 8;      // Hz
+const int HEATER_MANAGER_HZ     = 10;      // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 

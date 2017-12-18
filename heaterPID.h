@@ -99,7 +99,7 @@ int heaterPID::in( float set, float probe )
    }
    else
    {
-      iBucket = i_Out = d_Out = 0.0f;
+      i_Out = d_Out = 0.0f;
    }
 
    lastError = error;
