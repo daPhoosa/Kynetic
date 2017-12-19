@@ -25,6 +25,9 @@ bool getNextProgramBlock = false;
 bool executeNextBlock = false;
 bool fileComplete = true;
 
+int extrude1HeaterTemp = 0;
+int bedHeaterTemp = 0;
+
 
 
 // **** BUTTONS ****

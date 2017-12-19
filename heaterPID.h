@@ -45,10 +45,9 @@ class heaterPID
       float lastError, setPointTemp;
 
       const float outputMax = 255.0f;
-      const float outputMin =   0.0f;
+      const float invOutputMax = 1.0f / outputMax;
       
       int output;
-
 };
 
 
@@ -88,12 +87,12 @@ int heaterPID::in( float set, float probe )
 
    if( abs(p_Out) < outputMax ) // only add I+D when P is not saturated
    {
-      float scaleFactor = (outputMax - abs(p_Out)) / outputMax; // soft I+D effect at extreme error
+      float scaleFactor = (outputMax - abs(p_Out)) * invOutputMax; // soft I+D effect at extreme error
 
       i_Out += iGain * error * scaleFactor;     // integral component 
       i_Out = constrain( i_Out, -outputMax, outputMax );     
 
-      d_Out += dGain * ( error - lastError ) * scaleFactor; // derivative component
+      d_Out += dGain * ( error - lastError ) * scaleFactor; // derivative component (average two readings)
       d_Out *= 0.5f;
       d_Out = constrain( d_Out, -outputMax, outputMax );
    }

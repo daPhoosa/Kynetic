@@ -32,6 +32,8 @@ const float CORNER_ROUNDING     = 0.100f;   // mm
 // **** HEATER SETTINGS ****
 // ************************
 const int MIN_HEATER_PERIOD = 100;  // ms
+const int MAX_EXTRUDER1_TEMP = 275; // C
+const int MAX_BED_TEMP = 150; // C
 
 #define EXTRUDER1_SENSOR_TYPE 1
 #define BED_SENSOR_TYPE 1

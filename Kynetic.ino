@@ -78,16 +78,11 @@ void loop()
    }
    else if( softPWM.check() )
    {
-      heaterPWM();     // modulate heater power
+      heaterPWM();      // modulate heater power
    }
    else if( heaterManager.check() )
    {
-      heaterOperator();     // operate heaters
-
-      Serial.print( 0 );
-      Serial.print(" ");
-      //extruder1_PID.display();
-      bed_PID.display();
+      heaterOperator(); // operate heaters
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {

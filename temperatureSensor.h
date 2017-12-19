@@ -42,16 +42,16 @@ float tempConvert( int type, int reading )
 
 float getExtruder1Temp()
 {
-   static int tempList[OVER_SAMPLE_CNT];
+   static uint16_t tempList[OVER_SAMPLE_CNT];
    static int listIndex = 0;
 
-   int sensorReading = extrude1Filter.in(analogRead(EXTRUDER1_THERMISTOR));
+   int sensorReading = extrude1Filter.in( analogRead(EXTRUDER1_THERMISTOR) );
 
    tempList[listIndex] = sensorReading;
    listIndex++;
    if( listIndex == OVER_SAMPLE_CNT) listIndex = 0;
 
-   int sampleSum = 0;
+   uint32_t sampleSum = 0;
    for( int i = 0; i < OVER_SAMPLE_CNT; i++ )
    {
       sampleSum += tempList[i];
@@ -66,7 +66,7 @@ float getBedTemp()
    static int tempList[OVER_SAMPLE_CNT];
    static int listIndex = 0;
 
-   int sensorReading = bedFilter.in(analogRead(BED_THERMISTOR));
+   int sensorReading = bedFilter.in( analogRead(BED_THERMISTOR) );
 
    tempList[listIndex] = sensorReading;
    listIndex++;

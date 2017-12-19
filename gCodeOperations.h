@@ -232,6 +232,12 @@ void mCodes()
          case 30:    // Program end, reset
             break;
 
+         case 109:    // Hot end on, DO wait
+         case 104:    // Hot end on, NO wait
+            extrude1HeaterTemp = int(gCode.S);
+            gCode.S = 0.0f;
+            break;
+
          default:
             break;
 
