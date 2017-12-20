@@ -22,17 +22,10 @@ struct Vec3
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
+
+    Vec3() : x(0.0f), y(0.0f), z(0.0f) {}
+    Vec3( float t_x, float t_y, float t_z ) : x(t_x), y(t_y), z(t_z) {}
 };
-
-
-Vec3 VectorSet( float x, float y, float z )
-{
-   Vec3 a;
-   a.x = x;
-   a.y = y;
-   a.z = z;
-   return a;
-}
 
 
 Vec3 VectorSub(Vec3 a, const Vec3& b)
