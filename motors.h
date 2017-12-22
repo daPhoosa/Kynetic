@@ -18,15 +18,15 @@
 
 
 #include <FrequencyTimer2.h>     // https://github.com/PaulStoffregen/FrequencyTimer2     --included with teensyduino
-#include <uStepper.h>            // https://github.com/daPhoosa/uStepper                  --instal to libraries diectory
+#include <dStepper.h>            // https://github.com/daPhoosa/dStepper                  --instal to libraries diectory
 
 volatile uint32_t stepperTickCount = STEPPER_TICK_HZ;  // used to track actual tick rate
 
 // **** MOTOR SETUP ****
-uStepper A_motor( A_MOTOR_STEP_PER_MM, A_MOTOR_DIRECTION, STEPPER_TICK_HZ, A_MOTOR_STEP_PIN, A_MOTOR_DIR_PIN, A_MOTOR_ENBL_PIN);
-uStepper B_motor( B_MOTOR_STEP_PER_MM, B_MOTOR_DIRECTION, STEPPER_TICK_HZ, B_MOTOR_STEP_PIN, B_MOTOR_DIR_PIN, B_MOTOR_ENBL_PIN);
-uStepper C_motor( C_MOTOR_STEP_PER_MM, C_MOTOR_DIRECTION, STEPPER_TICK_HZ, C_MOTOR_STEP_PIN, C_MOTOR_DIR_PIN, C_MOTOR_ENBL_PIN);
-uStepper D_motor( D_MOTOR_STEP_PER_MM, D_MOTOR_DIRECTION, STEPPER_TICK_HZ, D_MOTOR_STEP_PIN, D_MOTOR_DIR_PIN, D_MOTOR_ENBL_PIN);
+dStepper A_motor( A_MOTOR_STEP_PER_MM, A_MOTOR_DIRECTION, STEPPER_TICK_HZ, A_MOTOR_STEP_PIN, A_MOTOR_DIR_PIN, A_MOTOR_ENBL_PIN);
+dStepper B_motor( B_MOTOR_STEP_PER_MM, B_MOTOR_DIRECTION, STEPPER_TICK_HZ, B_MOTOR_STEP_PIN, B_MOTOR_DIR_PIN, B_MOTOR_ENBL_PIN);
+dStepper C_motor( C_MOTOR_STEP_PER_MM, C_MOTOR_DIRECTION, STEPPER_TICK_HZ, C_MOTOR_STEP_PIN, C_MOTOR_DIR_PIN, C_MOTOR_ENBL_PIN);
+dStepper D_motor( D_MOTOR_STEP_PER_MM, D_MOTOR_DIRECTION, STEPPER_TICK_HZ, D_MOTOR_STEP_PIN, D_MOTOR_DIR_PIN, D_MOTOR_ENBL_PIN);
 
 
 void armMotors()
