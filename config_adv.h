@@ -35,3 +35,16 @@ const float MACHINE_VEL_STEP = MACHINE_ACCEL / float(MOTION_CONTROL_HZ); // [mm/
 // *********************************
 const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
+
+
+
+
+struct kynetic_operation_retention_enabler_t
+{
+   int extrude1TargetTemp = 0;
+   bool extrude1_wait = false;
+
+   int bedTargetTemp = 0;
+   bool bed_wait = false;
+   
+} KORE;

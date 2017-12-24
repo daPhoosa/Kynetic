@@ -24,18 +24,36 @@ void addMovementBlock()
    switch (gCode.G[1])
    {
       case 0:
-         motion.addLinear_Block(0, gCode.X, gCode.Y, gCode.Z, MAX_VELOCITY);
+         if( !gCode.lastMoveRapid )
+         {
+            gCode.lastMoveRapid = true;
+            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+         }
+         motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
          break;
 
       case 1:
-         motion.addLinear_Block(1, gCode.X, gCode.Y, gCode.Z, gCode.F);
+         if( gCode.lastMoveRapid )
+         {
+            gCode.lastMoveRapid = false;
+            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+         }
+         motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
          break;
 
       case 2:
       case 3:
+         if( gCode.lastMoveRapid )
+         {
+            gCode.lastMoveRapid = false;
+            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+         }
          arcCenterX = gCode.startX + gCode.I;
          arcCenterY = gCode.startY + gCode.J;
          motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
+         break;
+
+      default:
          break;
    }
 
@@ -74,7 +92,7 @@ void Group0()
    {
       if( gCode.G[0] == 4 ) // dwell
       {
-         motion.addDelay( max( gCode.P, 1 ) );
+         motion.addDelay( max( int(gCode.P), 1 ) );
       }
       else if( gCode.G[0] == 5 ) // exact stop
       {
@@ -233,8 +251,24 @@ void mCodes()
             break;
 
          case 109:    // Hot end on, DO wait
+            KORE.extrude1_wait = true;
+            KORE.extrude1TargetTemp = int(gCode.S);
+            gCode.S = 0.0f;
          case 104:    // Hot end on, NO wait
-            extrude1HeaterTemp = int(gCode.S);
+            KORE.extrude1_wait = false;
+            KORE.extrude1TargetTemp = int(gCode.S);
+            gCode.S = 0.0f;
+            break;
+
+         case 190:    // Bed on, DO wait
+            KORE.bed_wait = true;
+            KORE.extrude1TargetTemp = int(gCode.S);
+            gCode.S = 0.0f;
+            break;
+
+         case 140:    // Bed on, NO wait
+            KORE.bed_wait = false;
+            KORE.extrude1TargetTemp = int(gCode.S);
             gCode.S = 0.0f;
             break;
 

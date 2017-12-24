@@ -26,7 +26,7 @@ struct gCode_state_machine_t
 
    float startX, startY, startZ;
 
-   bool newAxisMove, newExtruderMove, newMcode;
+   bool newAxisMove, newExtruderMove, newMcode, lastMoveRapid;
  
 } gCode;
 

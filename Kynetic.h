@@ -25,8 +25,7 @@ bool getNextProgramBlock = false;
 bool executeNextBlock = false;
 bool fileComplete = true;
 
-int extrude1HeaterTemp = 0;
-int bedHeaterTemp = 0;
+
 
 
 
@@ -100,7 +99,7 @@ void motionRunner()
 
       gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
 
-      motion.addLinear_Block(1, cart.x, cart.y, cart.z, 0.1); 
+      motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); 
 
       homePositionSet = true;
 
