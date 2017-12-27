@@ -39,7 +39,7 @@ const int MAX_BED_TEMP = 150; // C
 #define BED_SENSOR_TYPE 1
 
 #define EXTRUDER1_PID   20.0f,0.50f,50.0f,0.72f   // Prorotional, Integral, Derivative, FeedForward
-#define BED_HEATER_PID 100.0f,0.25f,50.0f,0.94f
+#define BED_HEATER_PID 100.0f,0.25f,50.0f,1.50f
 
 #define OVER_SAMPLE_CNT 4
 

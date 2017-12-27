@@ -82,6 +82,7 @@ int heaterPID::in( float set, float probe )
    fwd_Out = fwdGain * ( setTemp - ambTemp );
 
    float error = setTemp - probeTemp;
+   float errorDelta = (error - lastError) * 0.25f; // smooth error change
 
    p_Out = constrain( pGain * error, -outputMax, outputMax );   // proportional component
 
@@ -92,8 +93,7 @@ int heaterPID::in( float set, float probe )
       i_Out += iGain * error * scaleFactor;     // integral component 
       i_Out = constrain( i_Out, -outputMax, outputMax );     
 
-      d_Out += dGain * ( error - lastError ) * scaleFactor; // derivative component (average two readings)
-      d_Out *= 0.5f;
+      d_Out = dGain * errorDelta * scaleFactor; // derivative component
       d_Out = constrain( d_Out, -outputMax, outputMax );
    }
    else
@@ -101,7 +101,7 @@ int heaterPID::in( float set, float probe )
       i_Out = d_Out = 0.0f;
    }
 
-   lastError = error;
+   lastError += errorDelta; 
    
    output = int( p_Out + i_Out + d_Out + fwd_Out );
    return output;

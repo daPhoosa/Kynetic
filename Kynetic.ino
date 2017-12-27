@@ -24,9 +24,9 @@
 #include "dataStreams.h"
 #include "timers.h"
 #include "motion.h"
-#include "gCode.h"
 #include "temperatureSensor.h"
 #include "heaters.h"
+#include "gCode.h"
 
 #include "3DMath.h"
 #include "Machines\cartesian.h"
@@ -72,7 +72,7 @@ void loop()
    {
       blockFeeder();
    }
-   else if( getNextProgramBlock ) // Read SD card and Parse G code
+   else if( blockRead.check() && getNextProgramBlock ) // Read SD card and Parse G code
    {
       programReader();
    }

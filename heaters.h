@@ -52,7 +52,13 @@ void heaterPWM()  // toogle heaters to get desired duty cycle
 void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha
-   extruder1_PWM.set( extruder1_PID.in( KORE.extrude1TargetTemp, getExtruder1Temp() ));
-   bed_PWM.set( bed_PID.in( KORE.bedTargetTemp, getBedTemp() ));
+   KORE.extrude1Temp = getExtruder1Temp();
+   KORE.bedTemp = getBedTemp();
+
+   extruder1_PWM.set( extruder1_PID.in( KORE.extrude1TargetTemp, KORE.extrude1Temp ));
+   bed_PWM.set( bed_PID.in( KORE.bedTargetTemp, KORE.bedTemp ));
+
+   //extruder1_PID.display();
+   bed_PID.display();
 }
 
