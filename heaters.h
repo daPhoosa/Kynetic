@@ -59,6 +59,6 @@ void heaterOperator()  // operate heaters
    bed_PWM.set( bed_PID.in( KORE.bedTargetTemp, KORE.bedTemp ));
 
    //extruder1_PID.display();
-   bed_PID.display();
+   //bed_PID.display();
 }
 

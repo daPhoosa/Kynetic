@@ -170,6 +170,7 @@ void setState( char letter, float number )
 
       gCode.M = num;
       gCode.newMcode = true;
+      delayedExecute = true;
       return;
    }
 
@@ -406,6 +407,8 @@ void executeCodeNow()
 
    Group16();  // Rotation
 
+   mCodesNow();  // miscellaneous, executed immediately
+
    movementOperations();  // group 1 -- placed last to allow modification by other G codes on the same line
 
    Group0();  // dwell
@@ -418,7 +421,7 @@ void executeCodeDelayed()
 
    Group9();  // Canned cycles
     
-   mCodes();  // miscellaneous
+   mCodesDelayed();  // miscellaneous, delayed execute
 
    delayedExecute = false;
 }

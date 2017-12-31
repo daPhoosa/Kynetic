@@ -89,7 +89,7 @@ void motionRunner()
    if( runProgram )
    {
       motorController();
-      //motionControl.collectStats();
+      motionControl.collectStats();
    }
    else if( machine.executeHome() )
    {
@@ -108,7 +108,11 @@ void motionRunner()
       runProgram = true;
 
       motion.startMoving( cart.x, cart.y, cart.z );
-   }   
+   }
+   else
+   {
+      motionControl.resetStats();
+   }
 }
 
 
@@ -132,18 +136,59 @@ void blockFeeder()
 }
 
 
+bool pauseManager() // return true if pause is active
+{
+   bool pauseStatus = KORE.manualPauseActive;
+
+   if( KORE.extrude1_wait ) 
+   {
+      if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
+      {
+         KORE.extrude1_wait = false; // up to temp
+         Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
+      }
+      else
+      {
+         pauseStatus = true;
+      }
+   }
+
+   if( KORE.bed_wait ) 
+   {
+      if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
+      {
+         KORE.bed_wait = false; // up to temp
+         Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
+      }
+      else
+      {
+         pauseStatus = true;
+      }
+   }
+
+   return pauseStatus;
+}
+
+
 void programReader()
 {
-   if( !readNextProgramLine() )
+   if( !pauseManager() )
    {
-      fileComplete = true;
-      //Serial.println("1");
+      if( !readNextProgramLine() )
+      {
+         fileComplete = true;
+         if( motion.blockQueueComplete() && !delayedExecute )
+         {
+            runProgram = false;
+         }
+         //Serial.println("1");
+      }
+      else
+      {
+         //Serial.println("0");
+      }
+      getNextProgramBlock = false;   
    }
-   else
-   {
-      //Serial.println("0");
-   }
-   getNextProgramBlock = false;   
 }
 
 
@@ -154,12 +199,12 @@ void buttonWatcher()
       //Serial.print("SELECT BUTTON - ");
       if( runProgram )
       {
-         //Serial.println("STOP");
-         runProgram = false;
+         KORE.manualPauseActive = !KORE.manualPauseActive;
       }
       else
       {
          //Serial.println("START");
+         KORE.manualPauseActive = false;
          machine.startHome( true, true, true );
          restartSD();
       }
@@ -171,3 +216,5 @@ void displayDriver()
 {
 
 }
+
+

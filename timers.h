@@ -31,6 +31,7 @@ PollTimer maintenance(MAINTENANCE_HZ);
 
 void startPollTimers()
 {
+      /*
    int offsetTime = 0;
    motionControl.start(offsetTime);   // number indicates microsecond offset
    blockExecute.start( offsetTime += 33);
@@ -39,4 +40,13 @@ void startPollTimers()
    heaterManager.start(offsetTime += 33);
    buttonsAndUI.start( offsetTime += 33);
    maintenance.start(  offsetTime += 33);
+   */
+   motionControl.start();   // number indicates microsecond offset
+   blockExecute.start();
+   blockRead.start();
+   softPWM.start();
+   heaterManager.start();
+   buttonsAndUI.start();
+   maintenance.start();
+
 }

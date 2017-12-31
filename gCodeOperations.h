@@ -211,7 +211,63 @@ void Group16()
 }
 
 
-void mCodes()
+void mCodesNow()
+{
+   if( gCode.newMcode )
+   {
+      switch(gCode.M)
+      {
+         case 7:     // Shower Coolant
+            break;
+
+         case 8:     // Coolant On
+            break;
+
+         case 9:     // Coolant Off
+            break;
+
+         case 82:    // Extrude Absolute Mode
+            gCode.extrudeAbsoluteMode = true;
+            break;
+
+         case 83:    // Extrude Relative Mode
+            gCode.extrudeAbsoluteMode = false;
+            break;
+
+         case 109:    // Hot end on, DO wait
+            KORE.extrude1_wait = true;
+            KORE.extrude1TargetTemp = int(gCode.S + 0.5f);
+            gCode.S = 0.0f;
+            break;
+
+         case 104:    // Hot end on, NO wait
+            KORE.extrude1_wait = false;
+            KORE.extrude1TargetTemp = int(gCode.S + 0.5f);
+            gCode.S = 0.0f;
+            break;
+
+         case 190:    // Bed on, DO wait
+            KORE.bed_wait = true;
+            KORE.bedTargetTemp = int(gCode.S + 0.5f);
+            gCode.S = 0.0f;
+            break;
+
+         case 140:    // Bed on, NO wait
+            KORE.bed_wait = false;
+            KORE.bedTargetTemp = int(gCode.S + 0.5f);
+            gCode.S = 0.0f;
+            break;
+
+         default:
+            break;
+
+      }
+      gCode.newMcode = false;
+   }
+}
+
+
+void mCodesDelayed()
 {
    if( gCode.newMcode )
    {
@@ -237,39 +293,8 @@ void mCodes()
 
          case 6:     // Tool Change
             break;
-         
-         case 7:     // Shower Coolant
-            break;
-
-         case 8:     // Coolant On
-            break;
-
-         case 9:     // Coolant Off
-            break;
 
          case 30:    // Program end, reset
-            break;
-
-         case 109:    // Hot end on, DO wait
-            KORE.extrude1_wait = true;
-            KORE.extrude1TargetTemp = int(gCode.S);
-            gCode.S = 0.0f;
-         case 104:    // Hot end on, NO wait
-            KORE.extrude1_wait = false;
-            KORE.extrude1TargetTemp = int(gCode.S);
-            gCode.S = 0.0f;
-            break;
-
-         case 190:    // Bed on, DO wait
-            KORE.bed_wait = true;
-            KORE.extrude1TargetTemp = int(gCode.S);
-            gCode.S = 0.0f;
-            break;
-
-         case 140:    // Bed on, NO wait
-            KORE.bed_wait = false;
-            KORE.extrude1TargetTemp = int(gCode.S);
-            gCode.S = 0.0f;
             break;
 
          default:

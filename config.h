@@ -23,8 +23,8 @@
 // **********************************
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
-const float MACHINE_ACCEL       = 10000.0f; // mm/s^2
-const float MAX_VELOCITY        = 300.0f;   // mm/s
+const float MACHINE_ACCEL       = 1000.0f; // mm/s^2
+const float MAX_VELOCITY        = 100.0f;   // mm/s
 const float CORNER_ROUNDING     = 0.100f;   // mm
 
 
@@ -59,9 +59,9 @@ const int MAX_BED_TEMP = 150; // C
 #define SLOW_HOME_VEL  4.0f      // [mm/s]
 #define SLOW_HOME_DIST 3.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 350.0f    // axis zero from home position [mm]
-#define B_MOTOR_HOME_OFFSET 350.0f
-#define C_MOTOR_HOME_OFFSET 350.0f
+#define A_MOTOR_HOME_OFFSET 470.0f    // axis zero from home position [mm]
+#define B_MOTOR_HOME_OFFSET 470.0f
+#define C_MOTOR_HOME_OFFSET 470.0f
 
 #define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
 #define Y_MAX_ENDSTOP_NO_CONTACT LOW

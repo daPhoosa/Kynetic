@@ -49,4 +49,6 @@ struct kynetic_operation_retention_enabler_t
    float bedTemp = 0;
    bool bed_wait = false;
 
+   bool manualPauseActive = false;
+
 } KORE;

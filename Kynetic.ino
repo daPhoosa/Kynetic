@@ -52,6 +52,7 @@ void setup()
    startPollTimers();
 }
 
+uint32_t funCounter = 0;
 
 void loop() 
 {
@@ -63,14 +64,18 @@ void loop()
    if( motionControl.check() )  // Highest Priority
    {
       motionRunner();
+      //funCounter++;
    }
    else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
    {
       // timeWaster  --  do nothing
+      //funCounter++;
+      delayMicroseconds(1);
    }
    else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
       blockFeeder();
+      //funCounter++;
    }
    else if( blockRead.check() && getNextProgramBlock ) // Read SD card and Parse G code
    {
@@ -92,11 +97,12 @@ void loop()
    else if( maintenance.check() ) // Lowest Priority
    {
       setMotorTickRate();
+
+      //Serial.println(funCounter);
+      funCounter = 0;
       //motionControl.displayStats();
-
-     
+      Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
    }   
-
 }
 
 
