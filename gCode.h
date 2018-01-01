@@ -444,8 +444,6 @@ void executeCodeNow()
 
    Group16();  // Rotation
 
-   mCodesNow();  // miscellaneous, executed immediately
-
    movementOperations();  // group 1 -- placed last to allow modification by other G codes on the same line
 
    Group0();  // dwell
@@ -458,7 +456,7 @@ void executeCodeDelayed()
 
    Group9();  // Canned cycles
     
-   mCodesDelayed();  // miscellaneous, delayed execute
+   mCodes();  // miscellaneous, delayed execute
 
    delayedExecute = false;
 }

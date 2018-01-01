@@ -211,12 +211,33 @@ void Group16()
 }
 
 
-void mCodesNow()
+void mCodes()
 {
    if( gCode.newMcode )
    {
       switch(gCode.M)
       {
+         case 0:     // Stop
+            break;
+         
+         case 1:     // Optional Stop
+            break;
+         
+         case 2:     // Program End
+            break;
+         
+         case 3:     // Spindle Start CW
+            break;
+         
+         case 4:     // Spindle Start CCW
+            break;
+
+         case 5:     // Spindle Stop
+            break;
+
+         case 6:     // Tool Change
+            break;
+
          case 7:     // Shower Coolant
             break;
 
@@ -224,6 +245,9 @@ void mCodesNow()
             break;
 
          case 9:     // Coolant Off
+            break;
+
+         case 30:    // Program end, reset
             break;
 
          case 82:    // Extrude Absolute Mode
@@ -256,45 +280,6 @@ void mCodesNow()
             KORE.bed_wait = false;
             KORE.bedTargetTemp = int(gCode.S + 0.5f);
             gCode.S = 0.0f;
-            break;
-
-         default:
-            break;
-
-      }
-      gCode.newMcode = false;
-   }
-}
-
-
-void mCodesDelayed()
-{
-   if( gCode.newMcode )
-   {
-      switch(gCode.M)
-      {
-         case 0:     // Stop
-            break;
-         
-         case 1:     // Optional Stop
-            break;
-         
-         case 2:     // Program End
-            break;
-         
-         case 3:     // Spindle Start CW
-            break;
-         
-         case 4:     // Spindle Start CCW
-            break;
-
-         case 5:     // Spindle Stop
-            break;
-
-         case 6:     // Tool Change
-            break;
-
-         case 30:    // Program end, reset
             break;
 
          default:
