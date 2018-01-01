@@ -42,17 +42,22 @@ void setState( char letter, float number )
 
    if( letter == 'X' )
    {
-      float diff = abs( gCode.X - number );
-      if( diff > 0.0009f )
+      if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+
+      if( gCode.G[3] == 90 ) // absolute
       {
-         gCode.newAxisMove = true;
-         if( gCode.G[3] == 90 )
+         if( abs( gCode.X - number ) > 0.0009f )
          {
-            gCode.X = number; // absolute
+            gCode.X = number;
+            gCode.newAxisMove = true;
          }
-         else if( gCode.G[3] == 91 )
+      }
+      else if( gCode.G[3] == 91 ) // incremental
+      {
+         if( abs(number) > 0.0009f )
          {
-            gCode.X = gCode.startX + number; // incremental
+            gCode.X += number; 
+            gCode.newAxisMove = true;
          }
       }
       return;
@@ -60,17 +65,22 @@ void setState( char letter, float number )
 
    if( letter == 'Y' )
    {
-      float diff = abs( gCode.Y - number );
-      if( diff > 0.0009f )
+      if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+      
+      if( gCode.G[3] == 90 ) // absolute
       {
-         gCode.newAxisMove = true;
-         if( gCode.G[3] == 90 )
+         if( abs(gCode.Y - number) > 0.0009f )
          {
-            gCode.Y = number; // absolute
+            gCode.Y = number;
+            gCode.newAxisMove = true;
          }
-         else if( gCode.G[3] == 91 )
+      }
+      else if( gCode.G[3] == 91 ) // incremental
+      {
+         if( abs(number) > 0.0009f )
          {
-            gCode.Y = gCode.startY + number; // incremental
+            gCode.Y += number; 
+            gCode.newAxisMove = true;
          }
       }
       return;
@@ -78,34 +88,58 @@ void setState( char letter, float number )
 
    if( letter == 'E' )
    {
-      float diff = abs( gCode.E - number );
-      if( diff > 0.0009f )
+      if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+      
+      if( gCode.extrudeAbsoluteMode ) // absolute
       {
-         gCode.newExtruderMove = true;
-         gCode.E = number;
+         if( abs(gCode.E - number) > 0.0009f )
+         {
+            gCode.E = number;
+            gCode.newExtruderMove = true;
+         }
+      }
+      else  // incremental
+      {
+         if( abs(number) > 0.0009f )
+         {
+            gCode.E += number; 
+            gCode.newExtruderMove = true;
+         }
       }
       return;
    }
 
    if( letter == 'F' )
    {
-      gCode.F = number;
+      if( gCode.G[6] == 21 ) // metric
+      {
+         gCode.F = number * ( 1.0f / 60.0f); // convert: mm/min ==> mm/s
+      } 
+      else if( gCode.G[6] == 20 ) // imperial
+      {
+         gCode.F = number * (25.4f / 60.0f); // convert: in/min ==> mm/s
+      }
       return;
    }
 
    if( letter == 'Z' )
    {
-      float diff = abs( gCode.Z - number );
-      if( diff > 0.0009f )
+      if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+
+      if( gCode.G[3] == 90 ) // absolute
       {
-         gCode.newAxisMove = true;
-         if( gCode.G[3] == 90 )
+         if( abs(gCode.Z - number) > 0.0009f )
          {
-            gCode.Z = number; // absolute
+            gCode.Z = number;
+            gCode.newAxisMove = true;
          }
-         else if( gCode.G[3] == 91 )
+      }
+      else if( gCode.G[3] == 91 ) // incremental
+      {
+         if( abs(number) > 0.0009f )
          {
-            gCode.Z = gCode.startZ + number; // incremental
+            gCode.Z += number; 
+            gCode.newAxisMove = true;
          }
       }
       return;
@@ -159,6 +193,9 @@ void setState( char letter, float number )
          case 41:
          case 42:
             gCode.G[7] = num;
+            break;
+
+         default:
             break;
       }
       return;
