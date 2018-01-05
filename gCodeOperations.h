@@ -122,6 +122,8 @@ void Group0()
 
             motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
             motion.startMoving();
+
+            Serial.print("Set Position:  X:");Serial.print(gCode.X);Serial.print("  Y:");Serial.print(gCode.Y);Serial.print("  Z:");Serial.print(gCode.Z);Serial.print("  E:");Serial.println(gCode.E);
             break;
          
          default:

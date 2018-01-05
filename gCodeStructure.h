@@ -33,34 +33,39 @@ struct gCode_state_machine_t
 } gCode;
 
 
-void gCodeSetPosition(float x, float y, float z, float e)
-{
-   gCode.X = x;
-   gCode.Y = y;
-   gCode.Z = z;
-   gCode.E = e;
-}
-
-
-void gCodeSetX(float x)
+void gCodeSetX(const float & x)
 {
    gCode.X = x;
 }
 
 
-void gCodeSetY(float y)
+void gCodeSetY(const float & y)
 {
    gCode.Y = y;
 }
 
 
-void gCodeSetZ(float z)
+void gCodeSetZ(const float & z)
 {
    gCode.Z = z;
 }
 
 
-void gCodeSetE(float e)
+void gCodeSetE(const float & e)
 {
    gCode.E = e;
+}
+
+
+void gCodeSetPosition(const float & x, const float & y, const float & z)
+{
+   gCodeSetX( x );
+   gCodeSetY( y );
+   gCodeSetZ( z );
+}
+
+void gCodeSetPosition(const float & x, const float & y, const float & z, const float & e)
+{
+   gCodeSetPosition( x, y, z );
+   gCodeSetE( e );
 }
