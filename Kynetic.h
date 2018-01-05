@@ -79,7 +79,16 @@ void motorController()
       C_motor.setSpeed( 0 );
    }
 
-   D_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motion.getExtrudeLocationMM() - D_motor.getPositionMM() ));
+   float extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
+   if( abs(extrudeDelta) > (1.5f / float(D_MOTOR_STEP_PER_MM)) ) // error must be more than 1 step, or motor is stopped
+   {
+      D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
+   }
+   else
+   {
+      D_motor.setSpeed( 0 );
+   }
+   
 
 }
 
