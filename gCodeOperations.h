@@ -27,7 +27,7 @@ void addMovementBlock()
          if( !gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = true;
-            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
          motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
          break;
@@ -36,7 +36,7 @@ void addMovementBlock()
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
-            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
          motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
          break;
@@ -46,7 +46,7 @@ void addMovementBlock()
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
-            motion.addDelay(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
          arcCenterX = gCode.startX + gCode.I;
          arcCenterY = gCode.startY + gCode.J;
@@ -63,6 +63,7 @@ void addMovementBlock()
 
 void addExtruderMove()
 {
+   motion.addExtrudeMM( gCode.E );
    gCode.newExtruderMove = false;
 }
 
@@ -90,14 +91,36 @@ void Group0()
 {
    if( gCode.G[0] )
    {
-      if( gCode.G[0] == 4 ) // dwell
+      switch( gCode.G[0] )
       {
-         motion.addDelay( max( int(gCode.P), 1 ) );
+         case 4:
+            motion.addDwell_Block( max( int(gCode.P), 1 ) );
+            gCode.P = 0.0f;
+            break;
+
+         case 9:
+            motion.addDwell_Block(10);
+            break;
+
+         case 28:
+            KORE.runProgram = false;
+            machine.startHome( true, true, true );
+            // TODO: add individual axis homing
+            break;
+
+         case 29:
+            break;
+
+         case 92: // set position
+            motion.setPosition( gCode.X, gCode.Y, gCode.Z );
+            motion.startMoving(); // use this to set new position
+
+            break;
+         
+         default:
+            break;
       }
-      else if( gCode.G[0] == 5 ) // exact stop
-      {
-         motion.addDelay(10);
-      }
+   
       gCode.G[0] = 0;
    }
 }

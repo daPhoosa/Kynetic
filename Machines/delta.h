@@ -32,6 +32,8 @@
          void startHome( bool xHome, bool yHome, bool zHome );
          void abortHome();
          bool executeHome();
+
+         bool allHomeCompleted();
          
 
       private:
@@ -184,6 +186,12 @@
    }
 
 
+   bool delta_machine_type::allHomeCompleted()
+   {
+      return homingComplete;
+   }
+
+
    void delta_machine_type::abortHome()
    {
       if( A_homeIndex || B_homeIndex || C_homeIndex ) // only abort if at least one axis is homing
@@ -227,6 +235,7 @@
          else
          {
             homingActive = false;
+            homingComplete = true;
             return true; // returns true once all axis are at home
          }
       }

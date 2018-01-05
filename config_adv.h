@@ -50,5 +50,7 @@ struct kynetic_operation_retention_enabler_t
    bool bed_wait = false;
 
    bool manualPauseActive = false;
+   bool runProgram = false;
+   bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 
 } KORE;

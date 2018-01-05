@@ -19,8 +19,6 @@
 #include <uButton.h>
 
 // **** GLOBAL VARIABLES ****
-bool homePositionSet = false;
-bool runProgram = false;
 bool getNextProgramBlock = false;
 bool executeNextBlock = false;
 bool fileComplete = true;
@@ -81,12 +79,14 @@ void motorController()
       C_motor.setSpeed( 0 );
    }
 
+   D_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motion.getExtrudeLocationMM() - D_motor.getPositionMM() ));
+
 }
 
 
 void motionRunner()
 {
-   if( runProgram )
+   if( KORE.runProgram && machine.allHomeCompleted() )
    {
       motorController();
       motionControl.collectStats();
@@ -99,15 +99,16 @@ void motionRunner()
 
       gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
 
-      motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); 
-
-      homePositionSet = true;
+      motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); // needed?
 
       startPollTimers();
 
-      runProgram = true;
+      KORE.runProgram = true;
 
-      motion.startMoving( cart.x, cart.y, cart.z );
+      motion.setPosition( cart.x, cart.y, cart.z );
+      motion.startMoving();
+
+      //Serial.println("Home Complete");
    }
    else
    {
@@ -118,11 +119,12 @@ void motionRunner()
 
 void blockFeeder()
 {
-   if( runProgram && motion.bufferVacancy() )
+   if( KORE.runProgram && motion.bufferVacancy() )
    {
-      if( delayedExecute ) 
+      if( KORE.delayedExecute ) 
       {
-         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
+         //Serial.println(motion.blockQueueComplete());
+         if( motion.blockQueueComplete() || !motion.getBlockCount() ) // don't execute delayed code until all queued moves are complete
          {
             executeCodeDelayed();
          }
@@ -145,7 +147,7 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
       {
          KORE.extrude1_wait = false; // up to temp
-         Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
+         //Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
       }
       else
       {
@@ -158,7 +160,7 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
       {
          KORE.bed_wait = false; // up to temp
-         Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
+         //Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
       }
       else
       {
@@ -177,9 +179,9 @@ void programReader()
       if( !readNextProgramLine() )
       {
          fileComplete = true;
-         if( motion.blockQueueComplete() && !delayedExecute )
+         if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
-            runProgram = false;
+            KORE.runProgram = false;
          }
          //Serial.println("1");
       }
@@ -197,7 +199,7 @@ void buttonWatcher()
    if( SelectBtn.check() )
    {
       //Serial.print("SELECT BUTTON - ");
-      if( runProgram )
+      if( KORE.runProgram )
       {
          KORE.manualPauseActive = !KORE.manualPauseActive;
       }
@@ -205,8 +207,11 @@ void buttonWatcher()
       {
          //Serial.println("START");
          KORE.manualPauseActive = false;
-         machine.startHome( true, true, true );
+         //machine.startHome( true, true, true );
          restartSD();
+         //getNextProgramBlock = true;
+         
+         KORE.runProgram = true;
       }
    }
 }

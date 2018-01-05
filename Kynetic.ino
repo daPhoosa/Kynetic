@@ -26,12 +26,13 @@
 #include "motion.h"
 #include "temperatureSensor.h"
 #include "heaters.h"
-#include "gCode.h"
 
 #include "3DMath.h"
 #include "Machines\cartesian.h"
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
+
+#include "gCode.h"
 
 #include "kynetic.h"
 
@@ -101,7 +102,10 @@ void loop()
       //Serial.println(funCounter);
       funCounter = 0;
       //motionControl.displayStats();
-      Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
+      //Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
+
+      //Serial.println(machine.allHomeCompleted());
+      Serial.println(motion.getExtrudeLocationMM());
    }   
 }
 

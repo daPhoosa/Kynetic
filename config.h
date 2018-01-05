@@ -112,7 +112,7 @@ const int MAX_BED_TEMP = 150; // C
 #define C_MOTOR_STEP_PER_MM 80.0f
 #define C_MOTOR_DIRECTION   1
 
-#define D_MOTOR_STEP_PER_MM 80.0f
+#define D_MOTOR_STEP_PER_MM 150.0f
 #define D_MOTOR_DIRECTION   1
 
 #define E_MOTOR_STEP_PER_MM 80.0f

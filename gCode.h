@@ -16,7 +16,7 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
+
 #include "gCodeStructure.h"
 #include "gCodeOperations.h"
 
@@ -28,6 +28,7 @@ char getNextChar()
       char ch;
       file.read(&ch, 1);
       //Serial.print(" ");Serial.print(int(ch));
+      //Serial.print(ch);
       return ch;
    }
    return 0;
@@ -43,6 +44,12 @@ void setState( char letter, float number )
    if( letter == 'X' )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+
+      if( gCode.G[0] == 92 )  // set position
+      {
+         gCode.X = number;
+         return;
+      }
 
       if( gCode.G[3] == 90 ) // absolute
       {
@@ -67,6 +74,12 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
       
+      if( gCode.G[0] == 92 )  // set position
+      {
+         gCode.Y = number;
+         return;
+      }
+
       if( gCode.G[3] == 90 ) // absolute
       {
          if( abs(gCode.Y - number) > 0.0009f )
@@ -90,6 +103,12 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
       
+      if( gCode.G[0] == 92 )  // set position
+      {
+         gCode.E = number;
+         return;
+      }
+
       if( gCode.extrudeAbsoluteMode ) // absolute
       {
          if( abs(gCode.E - number) > 0.0009f )
@@ -126,6 +145,12 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
 
+      if( gCode.G[0] == 92 )  // set position
+      {
+         gCode.Z = number;
+         return;
+      }
+
       if( gCode.G[3] == 90 ) // absolute
       {
          if( abs(gCode.Z - number) > 0.0009f )
@@ -151,10 +176,12 @@ void setState( char letter, float number )
 
       switch( num )
       {
-         case 4 :    // Group 0
+         case 4 :    // Group 0 -- dwell, exact stop, Home
          case 9 :
          case 28:
          case 29:
+         case 92:    // set position
+            KORE.delayedExecute = true;
             gCode.G[0] = num;
             break;
 
@@ -207,7 +234,7 @@ void setState( char letter, float number )
 
       gCode.M = num;
       gCode.newMcode = true;
-      delayedExecute = true;
+      KORE.delayedExecute = true;
       return;
    }
 
@@ -446,19 +473,20 @@ void executeCodeNow()
 
    movementOperations();  // group 1 -- placed last to allow modification by other G codes on the same line
 
-   Group0();  // dwell
 }
 
 
 void executeCodeDelayed()
 {
+   Group0();  // dwell, non-modal commands
+
    Group2();  // Plane Selection
 
    Group9();  // Canned cycles
     
    mCodes();  // miscellaneous, delayed execute
 
-   delayedExecute = false;
+   KORE.delayedExecute = false;
 }
 
 
