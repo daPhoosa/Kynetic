@@ -91,6 +91,8 @@ void Group0()
 {
    if( gCode.G[0] )
    {
+      Vec3 motor;
+
       switch( gCode.G[0] )
       {
          case 4:
@@ -112,9 +114,14 @@ void Group0()
             break;
 
          case 92: // set position
-            motion.setPosition( gCode.X, gCode.Y, gCode.Z );
-            motion.startMoving(); // use this to set new position
+            machine.invKinematics( gCode.X, gCode.Y, gCode.Z, motor.x, motor.y, motor.z ); // convert from cartesian to machine coordinates 
+            A_motor.setPosition( motor.x );
+            B_motor.setPosition( motor.y );
+            C_motor.setPosition( motor.z );
+            D_motor.setPosition( gCode.E );
 
+            motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
+            motion.startMoving();
             break;
          
          default:
