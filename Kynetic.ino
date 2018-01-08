@@ -105,7 +105,7 @@ void loop()
       //Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
 
       //Serial.println(machine.allHomeCompleted());
-      Serial.println(motion.getExtrudeLocationMM());
+      Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());
    }   
 }
 
