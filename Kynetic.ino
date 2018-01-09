@@ -58,22 +58,26 @@ uint32_t funCounter = 0;
 void loop() 
 {
    
-   // Nested if-else priority scheme
-   //  * After any operation completes, higher priority operations are given the first opportunity to run.
-   //  * All operations should run quickly so that higher priority operations are not delayed excessively.
-   
    if( motionControl.check() )  // Highest Priority
    {
       motionRunner();
       //funCounter++;
+
+      lowerPriorityOperations(); // only one of these will run each call
+
+      motionControl.collectStats();
    }
-   else if( motionControl.precheck(10) ) // prevent executing other code if very close to next motion control operation
-   {
-      // timeWaster  --  do nothing
-      //funCounter++;
-      delayMicroseconds(1);
-   }
-   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+ 
+}
+
+
+void lowerPriorityOperations()
+{
+   // Nested if-else priority scheme
+   //  * After any operation completes, higher priority operations are given the first opportunity to run.
+   //  * All operations should run quickly so that higher priority operations are not delayed excessively.
+
+   if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
       blockFeeder();
       //funCounter++;
@@ -101,14 +105,15 @@ void loop()
 
       //Serial.println(funCounter);
       funCounter = 0;
-      //motionControl.displayStats();
+
+      motionControl.displayStats();
+      
       //Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
 
       //Serial.println(machine.allHomeCompleted());
-      Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());
+      //Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());
    }   
 }
-
 
 
 

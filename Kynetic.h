@@ -88,41 +88,36 @@ void motorController()
    {
       D_motor.setSpeed( 0 );
    }
-   
-
 }
 
 
 void motionRunner()
 {
-   if( KORE.runProgram && machine.allHomeCompleted() )
+   if( KORE.runProgram && machine.allHomeCompleted() ) // Normal operation
    {
       motorController();
-      motionControl.collectStats();
    }
-   else if( machine.executeHome() )
+   else if( machine.executeHome() )  // Home operation
    {
       Vec3 cart;
 
       machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-      gCodeSetPosition( cart.x, cart.y, cart.z, 0.0f );
+      gCodeSetPosition(   cart.x, cart.y, cart.z );
+      motion.setPosition( cart.x, cart.y, cart.z );
 
-      motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); // needed?
+      //motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); // needed?
 
       startPollTimers();
 
       KORE.runProgram = true;
 
-      motion.setPosition( cart.x, cart.y, cart.z );
+      
       motion.startMoving();
 
       //Serial.println("Home Complete");
    }
-   else
-   {
-      motionControl.resetStats();
-   }
+
 }
 
 
@@ -132,7 +127,7 @@ void blockFeeder()
    {
       if( KORE.delayedExecute ) 
       {
-         //Serial.println(motion.blockQueueComplete());
+         Serial.print("Block Count: ");Serial.println(motion.getBlockCount());
          if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
          {
             Serial.println("delayed execute!");
