@@ -133,8 +133,9 @@ void blockFeeder()
       if( KORE.delayedExecute ) 
       {
          //Serial.println(motion.blockQueueComplete());
-         if( motion.blockQueueComplete() || !motion.getBlockCount() ) // don't execute delayed code until all queued moves are complete
+         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
          {
+            Serial.println("delayed execute!");
             executeCodeDelayed();
          }
       }

@@ -43,6 +43,7 @@ void startSD()
       if(!file)
       {
          SERIAL_PORT.println("Open File Failed!");
+         KORE.runProgram = false;
       }   
    }
    else

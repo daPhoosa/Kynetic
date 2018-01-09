@@ -178,9 +178,9 @@
 
    void delta_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
-      if( !A_homeIndex ) A_homeIndex = 5; // for delta, allways home all motors at once.  Don't reset motors that are already homing
-      if( !B_homeIndex ) B_homeIndex = 5;
-      if( !C_homeIndex ) C_homeIndex = 5;
+      if( A_homeIndex < 2 ) A_homeIndex = 6; // for delta, allways home all motors at once.  Don't reset motors that are already homing
+      if( B_homeIndex < 2 ) B_homeIndex = 6; // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is in process )
+      if( C_homeIndex < 2 ) C_homeIndex = 6;
       homingActive = true;
       homingComplete = false;
    }
@@ -194,7 +194,7 @@
 
    void delta_machine_type::abortHome()
    {
-      if( A_homeIndex || B_homeIndex || C_homeIndex ) // only abort if at least one axis is homing
+      if( A_homeIndex > 1 || B_homeIndex > 1 || C_homeIndex > 1 ) // only abort if at least one axis is actively homing
       {
          A_homeIndex = 0;
          B_homeIndex = 0;
@@ -210,33 +210,33 @@
       
       if(homingActive)
       {
-         if( A_homeIndex > 3 ) {
+         if( A_homeIndex > 4 ) {
             homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
             homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
-         if( B_homeIndex > 3 ) {
+         if( B_homeIndex > 4 ) {
             homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
             homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
-         if( C_homeIndex > 3 ) {
+         if( C_homeIndex > 4 ) {
             homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
             homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
-         if( A_homeIndex || B_homeIndex || C_homeIndex ) // not done going home until all axis are done
-         {
-            return false; // not at home
-         }
-         else
+         if( A_homeIndex == 1 && B_homeIndex == 1 && C_homeIndex == 1 ) // not done going home until all axis are done
          {
             homingActive = false;
             homingComplete = true;
             return true; // returns true once all axis are at home
+         }
+         else
+         {
+            return false; // not at home
          }
       }
       return false;
@@ -249,8 +249,8 @@
       
       switch(index)
       {
-         case 5 : // fast advance
-         case 3 : // slow advance
+         case 6 : // fast advance
+         case 4 : // slow advance
             if( digitalRead( endStopPin ) == switchNoContact )
             {
                speed += MACHINE_VEL_STEP;
@@ -265,8 +265,8 @@
                index--;
             }
           
-         case 4 : // fast retract
-         case 2 : // slow retract
+         case 5 : // fast retract
+         case 3 : // slow retract
             if( motor.getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
                speed -= MACHINE_VEL_STEP;
@@ -280,7 +280,7 @@
                index--;
             }
             
-         case 1 : // decelerate to zero after slow retract
+         case 2 : // decelerate to zero after slow retract
             speed += MACHINE_VEL_STEP;
             
             if( speed < 0.0f )
@@ -290,10 +290,11 @@
             }
             else
             {
-               index = 0;
+               index = 1;
             }
 
-         case 0 : // hold zero
+         case 1 : // hold zero speed
+         case 0 : 
             motor.setSpeed( 0.0f );
             break;
       }
