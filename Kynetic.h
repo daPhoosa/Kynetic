@@ -79,10 +79,18 @@ void motorController()
       C_motor.setSpeed( 0 );
    }
 
-   float extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
+   float eLoc = motion.getExtrudeLocationMM();
+   float eMot = D_motor.getPositionMM();
+
+   float extrudeDelta = eLoc - eMot ;
    if( abs(extrudeDelta) > (1.5f / float(D_MOTOR_STEP_PER_MM)) ) // error must be more than 1 step, or motor is stopped
-   {
-      D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
+   {  
+      float speed = float(MOTION_CONTROL_HZ) * extrudeDelta;
+      D_motor.setSpeed( speed );
+      
+      //Serial.print(eLoc);Serial.print("\t");
+      //Serial.print(eMot);Serial.print("\t");
+      //Serial.println(speed);
    }
    else
    {
@@ -106,16 +114,19 @@ void motionRunner()
       gCodeSetPosition(   cart.x, cart.y, cart.z );
       motion.setPosition( cart.x, cart.y, cart.z );
 
-      //motion.addLinear_Block( cart.x, cart.y, cart.z, 0.1 ); // needed?
-
       startPollTimers();
 
       KORE.runProgram = true;
 
+      motionControl.resetStats();
       
       motion.startMoving();
 
-      //Serial.println("Home Complete");
+      Serial.println("Home Complete");
+   }
+   else
+   {
+      //Serial.println("1");
    }
 
 }
@@ -127,11 +138,15 @@ void blockFeeder()
    {
       if( KORE.delayedExecute ) 
       {
-         Serial.print("Block Count: ");Serial.println(motion.getBlockCount());
+         //Serial.print("Block Count: ");Serial.println(motion.getBlockCount());
          if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
          {
-            Serial.println("delayed execute!");
+            //Serial.println("delayed execute!");
             executeCodeDelayed();
+         }
+         else
+         {
+            //motion.getBlockCount();
          }
       }
       else  
@@ -210,13 +225,13 @@ void buttonWatcher()
       }
       else
       {
-         //Serial.println("START");
+
+         Serial.println("START");
          KORE.manualPauseActive = false;
-         //machine.startHome( true, true, true );
          restartSD();
-         //getNextProgramBlock = true;
          
          KORE.runProgram = true;
+         
       }
    }
 }

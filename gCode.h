@@ -201,6 +201,8 @@ void setState( char letter, float number )
          case 90:    // Group 3
          case 91:
             gCode.G[3] = num;
+            if( num == 90 ) gCode.extrudeAbsoluteMode = true;
+            if( num == 91 ) gCode.extrudeAbsoluteMode = false;
             break;
 
                   // No Group 4

@@ -61,19 +61,13 @@ void addMovementBlock()
 }
 
 
-void addExtruderMove()
-{
-   motion.addExtrudeMM( gCode.E );
-   gCode.newExtruderMove = false;
-}
-
-
 void movementOperations()
 {
    if( gCode.newAxisMove && gCode.newExtruderMove ) // extrude while moving
    {
       addMovementBlock();
-      addExtruderMove();
+      motion.addExtrudeMM( gCode.E );
+      gCode.newExtruderMove = false;
    }
    else if ( gCode.newAxisMove ) // move only
    {
@@ -82,7 +76,9 @@ void movementOperations()
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {
-      addExtruderMove();
+      motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z ); // dummy block in current location to attach static extrude to
+      motion.addExtrudeMM( gCode.E, gCode.F );
+      gCode.newExtruderMove = false;
    }
 }
 
@@ -250,9 +246,11 @@ void mCodes()
       switch(gCode.M)
       {
          case 0:     // Stop
+            KORE.manualPauseActive = true;
             break;
          
          case 1:     // Optional Stop
+            KORE.manualPauseActive = true;
             break;
          
          case 2:     // Program End

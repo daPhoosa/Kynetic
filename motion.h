@@ -25,5 +25,6 @@ SmoothMove motion(MACHINE_ACCEL, MAX_VELOCITY, CORNER_ROUNDING);
 
 void configMotion()
 {
-      
+   motion.setExtrudeRateOverride( 1.1f );
+   motion.setExrudeAccel( EXTRUDE_ACCEL );
 }

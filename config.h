@@ -23,9 +23,11 @@
 // **********************************
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
-const float MACHINE_ACCEL       = 1000.0f; // mm/s^2
-const float MAX_VELOCITY        = 100.0f;   // mm/s
-const float CORNER_ROUNDING     = 0.100f;   // mm
+const float MACHINE_ACCEL   = 6000.0f;  // mm/s^2
+const float MAX_VELOCITY    = 300.0f;   // mm/s
+const float CORNER_ROUNDING = 0.100f;   // mm
+
+const float EXTRUDE_ACCEL   = 10000.0f; // mm/s^2
 
 
 // **************************
@@ -38,8 +40,8 @@ const int MAX_BED_TEMP = 150; // C
 #define EXTRUDER1_SENSOR_TYPE 1
 #define BED_SENSOR_TYPE 1
 
-#define EXTRUDER1_PID   20.0f,0.50f,50.0f,0.72f   // Prorotional, Integral, Derivative, FeedForward
-#define BED_HEATER_PID 100.0f,0.25f,50.0f,1.50f
+#define EXTRUDER1_PID   20.0f, 0.50f, 50.0f, 0.72f   // Prorotional, Integral, Derivative, FeedForward
+#define BED_HEATER_PID 100.0f, 0.25f, 50.0f, 1.50f
 
 #define OVER_SAMPLE_CNT 4
 
@@ -59,9 +61,9 @@ const int MAX_BED_TEMP = 150; // C
 #define SLOW_HOME_VEL  4.0f      // [mm/s]
 #define SLOW_HOME_DIST 3.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 470.0f    // axis zero from home position [mm]
-#define B_MOTOR_HOME_OFFSET 470.0f
-#define C_MOTOR_HOME_OFFSET 470.0f
+#define A_MOTOR_HOME_OFFSET 485.0f    // 485.0f axis zero from home position [mm]
+#define B_MOTOR_HOME_OFFSET 486.3f
+#define C_MOTOR_HOME_OFFSET 486.4f
 
 #define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
 #define Y_MAX_ENDSTOP_NO_CONTACT LOW
@@ -94,8 +96,8 @@ const int MAX_BED_TEMP = 150; // C
 
 #define MACHINE_TYPE_DELTA
 #ifdef  MACHINE_TYPE_DELTA // delta arm geometry configuration
-   #define DELTA_ARM_RADIUS         109.0f
-   #define DELTA_ARM_LENGTH         207.3f
+   #define DELTA_ARM_RADIUS         107.0f // 109.0 -- decrease if center is low, increase if outside is low
+   #define DELTA_ARM_LENGTH         207.3f //   
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 #endif
