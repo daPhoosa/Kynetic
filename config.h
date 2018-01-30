@@ -61,16 +61,17 @@ const int MAX_BED_TEMP = 150; // C
 #define SLOW_HOME_VEL  4.0f      // [mm/s]
 #define SLOW_HOME_DIST 3.0f      // [mm]
 
-#define A_MOTOR_HOME_OFFSET 485.0f    // 485.0f axis zero from home position [mm]
-#define B_MOTOR_HOME_OFFSET 486.3f
-#define C_MOTOR_HOME_OFFSET 486.4f
+#define X_HOME_OFFSET 0.0f
+#define Y_HOME_OFFSET 0.0f
+#define Z_HOME_OFFSET 0.0f  
 
-#define X_MAX_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
-#define Y_MAX_ENDSTOP_NO_CONTACT LOW
-#define Z_MAX_ENDSTOP_NO_CONTACT LOW
-#define X_MIN_ENDSTOP_NO_CONTACT LOW
-#define Y_MIN_ENDSTOP_NO_CONTACT LOW
-#define Z_MIN_ENDSTOP_NO_CONTACT LOW
+#define X_HOME_DIRECTION 1.0f  // Set as either 1.0 or -1.0 for direction
+#define Y_HOME_DIRECTION 1.0f
+#define Z_HOME_DIRECTION 1.0f
+
+#define X_ENDSTOP_NO_CONTACT LOW // switch state when not in contact with axis
+#define Y_ENDSTOP_NO_CONTACT LOW
+#define Z_ENDSTOP_NO_CONTACT LOW
 
 
 // ********************************
@@ -100,6 +101,10 @@ const int MAX_BED_TEMP = 150; // C
    #define DELTA_ARM_LENGTH         207.3f //   
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
+
+   #define A_MOTOR_HOME_OFFSET 484.6f    // 485.0f axis zero from home position [mm]
+   #define B_MOTOR_HOME_OFFSET 485.9f
+   #define C_MOTOR_HOME_OFFSET 486.0f  
 #endif
 
 
@@ -114,7 +119,7 @@ const int MAX_BED_TEMP = 150; // C
 #define C_MOTOR_STEP_PER_MM 80.0f
 #define C_MOTOR_DIRECTION   1
 
-#define D_MOTOR_STEP_PER_MM 150.0f
+#define D_MOTOR_STEP_PER_MM 160.0f
 #define D_MOTOR_DIRECTION   1
 
 #define E_MOTOR_STEP_PER_MM 80.0f

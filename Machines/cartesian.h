@@ -24,13 +24,24 @@
    {
       public:
 
-         void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          
+         void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
+         
+         void startHome( bool xHome, bool yHome, bool zHome );
+         void abortHome();
+         bool executeHome();
+
+         bool allHomeCompleted();
          
 
       private:
+
+         void homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
       
+         int A_homeIndex, B_homeIndex, C_homeIndex;
+         bool homingActive = false;
+         bool homingComplete = false;
 
    } machine;
  
@@ -51,4 +62,59 @@
    }
    
    
+   void cartesian_machine_type::startHome( bool xHome, bool yHome, bool zHome )
+   {
+      if( xHome && A_homeIndex < 2 )   // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is already in process )
+      {
+         A_homeIndex = 6;
+         homingActive = true;
+         homingComplete = false;
+      } 
+
+      if( yHome && B_homeIndex < 2 )  
+      {
+         B_homeIndex = 6;
+         homingActive = true;
+         homingComplete = false;
+      }
+
+      if( zHome && C_homeIndex < 2 ) 
+      {
+         C_homeIndex = 6;
+         homingActive = true;
+         homingComplete = false;
+      }
+   }
+
+
+   void cartesian_machine_type::homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
+   {
+
+   }
+
+
+   bool cartesian_machine_type::executeHome()
+   {
+
+   }
+
+
+   void cartesian_machine_type::abortHome()
+   {
+      if( A_homeIndex > 1 || B_homeIndex > 1 || C_homeIndex > 1 ) // only abort if at least one axis is actively homing
+      {
+         A_homeIndex = 0;
+         B_homeIndex = 0;
+         C_homeIndex = 0;
+         homingActive = true; // set to true to force a final execute that sets the motors to zero vel
+         homingComplete = false;
+      }
+   }
+
+
+   bool cartesian_machine_type::allHomeCompleted()
+   {
+      return homingComplete;
+   }  
+
 #endif

@@ -68,7 +68,7 @@ void loop()
       
       lowerPriorityOperations(); // only one of these will run each call
 
-      
+      motionControl.collectStats();
    }
  
 }
@@ -109,9 +109,9 @@ void lowerPriorityOperations()
       //Serial.println(funCounter);
       funCounter = 0;
 
-      //motionControl.displayStats();
+      motionControl.displayStats();
       
-      //Serial.print(KORE.bedTemp, 1);Serial.print("   ");Serial.println(KORE.extrude1Temp, 1);
+      //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
 
       //Serial.println(machine.allHomeCompleted());
       //Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());

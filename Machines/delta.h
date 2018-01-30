@@ -24,8 +24,6 @@
    {
       public:
          
-         //void init();
-         
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
          
@@ -66,26 +64,6 @@
 
    } machine;
 
-
-   /*
-   void delta_machine_type::init()
-   {
-      const float sin60 = 0.86602540378f;
-      const float cos60 = 0.5f;
-      
-      A_TowerX = -sin60 * DELTA_ARM_RADIUS;
-      A_TowerY = -cos60 * DELTA_ARM_RADIUS;
-      B_TowerX =  sin60 * DELTA_ARM_RADIUS;
-      B_TowerY = -cos60 * DELTA_ARM_RADIUS;
-      C_TowerX =  0.0f;
-      C_TowerY =  DELTA_ARM_RADIUS;
-      
-      armLengthSq = DELTA_ARM_LENGTH * DELTA_ARM_LENGTH;
-      
-      minArmHeightSq = square( sin( DELTA_MIN_ARM_ANGLE * 0.0174533f ) * DELTA_ARM_LENGTH );  // 
-   }
-   */
-   
 
    void delta_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
    {
@@ -211,21 +189,21 @@
       if(homingActive)
       {
          if( A_homeIndex > 4 ) {
-            homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+            homeAxis(A_homeIndex, A_motor, X_ENDSTOP_PIN, X_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
-            homeAxis(A_homeIndex, A_motor, X_MAX_ENDSTOP_PIN, X_MAX_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+            homeAxis(A_homeIndex, A_motor, X_ENDSTOP_PIN, X_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
          if( B_homeIndex > 4 ) {
-            homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+            homeAxis(B_homeIndex, B_motor, Y_ENDSTOP_PIN, Y_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
-            homeAxis(B_homeIndex, B_motor, Y_MAX_ENDSTOP_PIN, Y_MAX_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+            homeAxis(B_homeIndex, B_motor, Y_ENDSTOP_PIN, Y_ENDSTOP_NO_CONTACT, B_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
          if( C_homeIndex > 4 ) {
-            homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
+            homeAxis(C_homeIndex, C_motor, Z_ENDSTOP_PIN, Z_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
          }else{
-            homeAxis(C_homeIndex, C_motor, Z_MAX_ENDSTOP_PIN, Z_MAX_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
+            homeAxis(C_homeIndex, C_motor, Z_ENDSTOP_PIN, Z_ENDSTOP_NO_CONTACT, C_MOTOR_HOME_OFFSET, SLOW_HOME_VEL);
          }
 
          if( A_homeIndex == 1 && B_homeIndex == 1 && C_homeIndex == 1 ) // not done going home until all axis are done
