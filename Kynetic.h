@@ -62,24 +62,43 @@ void motorController()
    
    machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
 
-   if( motion.getSpeed() > MACHINE_VEL_STEP )
+   float deltaA = motor.x - A_motor.getPositionMM();
+   float deltaB = motor.y - B_motor.getPositionMM();
+   float deltaC = motor.z - C_motor.getPositionMM();
+
+   if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
    {
-      A_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.x - A_motor.getPositionMM() ));
-      B_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.y - B_motor.getPositionMM() ));
-      C_motor.setSpeed( float(MOTION_CONTROL_HZ) * ( motor.z - C_motor.getPositionMM() ));
+      A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
    }
-   else // force stop to avoid stepper "chatter"
+   else
    {
       A_motor.setSpeed( 0 );
+   }
+
+   if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM )
+   {
+      B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
+   }
+   else
+   {
       B_motor.setSpeed( 0 );
+   }   
+
+   if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM )
+   {
+      C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
+   }
+   else
+   {
       C_motor.setSpeed( 0 );
    }
+ 
 
    float eLoc = motion.getExtrudeLocationMM();
    float eMot = D_motor.getPositionMM();
 
    float extrudeDelta = eLoc - eMot ;
-   if( abs(extrudeDelta) > (1.5f / float(D_MOTOR_STEP_PER_MM)) ) // error must be more than 1 step, or motor is stopped
+   if( abs(extrudeDelta) > 1.0f/float(D_MOTOR_STEP_PER_MM) ) // error must be more than 1 step, or motor is stopped
    {  
       float speed = float(MOTION_CONTROL_HZ) * extrudeDelta;
       D_motor.setSpeed( speed );
