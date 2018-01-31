@@ -29,7 +29,8 @@ void addMovementBlock()
             gCode.lastMoveRapid = true;
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
-         motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
+         //motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
+         motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);  // 3D printer gCode assumes that rapids obey feed rate...
          break;
 
       case 1:
