@@ -54,7 +54,6 @@ void setup()
    startPollTimers();
 }
 
-uint32_t funCounter = 0;
 
 void loop() 
 {
@@ -80,7 +79,11 @@ void lowerPriorityOperations()
    //  * After any operation completes, higher priority operations are given the first opportunity to run.
    //  * All operations should run quickly so that higher priority operations are not delayed excessively.
 
-   if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+   if( motionControl.precheck(10) ) // immedately return to motion control if last one was delayed
+   {
+      funCounter++;
+   }
+   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
       blockFeeder();
       //funCounter++;
@@ -106,10 +109,16 @@ void lowerPriorityOperations()
    {
       setMotorTickRate();
 
-      //Serial.println(funCounter);
+      //Serial.println( float(funCounter*100) / 1000000.0f, 1);  // interupt CPU usage
+      if( funCounter )
+      {
+         Serial.println( funCounter );
+         motionControl.displayStats();
+      }
       funCounter = 0;
 
       motionControl.displayStats();
+      //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
       
       //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
 

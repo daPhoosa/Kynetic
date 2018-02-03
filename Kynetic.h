@@ -59,12 +59,18 @@ void motorController()
    Vec3 cart, motor;
 
    motion.getTargetLocation( cart.x, cart.y, cart.z );
+
+   //display(cart);
    
    machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
 
    float deltaA = motor.x - A_motor.getPositionMM();
    float deltaB = motor.y - B_motor.getPositionMM();
    float deltaC = motor.z - C_motor.getPositionMM();
+
+   //Serial.print(deltaA);Serial.print(" ");
+   //Serial.print(deltaB);Serial.print(" ");
+   //Serial.println(deltaC);
 
    if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
    {
@@ -182,7 +188,8 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
       {
          KORE.extrude1_wait = false; // up to temp
-         //Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
+         Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
+         KORE.programStartTime = millis();
       }
       else
       {
@@ -195,7 +202,8 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
       {
          KORE.bed_wait = false; // up to temp
-         //Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
+         Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
+         KORE.programStartTime = millis();
       }
       else
       {
@@ -217,6 +225,13 @@ void programReader()
          if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
             KORE.runProgram = false;
+
+            uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
+            Serial.print("H:");Serial.print( runTime / 3600);
+            runTime = runTime % 3600;
+            Serial.print(" M:");Serial.print( runTime / 60);
+            runTime = runTime % 60;
+            Serial.print(" S:");Serial.println( runTime);
          }
          //Serial.println("1");
       }
@@ -246,6 +261,8 @@ void buttonWatcher()
          restartSD();
          
          KORE.runProgram = true;
+
+         KORE.programStartTime = millis();
          
       }
    }

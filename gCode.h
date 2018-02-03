@@ -45,6 +45,8 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
 
+      gCode.X += gCode.workOffsetX; // shift from program postion to machine position
+
       if( gCode.G[0] == 92 )  // set position
       {
          gCode.X = number;
@@ -73,6 +75,8 @@ void setState( char letter, float number )
    if( letter == 'Y' )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+
+      gCode.Y += gCode.workOffsetY; // shift from program postion to machine position
       
       if( gCode.G[0] == 92 )  // set position
       {
@@ -144,6 +148,8 @@ void setState( char letter, float number )
    if( letter == 'Z' )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
+
+      gCode.Z += gCode.workOffsetZ; // shift from program postion to machine position
 
       if( gCode.G[0] == 92 )  // set position
       {

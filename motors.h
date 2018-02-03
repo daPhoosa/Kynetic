@@ -37,14 +37,18 @@ void armMotors()
    D_motor.enable();
 }
 
-void MotorTickISR() 
+void MotorTickISR() // at 60mm/s with 100k tick rate: 9.6% CPU usage
 {
+   //uint32_t timeNow = micros();
+
    A_motor.step();
    B_motor.step();
    C_motor.step();
    D_motor.step();
    
    stepperTickCount++;
+
+   //funCounter += micros() - timeNow;
 }
 
 void startStepperTickISR()

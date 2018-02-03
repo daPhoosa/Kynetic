@@ -29,6 +29,8 @@ struct gCode_state_machine_t
    bool newAxisMove, newExtruderMove, newMcode, lastMoveRapid;
 
    bool extrudeAbsoluteMode = true;
+
+   float workOffsetX, workOffsetY, workOffsetZ;
  
 } gCode;
 

@@ -23,11 +23,15 @@
 // **********************************
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
-const float MACHINE_ACCEL   = 6000.0f;  // mm/s^2
-const float MAX_VELOCITY    = 300.0f;   // mm/s
-const float CORNER_ROUNDING = 0.100f;   // mm
+const float MACHINE_ACCEL_XY = 5000.0f;  // mm/s^2
+const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
 
-const float EXTRUDE_ACCEL   = 10000.0f; // mm/s^2
+const float MACHINE_ACCEL_Z  = 500.0f;  // mm/s^2
+const float MAX_VELOCITY_Z   = 50.0f;   // mm/s
+
+const float CORNER_ROUNDING  = 0.2f;   // mm
+
+const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 
 
 // **************************
@@ -63,7 +67,7 @@ const int MAX_BED_TEMP = 150; // C
 
 #define X_HOME_OFFSET 0.0f
 #define Y_HOME_OFFSET 0.0f
-#define Z_HOME_OFFSET 0.0f  
+#define Z_HOME_OFFSET -0.1f  
 
 #define X_HOME_DIRECTION 1.0f  // Set as either 1.0 or -1.0 for direction
 #define Y_HOME_DIRECTION 1.0f
@@ -102,9 +106,9 @@ const int MAX_BED_TEMP = 150; // C
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 
-   #define A_MOTOR_HOME_OFFSET 484.6f    // 485.0f axis zero from home position [mm]
-   #define B_MOTOR_HOME_OFFSET 485.9f
-   #define C_MOTOR_HOME_OFFSET 486.0f  
+   #define A_MOTOR_HOME_OFFSET 484.7f    // 485.0f axis zero from home position [mm]
+   #define B_MOTOR_HOME_OFFSET 486.0f
+   #define C_MOTOR_HOME_OFFSET 486.1f  
 #endif
 
 

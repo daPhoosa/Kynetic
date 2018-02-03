@@ -20,14 +20,14 @@
 // ***********************************
 // **** CONTROL LOOP FREQUENCIES ****
 // *********************************
-const int MOTION_CONTROL_HZ     = 4000;    // Hz
-const int BLOCK_EXECUTE_HZ      = 400;     // Hz
+const int MOTION_CONTROL_HZ     = 5000;    // Hz
+const int BLOCK_EXECUTE_HZ      = 500;     // Hz
 const int SOFT_PWM_HZ           = 100;     // Hz
 const int HEATER_MANAGER_HZ     = 10;      // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz
 const int MAINTENANCE_HZ        = 1;       // Hz
 
-const float MACHINE_VEL_STEP = MACHINE_ACCEL / float(MOTION_CONTROL_HZ); // [mm/s*step]  max vel change per step at max acceleration
+const float MACHINE_VEL_STEP = MACHINE_ACCEL_XY / float(MOTION_CONTROL_HZ); // [mm/s*step]  max vel change per step at max acceleration
 
 
 // ***********************************
@@ -53,4 +53,9 @@ struct kynetic_operation_retention_enabler_t
    bool runProgram = false;
    bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 
+   uint32_t programStartTime;
+
 } KORE;
+
+
+uint32_t funCounter = 0;

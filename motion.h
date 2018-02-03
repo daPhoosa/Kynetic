@@ -21,10 +21,16 @@
 
 
 // **** MOVEMENT ENGINE ****
-SmoothMove motion(MACHINE_ACCEL, MAX_VELOCITY, CORNER_ROUNDING);
+SmoothMove motion;
 
 void configMotion()
 {
+   motion.setParamXY( MACHINE_ACCEL_XY, MAX_VELOCITY_XY );
+   motion.setParamZ( MACHINE_ACCEL_Z, MAX_VELOCITY_Z );
+   motion.setCornerRounding( CORNER_ROUNDING );
+         
    motion.setExtrudeRateOverride( 1.0f );
+   motion.setMotionRateOverride(  1.0f );
    motion.setExrudeAccel( EXTRUDE_ACCEL );
+   //motion.junctionSmoothingOff();
 }
