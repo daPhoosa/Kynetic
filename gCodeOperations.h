@@ -103,8 +103,15 @@ void Group0()
 
          case 28:
             KORE.runProgram = false;
-            machine.startHome( true, true, true );
-            // TODO: add individual axis homing
+            if( gCode.homeX || gCode.homeY || gCode.homeZ ) 
+            {
+               machine.startHome( gCode.homeX, gCode.homeY, gCode.homeZ );
+               gCode.homeX = gCode.homeY = gCode.homeZ = false;
+            }
+            else
+            {
+               machine.startHome( true, true, true ); // home all axis if no axis is specified
+            }
             break;
 
          case 29:

@@ -45,16 +45,22 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
 
-      gCode.X += gCode.workOffsetX; // shift from program postion to machine position
-
       if( gCode.G[0] == 92 )  // set position
       {
          gCode.X = number;
          return;
       }
 
+      if( gCode.G[0] == 28 )  // send Home
+      {
+         gCode.X = number;
+         gCode.homeX = true;
+         return;
+      }
+
       if( gCode.G[3] == 90 ) // absolute
       {
+         number += gCode.workOffsetX; // shift from program to machine coordinate
          if( abs( gCode.X - number ) > 0.0009f )
          {
             gCode.X = number;
@@ -69,6 +75,7 @@ void setState( char letter, float number )
             gCode.newAxisMove = true;
          }
       }
+
       return;
    }
 
@@ -76,16 +83,22 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
 
-      gCode.Y += gCode.workOffsetY; // shift from program postion to machine position
-      
       if( gCode.G[0] == 92 )  // set position
       {
          gCode.Y = number;
          return;
       }
 
+      if( gCode.G[0] == 28 )  // send Home
+      {
+         gCode.Y = number;
+         gCode.homeY = true;
+         return;
+      }
+
       if( gCode.G[3] == 90 ) // absolute
       {
+         number += gCode.workOffsetY; // shift from program to machine coordinate
          if( abs(gCode.Y - number) > 0.0009f )
          {
             gCode.Y = number;
@@ -100,6 +113,7 @@ void setState( char letter, float number )
             gCode.newAxisMove = true;
          }
       }
+
       return;
    }
 
@@ -149,16 +163,22 @@ void setState( char letter, float number )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
 
-      gCode.Z += gCode.workOffsetZ; // shift from program postion to machine position
-
       if( gCode.G[0] == 92 )  // set position
       {
          gCode.Z = number;
          return;
       }
 
+      if( gCode.G[0] == 28 )  // send Home
+      {
+         gCode.Z = number;
+         gCode.homeZ = true;
+         return;
+      }
+
       if( gCode.G[3] == 90 ) // absolute
       {
+         number += gCode.workOffsetZ; // shift from program to machine coordinate
          if( abs(gCode.Z - number) > 0.0009f )
          {
             gCode.Z = number;
@@ -173,6 +193,7 @@ void setState( char letter, float number )
             gCode.newAxisMove = true;
          }
       }
+
       return;
    }
 

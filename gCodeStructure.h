@@ -31,6 +31,8 @@ struct gCode_state_machine_t
    bool extrudeAbsoluteMode = true;
 
    float workOffsetX, workOffsetY, workOffsetZ;
+
+   bool homeX, homeY, homeZ;
  
 } gCode;
 
