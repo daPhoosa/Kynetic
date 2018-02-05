@@ -59,18 +59,12 @@ void motorController()
    Vec3 cart, motor;
 
    motion.getTargetLocation( cart.x, cart.y, cart.z );
-
-   //display(cart);
    
    machine.invKinematics( cart.x, cart.y, cart.z, motor.x, motor.y, motor.z );
 
    float deltaA = motor.x - A_motor.getPositionMM();
    float deltaB = motor.y - B_motor.getPositionMM();
    float deltaC = motor.z - C_motor.getPositionMM();
-
-   //Serial.print(deltaA);Serial.print(" ");
-   //Serial.print(deltaB);Serial.print(" ");
-   //Serial.println(deltaC);
 
    if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
    {
@@ -98,20 +92,13 @@ void motorController()
    {
       C_motor.setSpeed( 0 );
    }
- 
 
-   float eLoc = motion.getExtrudeLocationMM();
-   float eMot = D_motor.getPositionMM();
 
-   float extrudeDelta = eLoc - eMot ;
-   if( abs(extrudeDelta) > 1.0f/float(D_MOTOR_STEP_PER_MM) ) // error must be more than 1 step, or motor is stopped
+   float extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
+
+   if( abs(extrudeDelta) > 1.0f / D_MOTOR_STEP_PER_MM ) // error must be more than 1 step, or motor is stopped
    {  
-      float speed = float(MOTION_CONTROL_HZ) * extrudeDelta;
-      D_motor.setSpeed( speed );
-      
-      //Serial.print(eLoc);Serial.print("\t");
-      //Serial.print(eMot);Serial.print("\t");
-      //Serial.println(speed);
+      D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
    }
    else
    {
