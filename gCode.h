@@ -254,21 +254,21 @@ void setState( char letter, float number )
    
    if( letter == 'I' )
    {
-      gCode.newAxisMove = true;
+      if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
       gCode.I = number;
       return;
    }
    
    if( letter == 'J' )
    {
-      gCode.newAxisMove = true;
+      if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
       gCode.J = number;
       return;
    }
    
    if( letter == 'K' )
    {
-      gCode.newAxisMove = true;
+      if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
       gCode.K = number;
       return;
    }
