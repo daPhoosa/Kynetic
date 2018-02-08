@@ -21,6 +21,8 @@ void addMovementBlock()
 {
    float arcCenterX, arcCenterY;
 
+   static bool zHopActive = false;
+
    switch (gCode.G[1])
    {
       case 0:
@@ -28,15 +30,39 @@ void addMovementBlock()
          {
             gCode.lastMoveRapid = true;
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
+            if( abs(gCode.startZ - gCode.Z) < 0.001 ) // no vertical component
+            {
+               float dx = gCode.startX - gCode.X;
+               float dy = gCode.startY - gCode.Y;
+               if( dx*dx + dy*dy > Z_HOP_MIN_DIST_SQ ) // first move is greater than min
+               {
+                  motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ + AUTO_Z_HOP_HEIGHT ); // lift up
+                  zHopActive = true;
+               }
+            }
          }
-         //motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
-         motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);  // 3D printer gCode assumes that rapids obey feed rate...
+         
+         if( zHopActive )
+         {
+            motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z + AUTO_Z_HOP_HEIGHT, gCode.F);
+         }
+         else
+         {
+            //motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
+            motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);  // 3D printer gCode assumes that rapids obey feed rate...
+         }
+         
          break;
 
       case 1:
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
+            if( zHopActive )
+            {
+               zHopActive = false;
+               motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
+            }
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
          motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
@@ -47,6 +73,11 @@ void addMovementBlock()
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
+            if( zHopActive )
+            {
+               zHopActive = false;
+               motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
+            }
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
          }
          arcCenterX = gCode.startX + gCode.I;
