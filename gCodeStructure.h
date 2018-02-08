@@ -33,6 +33,11 @@ struct gCode_state_machine_t
    float workOffsetX, workOffsetY, workOffsetZ;
 
    bool homeX, homeY, homeZ;
+
+   struct work_offset_storage_t
+   {
+      float X, Y, Z;
+   } WO[6]; // offsets G54, G55, G56, G57, G58, G59
  
 } gCode;
 

@@ -251,6 +251,20 @@ void setState( char letter, float number )
             gCode.G[7] = num;
             break;
 
+         case 54:    // Group 12 -- work offsets
+         case 55:
+         case 56:
+         case 57:
+         case 58:
+         case 59:
+            gCode.G[12] = num;
+            num -= 54;
+            gCode.workOffsetX = gCode.WO[num].X;
+            gCode.workOffsetY = gCode.WO[num].Y;
+            gCode.workOffsetZ = gCode.WO[num].Z;
+            break;
+
+
          default:
             break;
       }
