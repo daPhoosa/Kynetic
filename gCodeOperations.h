@@ -169,7 +169,7 @@ void Group0()
    }
 }
 
-
+/*
 void Group2()
 {
    if( gCode.G[2] )
@@ -177,8 +177,8 @@ void Group2()
 
    }
 }
-
-
+*/
+/*
 void Group3()
 {
    if( gCode.G[3] )
@@ -186,8 +186,8 @@ void Group3()
 
    }
 }
-
-
+*/
+/*
 void Group5()
 {
    if( gCode.G[5] )
@@ -195,8 +195,8 @@ void Group5()
 
    }
 }
-
-
+*/
+/*
 void Group6()
 {
    if( gCode.G[6] )
@@ -204,8 +204,8 @@ void Group6()
 
    }
 }
-
-
+*/
+/*
 void Group7()
 {
    if( gCode.G[7] )
@@ -213,8 +213,8 @@ void Group7()
 
    }
 }
-
-
+*/
+/*
 void Group8()
 {
    if( gCode.G[8] )
@@ -222,8 +222,8 @@ void Group8()
 
    }
 }
-
-
+*/
+/*
 void Group9()
 {
    if( gCode.G[9] )
@@ -231,8 +231,8 @@ void Group9()
 
    }
 }
-
-
+*/
+/*
 void Group10()
 {
    if( gCode.G[10] )
@@ -240,8 +240,8 @@ void Group10()
 
    }
 }
-
-
+*/
+/*
 void Group11()
 {
    if( gCode.G[11] )
@@ -249,8 +249,8 @@ void Group11()
 
    }
 }
-
-
+*/
+/*
 void Group12()
 {
    if( gCode.G[12] )
@@ -258,8 +258,8 @@ void Group12()
 
    }
 }
-
-
+*/
+/*
 void Group15()
 {
    if( gCode.G[15] )
@@ -267,8 +267,8 @@ void Group15()
 
    }
 }
-
-
+*/
+/*
 void Group16()
 {
    if( gCode.G[16] )
@@ -276,7 +276,7 @@ void Group16()
 
    }
 }
-
+*/
 
 void mCodes()
 {

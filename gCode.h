@@ -494,25 +494,25 @@ bool readNextProgramLine()
 
 void executeCodeNow()
 {
-   Group3();  // Abs/Inc selection
+   //Group3();  // Abs/Inc selection
 
-   Group5();  // Feed Mode
+   //Group5();  // Feed Mode
 
-   Group6();  // Inch/Metric
+   //Group6();  // Inch/Metric
 
-   Group7();  // Cutter comp
+   //Group7();  // Cutter comp
 
-   Group8();  // Tool length comp
+   //Group8();  // Tool length comp
 
-   Group10();  // Return plane select
+   //Group10();  // Return plane select
 
-   Group11();  // Scaling
+   //Group11();  // Scaling
 
-   Group12();  // Work coordinate
+   //Group12();  // Work coordinate
 
-   Group15();  // Exact stop mode
+   //Group15();  // Exact stop mode
 
-   Group16();  // Rotation
+   //Group16();  // Rotation
 
    movementOperations();  // group 1 -- placed last to allow modification by other G codes on the same line
 
@@ -523,9 +523,9 @@ void executeCodeDelayed()
 {
    Group0();  // dwell, non-modal commands
 
-   Group2();  // Plane Selection
+   //Group2();  // Plane Selection
 
-   Group9();  // Canned cycles
+   //Group9();  // Canned cycles
     
    mCodes();  // miscellaneous, delayed execute
 
