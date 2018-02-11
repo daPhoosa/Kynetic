@@ -231,7 +231,7 @@
          case 4 : // slow advance
             if( digitalRead( endStopPin ) == switchNoContact )
             {
-               speed += MACHINE_VEL_STEP;
+               speed += MACHINE_VEL_STEP_Z;
                if( speed > velocity ) speed = velocity;
                
                motor.setSpeed( speed );  // move toward end stop if no contact is observed
@@ -247,7 +247,7 @@
          case 3 : // slow retract
             if( motor.getPositionMM() > homeOffset - SLOW_HOME_DIST )
             {
-               speed -= MACHINE_VEL_STEP;
+               speed -= MACHINE_VEL_STEP_Z;
                if( speed < -velocity ) speed = -velocity;
                
                motor.setSpeed( speed );  // back away from switch
@@ -259,7 +259,7 @@
             }
             
          case 2 : // decelerate to zero after slow retract
-            speed += MACHINE_VEL_STEP;
+            speed += MACHINE_VEL_STEP_Z;
             
             if( speed < 0.0f )
             {
