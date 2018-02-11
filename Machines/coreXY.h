@@ -109,7 +109,7 @@
          case 4 : // slow advance
             if( digitalRead( X_ENDSTOP_PIN ) == X_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
             {
-               speed += MACHINE_VEL_STEP * X_HOME_DIRECTION;
+               speed += MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
                if( speed * X_HOME_DIRECTION > velocity ) speed = velocity * X_HOME_DIRECTION;
                
                setVelX( speed );  // move toward end stop if no contact is observed
@@ -125,7 +125,7 @@
          case 3 : // slow retract
             if( getPosX() * X_HOME_DIRECTION > X_HOME_OFFSET - SLOW_HOME_DIST * X_HOME_DIRECTION )
             {
-               speed -= MACHINE_VEL_STEP * X_HOME_DIRECTION;
+               speed -= MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
                if( speed * X_HOME_DIRECTION < -velocity ) speed = -velocity * X_HOME_DIRECTION;
                
                setVelX( speed );  // back away from switch
@@ -137,7 +137,7 @@
             }
             
          case 2 : // decelerate to zero after slow retract
-            speed += MACHINE_VEL_STEP * X_HOME_DIRECTION;
+            speed += MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
             
             if( speed * X_HOME_DIRECTION < 0.0f )
             {
@@ -159,13 +159,117 @@
 
    void coreXY_machine_type::homeAxisY( float velocity )
    {
+      float speed = getVelY(); 
+      
+      switch( Y_homeIndex )
+      {
+         case 6 : // fast advance
+         case 4 : // slow advance
+            if( digitalRead( Y_ENDSTOP_PIN ) == Y_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
+            {
+               speed += MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
+               if( speed * Y_HOME_DIRECTION > velocity ) speed = velocity * Y_HOME_DIRECTION;
+               
+               setVelY( speed );  // move toward end stop if no contact is observed
+               break;
+            }
+            else
+            {
+               setPosY( Y_HOME_OFFSET ); // switched has been activated
+               Y_homeIndex --;
+            }
+          
+         case 5 : // fast retract
+         case 3 : // slow retract
+            if( getPosX() * Y_HOME_DIRECTION > Y_HOME_OFFSET - SLOW_HOME_DIST * Y_HOME_DIRECTION )
+            {
+               speed -= MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
+               if( speed * Y_HOME_DIRECTION < -velocity ) speed = -velocity * Y_HOME_DIRECTION;
+               
+               setVelY( speed );  // back away from switch
+               break;
+            }
+            else
+            {
+               Y_homeIndex --;
+            }
+            
+         case 2 : // decelerate to zero after slow retract
+            speed += MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
+            
+            if( speed * Y_HOME_DIRECTION < 0.0f )
+            {
+               setVelY( speed );  // decelerate
+               break;
+            }
+            else
+            {
+               Y_homeIndex  = 1;
+            }
 
+         case 1 : // hold zero speed, home set
+         case 0 : // hold zero speed, home not set
+            setVelY( 0.0f );
+            break;
+      }
    }
 
 
    void coreXY_machine_type::homeAxisZ( float velocity )
    {
+      float speed = getVelZ(); 
+      
+      switch( Z_homeIndex )
+      {
+         case 6 : // fast advance
+         case 4 : // slow advance
+            if( digitalRead( Z_ENDSTOP_PIN ) == Z_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
+            {
+               speed += MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
+               if( speed * Z_HOME_DIRECTION > velocity ) speed = velocity * Z_HOME_DIRECTION;
+               
+               setVelX( speed );  // move toward end stop if no contact is observed
+               break;
+            }
+            else
+            {
+               setPosX( Z_HOME_OFFSET ); // switched has been activated
+               Z_homeIndex --;
+            }
+          
+         case 5 : // fast retract
+         case 3 : // slow retract
+            if( getPosZ() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
+            {
+               speed -= MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
+               if( speed * Z_HOME_DIRECTION < -velocity ) speed = -velocity * Z_HOME_DIRECTION;
+               
+               setVelZ( speed );  // back away from switch
+               break;
+            }
+            else
+            {
+               Z_homeIndex --;
+            }
+            
+         case 2 : // decelerate to zero after slow retract
+            speed += MACHINE_VEL_STEP_XY * Z_HOME_DIRECTION;
+            
+            if( speed * Z_HOME_DIRECTION < 0.0f )
+            {
+               setVelZ( speed );  // decelerate
+               break;
+            }
+            else
+            {
+               Z_homeIndex  = 1;
+            }
 
+         case 1 : // hold zero speed, home set
+         case 0 : // hold zero speed, home not set
+            setVelZ( 0.0f );
+            break;
+      }
    }
 
 
@@ -191,7 +295,7 @@
             homeAxisZ( SLOW_HOME_VEL );
          }
 
-         if( X_homeIndex == 1 && Y_homeIndex == 1 && Z_homeIndex == 1 ) // not done going home until all axis are done
+         if( X_homeIndex < 2 && Y_homeIndex < 2 && Z_homeIndex < 2 ) // not done going home until all axis are done
          {
             homingActive = false;
             homingComplete = true;
