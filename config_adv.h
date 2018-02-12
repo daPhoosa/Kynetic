@@ -20,7 +20,7 @@
 // ***********************************
 // **** CONTROL LOOP FREQUENCIES ****
 // *********************************
-const int MOTION_CONTROL_HZ     = 5000;    // Hz
+const int MOTION_CONTROL_HZ     = 4000;    // Hz
 const int BLOCK_EXECUTE_HZ      = 500;     // Hz
 const int SOFT_PWM_HZ           = 100;     // Hz
 const int HEATER_MANAGER_HZ     = 10;      // Hz
@@ -54,6 +54,8 @@ struct kynetic_operation_retention_enabler_t
    bool delayedExecute = false; // use this to force the movement buffer to empty before doing some operation
 
    uint32_t programStartTime;
+
+   uint32_t motionTickPerExecute = STEPPER_TICK_HZ / MOTION_CONTROL_HZ;
 
 } KORE;
 
