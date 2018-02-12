@@ -55,79 +55,85 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: 9.6% CPU usage
    static float motor_A, motor_B, motor_C;
    static float  deltaA,  deltaB,  deltaC, extrudeDelta;
 
-
-   switch( counter ) // split motion control over multiple ISR calls
+   if( KORE.runProgram && machine.allHomeCompleted() )
    {
-      case 0:
-         motion.getTargetLocation( cart_X, cart_Y, cart_Z );
-         break;
+      switch( counter ) // split motion control over multiple ISR calls
+      {
+         case 0:
+            motion.getTargetLocation( cart_X, cart_Y, cart_Z );
+            break;
 
-      case 1:
-         machine.invKinematics( cart_X, cart_Y, cart_Z, motor_A, motor_B, motor_C );
-         break;
+         case 1:
+            machine.invKinematics( cart_X, cart_Y, cart_Z, motor_A, motor_B, motor_C );
+            break;
 
-      case 2:
-         deltaA = motor_A - A_motor.getPositionMM();
+         case 2:
+            deltaA = motor_A - A_motor.getPositionMM();
 
-         if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
-         {
-            A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
-         }
-         else
-         {
-            A_motor.setSpeed( 0 );
-         }
-         break;
+            if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
+            {
+               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
+            }
+            else
+            {
+               A_motor.setSpeed( 0 );
+            }
+            break;
 
-      case 3:
-         deltaB = motor_B - B_motor.getPositionMM();
+         case 3:
+            deltaB = motor_B - B_motor.getPositionMM();
 
-         if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM )
-         {
-            B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
-         }
-         else
-         {
-            B_motor.setSpeed( 0 );
-         } 
-         break;
+            if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM )
+            {
+               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
+            }
+            else
+            {
+               B_motor.setSpeed( 0 );
+            } 
+            break;
 
-      case 4:
-         deltaC = motor_C - C_motor.getPositionMM();
+         case 4:
+            deltaC = motor_C - C_motor.getPositionMM();
 
-         if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM )
-         {
-            C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
-         }
-         else
-         {
-            C_motor.setSpeed( 0 );
-         }
-         break;
+            if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM )
+            {
+               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
+            }
+            else
+            {
+               C_motor.setSpeed( 0 );
+            }
+            break;
 
-      case 5:
-         extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
+         case 5:
+            extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
 
-         if( abs(extrudeDelta) > 1.0f / D_MOTOR_STEP_PER_MM ) // error must be more than 1 step, or motor is stopped
-         {  
-            D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
-         }
-         else
-         {
-            D_motor.setSpeed( 0 );
-         }
-         break;
+            if( abs(extrudeDelta) > 1.0f / D_MOTOR_STEP_PER_MM ) // error must be more than 1 step, or motor is stopped
+            {  
+               D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
+            }
+            else
+            {
+               D_motor.setSpeed( 0 );
+            }
+            break;
 
-      default:
-   }
+         default:
+      }
 
-   if( counter > KORE.motionTickPerExecute )
-   {
-      counter = 1;
+      if( counter >= KORE.motionTickPerExecute )
+      {
+         counter = 0;
+      }
+      else
+      {
+         counter++;
+      }
    }
    else
    {
-      counter++;
+      counter = 0;
    }
 
    A_motor.step();
