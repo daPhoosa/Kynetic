@@ -59,52 +59,36 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 
          case 2:
             deltaA = motor_A - A_motor.getPositionMM();
+            deltaB = motor_B - B_motor.getPositionMM();
+            deltaC = motor_C - C_motor.getPositionMM();
 
-            if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM )
-            {
+            if( abs(deltaA) > 1.0f / A_MOTOR_STEP_PER_MM ){
                A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
-            }
-            else
-            {
+            }else{
                A_motor.setSpeed( 0 );
             }
             break;
 
-         case 3:
-            deltaB = motor_B - B_motor.getPositionMM();
-
-            if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM )
-            {
+            if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM ){
                B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
-            }
-            else
-            {
+            }else{
                B_motor.setSpeed( 0 );
             } 
             break;
 
-         case 4:
-            deltaC = motor_C - C_motor.getPositionMM();
-
-            if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM )
-            {
+            if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM ){
                C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
-            }
-            else
-            {
+            }else{
                C_motor.setSpeed( 0 );
             }
             break;
 
-         case 5:
+         case 3:
             extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
 
-            if( abs(extrudeDelta) > 1.0f / D_MOTOR_STEP_PER_MM ) // error must be more than 1 step, or motor is stopped
-            {  
+            if( abs(extrudeDelta) > 1.0f / D_MOTOR_STEP_PER_MM ){  
                D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
-            }
-            else
-            {
+            }else{
                D_motor.setSpeed( 0 );
             }
             break;

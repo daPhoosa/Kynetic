@@ -102,6 +102,7 @@
       if( feedRate < 0.0f )     // reverse
       {
          uint32_t tps = uint32_t( stepperConstant * -feedRate );
+
          noInterrupts();
          digitalWrite(directionPin, REVERSE);
          moveDirection = Negative;
@@ -111,6 +112,7 @@
       else                     // forward
       {
          uint32_t tps = uint32_t( stepperConstant * feedRate );
+
          noInterrupts();
          digitalWrite(directionPin, FORWARD);
          moveDirection = Positive;
@@ -123,7 +125,7 @@
    void stepperMotor::setTickRateHz( const uint32_t & t_tickRateHz )
    {
       tickRateHz = float(t_tickRateHz);
-      maxFeedRate = 0.499f * tickRateHz * MMPerStep; // max feed rate is when sending a pulse every other tick
+      maxFeedRate = 0.5f * tickRateHz * MMPerStep; // max feed rate is when sending a pulse every other tick
       stepperConstant = float(1UL << 31) / maxFeedRate;
    }
 
@@ -158,15 +160,15 @@
       return float(temp) * MMPerStep;
    }
 
+
    float stepperMotor::getSpeed()
    {
       return feedRate;  // MM / s 
    }
 
+
    inline void stepperMotor::step()
    {
-      static uint32_t tickCounter = 0;
-      
       uint32_t next = tickCounter + ticksPerStep;
 
       if( next < tickCounter ) // detect rollover
