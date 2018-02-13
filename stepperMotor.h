@@ -173,6 +173,11 @@
       return float(temp) * MMPerStep;
    }
 
+   float stepperMotor::getSpeed()
+   {
+      return feedRate;
+   }
+
    inline void stepperMotor::step()
    {
       tickCounter++;

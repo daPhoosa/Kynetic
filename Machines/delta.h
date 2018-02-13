@@ -39,7 +39,7 @@
          bool actuatorPos( const float & x1, const float & y1, const float & x2, const float & y2, const float & z, float & result );
          float square( float x );
          
-         void homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
+         void homeAxis(int & index, stepperMotor & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
 
          int A_homeIndex, B_homeIndex, C_homeIndex;
          bool homingActive = false;
@@ -221,7 +221,7 @@
    }
    
    
-   void delta_machine_type::homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
+   void delta_machine_type::homeAxis(int & index, stepperMotor & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
    {
       float speed = motor.getSpeed(); 
       

@@ -20,10 +20,11 @@
 #include "config_adv.h"
 #include "Kynetic_pins.h"
 
+#include "stepperMotor.h"
 #include "motors.h"
+
 #include "dataStreams.h"
 #include "timers.h"
-#include "motion.h"
 #include "temperatureSensor.h"
 #include "heaters.h"
 
@@ -31,6 +32,8 @@
 #include "Machines\cartesian.h"
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
+
+#include "motion.h"
 
 #include "gCode.h"
 
@@ -81,6 +84,7 @@ void lowerPriorityOperations()
 
    if( motionControl.precheck(10) ) // immedately return to motion control if last one was delayed
    {
+      //delayMicroseconds( 100000 / MOTION_CONTROL_HZ); // delay for 10% of one cycle
       funCounter++;
    }
    else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
@@ -117,7 +121,7 @@ void lowerPriorityOperations()
       }
       funCounter = 0;
 
-      motionControl.displayStats();
+      //motionControl.displayStats();
       //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
       
       //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
