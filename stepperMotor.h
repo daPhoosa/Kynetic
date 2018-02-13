@@ -40,9 +40,6 @@
 
       private:
 
-         void setStepperConstant();
-         void setMaxFeedRate();
-
          float stepperConstant;
          float tickRateHz;
          float stepsPerMM, MMPerStep;
@@ -59,8 +56,7 @@
 
          enum move_direction_t {
             Positive,
-            Negative,
-            Stopped
+            Negative
          } moveDirection;
 
    };
@@ -72,8 +68,7 @@
       MMPerStep  = 1.0f / stepsPerMM;
       setTickRateHz( t_tickRateHz );
 
-      moveDirection = Stopped;
-      ticksPerStep = 1 << 31;
+      ticksPerStep = 0;
 
       // Config Step Pin
       stepPin = t_stepPin;
@@ -104,32 +99,22 @@
    {
       feedRate = constrain( t_feedRate, -maxFeedRate, maxFeedRate );
 
-      static const float minFeedRate = 0.1f;
-
-      if( feedRate < -minFeedRate )     // reverse
+      if( feedRate < 0.0f )     // reverse
       {
-         uint32_t tps = uint32_t( stepperConstant / -feedRate + 0.5f );
+         uint32_t tps = uint32_t( stepperConstant * -feedRate );
          noInterrupts();
          digitalWrite(directionPin, REVERSE);
          moveDirection = Negative;
          ticksPerStep = tps;
          interrupts();
       }
-      else if( feedRate > minFeedRate ) // forward
+      else                     // forward
       {
-         uint32_t tps = uint32_t( stepperConstant / feedRate + 0.5f );
+         uint32_t tps = uint32_t( stepperConstant * feedRate );
          noInterrupts();
          digitalWrite(directionPin, FORWARD);
          moveDirection = Positive;
          ticksPerStep = tps;
-         interrupts();
-      }
-      else                              // stopped
-      {
-         noInterrupts();
-         moveDirection = Stopped;
-         ticksPerStep = 1 << 31;
-         tickCounter = 0;
          interrupts();
       }
    }
@@ -138,14 +123,23 @@
    void stepperMotor::setTickRateHz( const uint32_t & t_tickRateHz )
    {
       tickRateHz = float(t_tickRateHz);
-      setStepperConstant();
-      setMaxFeedRate();
+      maxFeedRate = 0.499f * tickRateHz * MMPerStep; // max feed rate is when sending a pulse every other tick
+      stepperConstant = float(1UL << 31) / maxFeedRate;
    }
 
 
    void stepperMotor::setPosition(const float & posFloat)
    {
-      int32_t posInt = int32_t( posFloat * stepsPerMM + 0.5f );
+      int32_t posInt;
+
+      if( posFloat > 0.0f )
+      {
+         posInt = int32_t( posFloat * stepsPerMM + 0.5f );
+      }
+      else
+      {
+         posInt = int32_t( posFloat * stepsPerMM - 0.5f );
+      }
       
       noInterrupts();
       position = posInt;
@@ -153,21 +147,12 @@
    }
 
 
-   void stepperMotor::setStepperConstant()
-   {
-      stepperConstant = tickRateHz * MMPerStep;
-   }
-
-
-   void stepperMotor::setMaxFeedRate()
-   {
-      maxFeedRate = 0.5f * tickRateHz * MMPerStep; // max feed rate is when sending a pulse every other tick
-   }
-
    float stepperMotor::getPositionMM()
    {
+      int32_t temp;
+      
       noInterrupts();
-      int32_t temp = position;
+      temp = position;
       interrupts();
       
       return float(temp) * MMPerStep;
@@ -175,42 +160,35 @@
 
    float stepperMotor::getSpeed()
    {
-      return feedRate;
+      return feedRate;  // MM / s 
    }
 
    inline void stepperMotor::step()
    {
-      tickCounter++;
+      static uint32_t tickCounter = 0;
+      
+      uint32_t next = tickCounter + ticksPerStep;
 
-      if( tickCounter >= ticksPerStep )
+      if( next < tickCounter ) // detect rollover
       {
-         if( stepPinOn )
+         digitalWrite( stepPin, HIGH );
+         stepPinOn = true;
+         
+         if( moveDirection == Positive )
          {
-            digitalWrite( stepPin, LOW );   // set pin low
-            stepPinOn = false;
-            tickCounter = 1;
+            position++;
          }
          else
          {
-            if( moveDirection == Positive )
-            {
-               position++;
-               digitalWrite( stepPin, HIGH );
-               stepPinOn = true;
-            }
-            else if( moveDirection == Negative )
-            {
-               position--;
-               digitalWrite( stepPin, HIGH );
-               stepPinOn = true;
-            }
-            else     // stopped
-            {
-               tickCounter = 0; // reset to avoid running repeatedly
-               // no step pulse is sent if stopped
-            }  
+            position--;
          }
-      }      
+      }
+      else if( stepPinOn )
+      {
+         digitalWrite( stepPin, LOW );   // set pin low
+         stepPinOn = false;
+      }
+      tickCounter = next;      
    }
 
 #endif
