@@ -82,12 +82,7 @@ void lowerPriorityOperations()
    //  * After any operation completes, higher priority operations are given the first opportunity to run.
    //  * All operations should run quickly so that higher priority operations are not delayed excessively.
 
-   if( motionControl.precheck(10) ) // immedately return to motion control if last one was delayed
-   {
-      //delayMicroseconds( 100000 / MOTION_CONTROL_HZ); // delay for 10% of one cycle
-      funCounter++;
-   }
-   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+   if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
       blockFeeder();
       //funCounter++;
