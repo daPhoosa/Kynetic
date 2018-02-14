@@ -60,4 +60,4 @@ struct kynetic_operation_retention_enabler_t
 } KORE;
 
 
-uint32_t funCounter = 0;
+volatile uint32_t funCounter = 0;

@@ -32,7 +32,7 @@ void configMotion()
    motion.setExtrudeRateOverride( 1.0f );
    motion.setMotionRateOverride(  1.0f );
    motion.setExrudeAccel( EXTRUDE_ACCEL );
-   //motion.junctionSmoothingOff();
+   motion.junctionSmoothingOff();
 }
 
 
@@ -47,9 +47,10 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 
    if( KORE.runProgram && machine.allHomeCompleted() )
    {
-      switch( counter ) // split motion control over multiple ISR calls
+      switch( counter ) // split motion control over multiple ISR calls to avoid going over time
       {
          case 0:
+            //funCounter++;
             motion.getTargetLocation( cart_X, cart_Y, cart_Z );
             break;
 
@@ -67,21 +68,18 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             }else{
                A_motor.setSpeed( 0 );
             }
-            break;
 
             if( abs(deltaB) > 1.0f / B_MOTOR_STEP_PER_MM ){
                B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
             }else{
                B_motor.setSpeed( 0 );
             } 
-            break;
 
             if( abs(deltaC) > 1.0f / C_MOTOR_STEP_PER_MM ){
                C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
             }else{
                C_motor.setSpeed( 0 );
             }
-            break;
 
          case 3:
             extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();

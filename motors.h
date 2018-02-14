@@ -62,7 +62,7 @@ void setMotorTickRate()
       C_motor.setTickRateHz( tickCount );
       D_motor.setTickRateHz( tickCount );
 
-      KORE.motionTickPerExecute = uint32_t( float(tickCount) / float(MOTION_CONTROL_HZ) + 0.5f );
+      KORE.motionTickPerExecute = tickCount / MOTION_CONTROL_HZ - 1;
 
       //SERIAL_PORT.println( tickCount );
       //SERIAL_PORT.println( scaleFactor, 6 );
