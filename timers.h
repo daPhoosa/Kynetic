@@ -16,8 +16,6 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include <PollTimer.h>           // https://github.com/daPhoosa/PollTimer                 --instal to libraries diectory
-
 
 // **** POLL TIMERS ****
 PollTimer motionControl(MOTION_CONTROL_HZ);

@@ -20,6 +20,13 @@
 #include "config_adv.h"
 #include "Kynetic_pins.h"
 
+#include <SdFat.h>               // https://github.com/greiman/SdFat                --instal to libraries diectory
+#include <uButton.h>             // https://github.com/daPhoosa/uButton
+#include <FrequencyTimer2.h>     // https://github.com/PaulStoffregen/FrequencyTimer2     --included with teensyduino
+#include <SmoothMove.h>          // https://github.com/daPhoosa/SmoothMove                --instal to libraries diectory
+#include <MedianFilter.h>        // https://github.com/daPhoosa/MedianFilter
+#include <PollTimer.h>           // https://github.com/daPhoosa/PollTimer                 --instal to libraries diectory
+
 #include "stepperMotor.h"
 #include "motors.h"
 

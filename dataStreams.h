@@ -16,8 +16,6 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include <SdFat.h>               // https://github.com/greiman/SdFat                --instal to libraries diectory
-
 
 // **** SD CARD INTERFACE ****
 SdFatSdioEX sdEx;

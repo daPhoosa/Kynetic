@@ -18,7 +18,7 @@
 
 
 #include "thermistorTables.h"
-#include <MedianFilter.h>
+
 
 MedianFilter extrude1Filter( 9, 1000);
 MedianFilter bedFilter( 9, 1000);

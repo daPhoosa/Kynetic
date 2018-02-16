@@ -16,9 +16,6 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include <FrequencyTimer2.h>     // https://github.com/PaulStoffregen/FrequencyTimer2     --included with teensyduino
-#include <SmoothMove.h>          // https://github.com/daPhoosa/SmoothMove                --instal to libraries diectory
-
 
 // **** MOVEMENT ENGINE ****
 SmoothMove motion;
