@@ -104,7 +104,6 @@ void movementOperations()
    else if ( gCode.newAxisMove ) // move only
    {
       addMovementBlock();
-      //Serial.println("!");
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {
@@ -158,7 +157,7 @@ void Group0()
             motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
             motion.startMoving();
 
-            Serial.print("Set Position:  X:");Serial.print(gCode.X);Serial.print("  Y:");Serial.print(gCode.Y);Serial.print("  Z:");Serial.print(gCode.Z);Serial.print("  E:");Serial.println(gCode.E);
+            display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n';
             break;
          
          default:

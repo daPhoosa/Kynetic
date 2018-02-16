@@ -26,11 +26,21 @@ File file;
 bool endOfFileFound;
 
 
+void display( const String& msg )
+{
+   #ifdef SERIAL_PORT
+      if(SERIAL_PORT)
+      {
+         SERIAL_PORT.print(msg);
+      }
+   #endif
+}
+
+
 void startSerial()
 {
    #ifdef SERIAL_PORT
       SERIAL_PORT.begin(250000);
-      //while(!Serial){}
    #endif
 }
 
@@ -42,13 +52,13 @@ void startSD()
       file = sdEx.open("print.nc", O_READ);
       if(!file)
       {
-         SERIAL_PORT.println("Open File Failed!");
+         display("Open File Failed! \n");
          KORE.runProgram = false;
       }   
    }
    else
    {
-      SERIAL_PORT.println("Start SD Failed!");
+      display("Start SD Failed! \n");
    }
 }
 

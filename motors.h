@@ -27,18 +27,10 @@ stepperMotor D_motor( D_MOTOR_STEP_PER_MM, D_MOTOR_DIRECTION, STEPPER_TICK_HZ, D
 
 void armMotors()
 {
-   /*
-   A_motor.enable();
-   B_motor.enable();
-   C_motor.enable();
-   D_motor.enable();
-   */
-
    pinMode( A_MOTOR_ENBL_PIN, LOW);
    pinMode( B_MOTOR_ENBL_PIN, LOW);
    pinMode( C_MOTOR_ENBL_PIN, LOW);
    pinMode( D_MOTOR_ENBL_PIN, LOW);
-
 }
 
 
@@ -63,9 +55,6 @@ void setMotorTickRate()
       D_motor.setTickRateHz( tickCount );
 
       KORE.motionTickPerExecute = tickCount / MOTION_CONTROL_HZ - 1;
-
-      //SERIAL_PORT.println( tickCount );
-      //SERIAL_PORT.println( scaleFactor, 6 );
    }
    stepperTickCount = 0;
 }

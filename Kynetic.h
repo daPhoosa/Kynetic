@@ -83,11 +83,7 @@ void motionRunner()
       
       motion.startMoving();
 
-      Serial.println("Home Complete");
-   }
-   else
-   {
-      //Serial.println("1");
+      display(String("Home Complete \n"));
    }
 
 }
@@ -99,15 +95,10 @@ void blockFeeder()
    {
       if( KORE.delayedExecute ) 
       {
-         //Serial.print("Block Count: ");Serial.println(motion.getBlockCount());
          if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
          {
             //Serial.println("delayed execute!");
             executeCodeDelayed();
-         }
-         else
-         {
-            //motion.getBlockCount();
          }
       }
       else  
@@ -128,7 +119,7 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
       {
          KORE.extrude1_wait = false; // up to temp
-         Serial.print("Extruder to Temp: ");Serial.println(KORE.extrude1Temp, 1);
+         display( "Extruder to Temp: " + String(KORE.extrude1Temp, 1) + '\n' );
          KORE.programStartTime = millis();
       }
       else
@@ -142,7 +133,7 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
       {
          KORE.bed_wait = false; // up to temp
-         Serial.print("Bed to Temp: ");Serial.println(KORE.bedTemp, 1);
+         display( "Bed to Temp: " + String(KORE.bedTemp, 1) + '\n' );
          KORE.programStartTime = millis();
       }
       else
@@ -167,18 +158,14 @@ void programReader()
             KORE.runProgram = false;
 
             uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
-            Serial.print("H:");Serial.print( runTime / 3600);
+            display( "H:" + Stream( runTime / 3600) );
             runTime = runTime % 3600;
-            Serial.print(" M:");Serial.print( runTime / 60);
+            display( " M:" + Stream( runTime / 60) );
             runTime = runTime % 60;
-            Serial.print(" S:");Serial.println( runTime);
+            display( " S:" + Stream( runTime) + '\n');
          }
-         //Serial.println("1");
       }
-      else
-      {
-         //Serial.println("0");
-      }
+
       getNextProgramBlock = false;   
    }
 }
@@ -188,22 +175,19 @@ void buttonWatcher()
 {
    if( SelectBtn.check() )
    {
-      //Serial.print("SELECT BUTTON - ");
       if( KORE.runProgram )
       {
          KORE.manualPauseActive = !KORE.manualPauseActive;
       }
       else
       {
-
-         Serial.println("START");
+         display("START" + '\n');
          KORE.manualPauseActive = false;
          restartSD();
          
          KORE.runProgram = true;
 
          KORE.programStartTime = millis();
-         
       }
    }
 }

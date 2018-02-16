@@ -116,17 +116,11 @@ int  heaterPID::out()
 
 void  heaterPID::display()
 {
-   SERIAL_PORT.print( setTemp );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.print( probeTemp );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.print( p_Out );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.print( i_Out );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.print( d_Out );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.print( fwd_Out );
-   SERIAL_PORT.print(" ");
-   SERIAL_PORT.println( out() );
+   display( String( setTemp )   + " " + 
+            String( probeTemp ) + " " + 
+            String( p_Out )     + " " + 
+            String( i_Out )     + " " + 
+            String( d_Out )     + " " + 
+            String( fwd_Out )   + " " + 
+            String( out() )     + '\n';
 }

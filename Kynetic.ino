@@ -111,8 +111,8 @@ void lowerPriorityOperations()
       //Serial.println( float(funCounter*100) / 1000000.0f, 1);  // interupt CPU usage
       if( funCounter )
       {
-         Serial.println( funCounter );
-         motionControl.displayStats();
+         display( String(funCounter) );
+         //motionControl.displayStats();
       }
       funCounter = 0;
 

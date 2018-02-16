@@ -27,7 +27,6 @@ char getNextChar()
    {
       char ch;
       file.read(&ch, 1);
-      //Serial.print(" ");Serial.print(int(ch));
       //Serial.print(ch);
       return ch;
    }
@@ -39,7 +38,6 @@ void setState( char letter, float number )
 {
 
    // list most common letters first to avoid uneeded compares
-   //Serial.print(letter);Serial.println(number);
 
    if( letter == 'X' )
    {
@@ -409,7 +407,6 @@ bool readNextProgramLine()
       if( endOfBlockFound ) // ignore all characters after the EOB until CR
       {
          ch = getNextChar(); // throw away
-         //Serial.print(".");
       }
       else
       {
