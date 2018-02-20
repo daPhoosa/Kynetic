@@ -21,8 +21,6 @@ void addMovementBlock()
 {
    float arcCenterX, arcCenterY;
 
-   static bool zHopActive = false;
-
    switch (gCode.G[1])
    {
       case 0:
@@ -37,12 +35,12 @@ void addMovementBlock()
                if( dx*dx + dy*dy > Z_HOP_MIN_DIST_SQ ) // first move is greater than min
                {
                   motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ + AUTO_Z_HOP_HEIGHT ); // lift up
-                  zHopActive = true;
+                  gCode.zHopActive = true;
                }
             }
          }
          
-         if( zHopActive )
+         if( gCode.zHopActive )
          {
             motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z + AUTO_Z_HOP_HEIGHT, gCode.F);
          }
@@ -58,9 +56,9 @@ void addMovementBlock()
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
-            if( zHopActive )
+            if( gCode.zHopActive )
             {
-               zHopActive = false;
+               gCode.zHopActive = false;
                motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
             }
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
@@ -73,9 +71,9 @@ void addMovementBlock()
          if( gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = false;
-            if( zHopActive )
+            if( gCode.zHopActive )
             {
-               zHopActive = false;
+               gCode.zHopActive = false;
                motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
             }
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
@@ -107,7 +105,14 @@ void movementOperations()
    }
    else if ( gCode.newExtruderMove ) // extrude only
    {
-      motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z ); // dummy block in current location to attach static extrude to
+      if( gCode.zHopActive )  // dummy block in current location to attach static extrude to
+      {
+         motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z + AUTO_Z_HOP_HEIGHT );
+      }
+      else
+      {
+         motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z ); 
+      }
       motion.addExtrudeMM( gCode.E, gCode.F );
       gCode.newExtruderMove = false;
    }
@@ -157,7 +162,7 @@ void Group0()
             motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
             motion.startMoving();
 
-            display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n';
+            display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" + String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n');
             break;
          
          default:
