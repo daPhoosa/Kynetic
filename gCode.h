@@ -20,17 +20,62 @@
 #include "gCodeStructure.h"
 #include "gCodeOperations.h"
 
+const int SD_BUFFER_SIZE = 2048;
+
+
+struct read_buffer_sd_t
+{
+   char data[SD_BUFFER_SIZE];
+   int  dataCount = 0;
+   bool dataReady = false;
+} readBuffer[2];
+
 
 char getNextChar()
 {
+   static int dataIndex = 0;
+   static int bufferIndex = 0;
+
    if( file.available() )
    {
-      char ch;
-      file.read(&ch, 1);
-      //Serial.print(ch);
+      if( !readBuffer[0].dataReady ) // fill first buffer if empty
+      {
+         readBuffer[0].dataCount = file.read( &readBuffer[0].data , SD_BUFFER_SIZE );
+         if( readBuffer[0].dataCount > 0 ) readBuffer[0].dataReady = true;
+         if( !readBuffer[1].dataReady )  // insure read starts with this buffer if both are empty
+         {
+            bufferIndex = 0;
+            dataIndex = 0;
+         }
+      }
+
+      if( !readBuffer[1].dataReady ) // fill second buffer if empty
+      {
+         readBuffer[1].dataCount = file.read( &readBuffer[1].data , SD_BUFFER_SIZE );
+         if( readBuffer[1].dataCount > 0 ) readBuffer[1].dataReady = true;
+      }
+   }
+
+   if( readBuffer[0].dataReady || readBuffer[1].dataReady ) // check if either buffer has data
+   {
+      char ch = readBuffer[bufferIndex].data[dataIndex]; // get character
+
+      dataIndex++;
+
+      if( dataIndex >= readBuffer[bufferIndex].dataCount )  // out of data in current buffer
+      {
+         readBuffer[bufferIndex].dataReady = false;
+         dataIndex = 0;
+         bufferIndex = !bufferIndex; // toggle between 0 and 1
+      }
+
       return ch;
    }
-   return 0;
+   else // no more data in buffers ( file end has been found or read error )
+   {
+      return 0;
+   }
+
 }
 
 

@@ -34,6 +34,8 @@ struct gCode_state_machine_t
 
    bool homeX, homeY, homeZ;
 
+   bool zHopActive = false;
+
    struct work_offset_storage_t
    {
       float X, Y, Z;

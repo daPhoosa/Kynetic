@@ -18,7 +18,7 @@
 
 
 // **** SD CARD INTERFACE ****
-SdFatSdioEX sdEx;
+SdFatSdioEX SD;
 File file;
 
 bool endOfFileFound;
@@ -45,9 +45,9 @@ void startSerial()
 
 void startSD()
 {
-   if( sdEx.begin() )
+   if( SD.begin() )
    {
-      file = sdEx.open("print.nc", O_READ);
+      file = SD.open("print.nc", O_READ);
       if(!file)
       {
          display("Open File Failed! \n");
