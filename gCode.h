@@ -34,25 +34,21 @@ struct read_buffer_sd_t
 char getNextChar()
 {
    static int dataIndex = 0;
-   static int bufferIndex = 0;
+   static int bufferIndex = 0; // read from this buffer
+   static int otherBuffer = 1; // fill this buffer
 
-   if( file.available() )
+   if( !readBuffer[otherBuffer].dataReady ) // check for empty buffer
    {
-      if( !readBuffer[0].dataReady ) // fill first buffer if empty
+      if( file.available() )
       {
-         readBuffer[0].dataCount = file.read( &readBuffer[0].data , SD_BUFFER_SIZE );
-         if( readBuffer[0].dataCount > 0 ) readBuffer[0].dataReady = true;
-         if( !readBuffer[1].dataReady )  // insure read starts with this buffer if both are empty
+         readBuffer[otherBuffer].dataCount = file.read( &readBuffer[otherBuffer].data , SD_BUFFER_SIZE );
+         if( readBuffer[otherBuffer].dataCount > 0 ) readBuffer[otherBuffer].dataReady = true;
+         if( !readBuffer[bufferIndex].dataReady )  // insure read starts with this buffer if both are empty
          {
-            bufferIndex = 0;
+            bufferIndex = otherBuffer;
+            otherBuffer = !bufferIndex;
             dataIndex = 0;
          }
-      }
-
-      if( !readBuffer[1].dataReady ) // fill second buffer if empty
-      {
-         readBuffer[1].dataCount = file.read( &readBuffer[1].data , SD_BUFFER_SIZE );
-         if( readBuffer[1].dataCount > 0 ) readBuffer[1].dataReady = true;
       }
    }
 
@@ -66,7 +62,8 @@ char getNextChar()
       {
          readBuffer[bufferIndex].dataReady = false;
          dataIndex = 0;
-         bufferIndex = !bufferIndex; // toggle between 0 and 1
+         otherBuffer = bufferIndex;    // swap active buffers
+         bufferIndex = !bufferIndex;   // toggle between 0 and 1
       }
 
       return ch;
@@ -75,7 +72,6 @@ char getNextChar()
    {
       return 0;
    }
-
 }
 
 
