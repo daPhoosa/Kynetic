@@ -462,11 +462,11 @@ bool readNextProgramLine()
 
             if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
             {
-               bool negative  = false;
-               bool validNum  = false;
-               int decimal    = -1;
+               bool negative   = false;
+               bool validNum   = false;
+               int decimal     = 0;
                int32_t iNumber = 0;
-               char letter    = ch;    // save letter for later
+               char letter     = ch;    // save letter for later
  
                ch = getNextChar();
  
@@ -479,52 +479,48 @@ bool readNextProgramLine()
                {
                   ch = getNextChar();  // ignore positive sign
                }
- 
-               while( (ch > 47 && ch < 58) || ch == '.' || ch == ',' ) // Get Number (or decimal point )
+
+               while( ch - '0' <= 9 ) // get digits for int portion
                {
-                  if( ch == '.' || ch == ',' )
-                  {
-                     if( decimal < 0 )
-                     {
-                        decimal = 0; // only change if a decimal point has not been seen previously
-                     }
-                     // ( in the future multiple decimal points should probably generate an alarm, for now just ignore )
-                  }
-                  else
-                  {
-                     validNum = true; // at least one digit after the letter
-                    
-                     iNumber = iNumber * 10 + (ch - 48); // move previous value over one dec place and add new number
+                  validNum = true; // at least one digit after the letter
+
+                  iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
+
+                  ch = getNextChar();
+               }
+
+               if( ch == '.' || ch == ',' )  // catch decimal point
+               {
+                  ch = getNextChar();
+               }
  
-                     if( decimal >= 0 ) // check if a decimal place has been seen
-                     {
-                        decimal++; // increment number of decimal places
-                     }
-                  }
- 
+               while( ch - '0' <= 9 && decimal < 5 ) // Get digits for decimal portion (up to 5)
+               {
+                  validNum = true; // at least one digit after the letter
+                  
+                  iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
+
+                  decimal++; // increment number of decimal places
+                  
                   ch = getNextChar();
                }
  
                if( validNum )
                {
                   float fNumber;
-                  static const float decTable[8] = { 1.0f, 0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f, 0.000001f, 0.0000001f };
+                  static const float decTable[6] = { 1.0f, 0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f };
  
                   if( negative ) iNumber *= -1;
  
-                  if( decimal < 1 )
+                  if( decimal )
                   {
-                     fNumber = float( iNumber ); // integer
-                  }
-                  else if( decimal < 8 )
-                  {
-                     fNumber = float( iNumber ) * decTable[decimal];
+                     fNumber = float( iNumber ) * decTable[decimal]; // decimal
                   }
                   else
                   {
-                     fNumber = float( iNumber ) / powf( 10.0f, float(decimal) );
+                     fNumber = float( iNumber ); // integer
                   }
-
+                  
                   setState( letter, fNumber );
                }
                else
