@@ -20,50 +20,49 @@
 #include "gCodeStructure.h"
 #include "gCodeOperations.h"
 
-const int SD_BUFFER_SIZE = 2048;
-
-
-struct read_buffer_sd_t
-{
-   char data[SD_BUFFER_SIZE];
-   int  dataCount = 0;
-   bool dataReady = false;
-} readBuffer[2];
-
 
 char getNextChar()
 {
-   static int dataIndex = 0;
-   static int bufferIndex = 0; // read from this buffer
-   static int otherBuffer = 1; // fill this buffer
+   static const int SD_BUFFER_SIZE = 2048;
 
-   if( !readBuffer[otherBuffer].dataReady ) // check for empty buffer
+   static struct read_buffer_sd_t
+   {
+      char data[SD_BUFFER_SIZE];
+      int  dataCount = 0;
+      bool dataReady = false;
+   } buffer[2];
+
+   static int dataIndex = 0;
+   static int active    = 0;    // read from this buffer
+   static int fill      = 1;    // fill this buffer
+
+   if( !buffer[fill].dataReady ) // check for empty buffer
    {
       if( file.available() )
       {
-         readBuffer[otherBuffer].dataCount = file.read( &readBuffer[otherBuffer].data , SD_BUFFER_SIZE );
-         if( readBuffer[otherBuffer].dataCount > 0 ) readBuffer[otherBuffer].dataReady = true;
-         if( !readBuffer[bufferIndex].dataReady )  // insure read starts with this buffer if both are empty
+         buffer[fill].dataCount = file.read( &buffer[fill].data , SD_BUFFER_SIZE );
+         if( buffer[fill].dataCount > 0 ) buffer[fill].dataReady = true;
+         if( !buffer[active].dataReady )  // insure read starts with this buffer if active is empty
          {
-            bufferIndex = otherBuffer;
-            otherBuffer = !bufferIndex;
+            active    =  fill;
+            fill      = !fill;
             dataIndex = 0;
          }
       }
    }
 
-   if( readBuffer[0].dataReady || readBuffer[1].dataReady ) // check if either buffer has data
+   if( buffer[active].dataReady ) // check if active buffer has data
    {
-      char ch = readBuffer[bufferIndex].data[dataIndex]; // get character
+      char ch = buffer[active].data[dataIndex]; // get character
 
       dataIndex++;
 
-      if( dataIndex >= readBuffer[bufferIndex].dataCount )  // out of data in current buffer
+      if( dataIndex >= buffer[active].dataCount )  // out of data in current buffer
       {
-         readBuffer[bufferIndex].dataReady = false;
+         buffer[active].dataReady = false;
+         fill      =  active;   // swap active buffers
+         active    = !active;
          dataIndex = 0;
-         otherBuffer = bufferIndex;    // swap active buffers
-         bufferIndex = !bufferIndex;   // toggle between 0 and 1
       }
 
       return ch;
