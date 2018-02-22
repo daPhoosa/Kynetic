@@ -455,7 +455,7 @@ bool readNextProgramLine()
             endOfBlockFound = true;
             ch = getNextChar();
          }
-         else
+         else     // Parse to find letter & lumber pairs
          {
             if( ch > 96 && ch < 123 ) ch -= 32; // to upper
 
@@ -493,7 +493,7 @@ bool readNextProgramLine()
                   ch = getNextChar();
                }
  
-               while( ch - '0' <= 9 && decimal < 5 ) // Get digits for decimal portion (up to 5)
+               while( ch - '0' <= 9 && decimal < 5 ) // Get digits for decimal portion up to 5 ( int32_t hold 9 dec digits - xxxx.xxxxx )
                {
                   validNum = true; // at least one digit after the letter
                   
@@ -509,7 +509,7 @@ bool readNextProgramLine()
                   float fNumber;
                   static const float decTable[6] = { 1.0f, 0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f };
  
-                  if( negative ) iNumber *= -1;
+                  if( negative ) iNumber = -iNumber;
  
                   if( decimal )
                   {
