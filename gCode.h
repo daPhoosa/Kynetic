@@ -457,9 +457,8 @@ bool readNextProgramLine()
          }
          else     // Parse to find letter & lumber pairs
          {
-            if( ch > 96 && ch < 123 ) ch -= 32; // to upper
 
-            if( ch > 64 && ch < 91 ) // Get Letter (ignore all else)
+            if( ch >= 'A' && ch <= 'Z' ) // Get Letter (ignore all else)
             {
                bool negative   = false;
                bool validNum   = false;
@@ -469,17 +468,13 @@ bool readNextProgramLine()
  
                ch = getNextChar();
  
-               if( ch == '-' )  // check for negative (only valid if it is the first char after the letter)
+               if( ch == '-' )  // check for negative
                {
                   negative = true;
                   ch = getNextChar();
                }
-               else if( ch == '+' )
-               {
-                  ch = getNextChar();  // ignore positive sign
-               }
 
-               while( ch - '0' <= 9 ) // get digits for int portion
+               while( ch >= '0' && ch <= '9' )  // get digits for int portion
                {
                   validNum = true; // at least one digit after the letter
 
@@ -492,14 +487,17 @@ bool readNextProgramLine()
                {
                   ch = getNextChar();
                }
- 
-               while( ch - '0' <= 9 && decimal < 5 ) // Get digits for decimal portion up to 5 ( int32_t hold 9 dec digits - xxxx.xxxxx )
-               {
-                  validNum = true; // at least one digit after the letter
-                  
-                  iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
 
-                  decimal++; // increment number of decimal places
+               while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t hold 9 dec digits - xxxx.xxxxx )
+               {
+                  if( decimal < 5 )
+                  {
+                     validNum = true; // at least one digit after the letter
+                     
+                     iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
+
+                     decimal++; // increment number of decimal places
+                  }
                   
                   ch = getNextChar();
                }
@@ -519,7 +517,7 @@ bool readNextProgramLine()
                   {
                      fNumber = float( iNumber ); // integer
                   }
-                  
+
                   setState( letter, fNumber );
                }
                else
