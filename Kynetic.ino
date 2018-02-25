@@ -74,29 +74,24 @@ void loop()
       //funCounter++;
 
       //motionControl.collectStats();
+
+      watchDogChecks();
       
-      lowerPriorityOperations(); // only one of these will run each call
-
-      motionControl.collectStats();
    }
- 
-}
-
-
-void lowerPriorityOperations()
-{
-   // Nested if-else priority scheme
-   //  * After any operation completes, higher priority operations are given the first opportunity to run.
-   //  * All operations should run quickly so that higher priority operations are not delayed excessively.
-
-   if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
+   else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
-      blockFeeder();
-      //funCounter++;
+      if( blockFeeder() )
+      {
+         //blockExecute.collectStats();
+      }
    }
-   else if( blockRead.check() && getNextProgramBlock ) // Read SD card and Parse G code
+   else if( blockRead.check() ) // Read SD card and Parse G code
    {
-      programReader();
+      if( getNextProgramBlock )
+      {
+         programReader();
+         blockRead.collectStats();
+      }
    }
    else if( softPWM.check() )
    {
@@ -115,23 +110,31 @@ void lowerPriorityOperations()
    {
       setMotorTickRate();
 
-      //Serial.println( float(funCounter*100) / 1000000.0f, 1);  // interupt CPU usage
-      if( funCounter )
+      if( KORE.runProgram )
       {
+         //Serial.println( float(funCounter*100) / 1000000.0f, 1);  // interupt CPU usage
+         /*
+         if( funCounter )
+         {
          display( String(funCounter) );
          //motionControl.displayStats();
+         } */
+         
+         funCounter = 0;
+         
+         
+         //motionControl.displayStats();
+         //blockExecute.displayStats();
+         //blockRead.displayStats();
+
+         //blockRead.resetStats();
+         //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
+         
+         //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
+
+         //Serial.println(machine.allHomeCompleted());
+         //Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());
       }
-      funCounter = 0;
-
-      //motionControl.displayStats();
-      //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
-      
-      //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
-
-      //Serial.println(machine.allHomeCompleted());
-      //Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());
    }   
+ 
 }
-
-
-
