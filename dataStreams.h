@@ -35,6 +35,17 @@ void display( const String& msg )
 }
 
 
+void display( const int& msg )
+{
+   #ifdef SERIAL_PORT
+      if(SERIAL_PORT)
+      {
+         SERIAL_PORT.print(msg);
+      }
+   #endif
+}
+
+
 void startSerial()
 {
    #ifdef SERIAL_PORT
