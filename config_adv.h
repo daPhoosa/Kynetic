@@ -57,6 +57,8 @@ struct kynetic_operation_retention_enabler_t
 
    uint32_t motionTickPerExecute = STEPPER_TICK_HZ / MOTION_CONTROL_HZ;
 
+   uint32_t heaterWatchDog = 0;
+
 } KORE;
 
 
