@@ -153,6 +153,7 @@ void Group0()
             break;
 
          case 92: // set position
+            /*
             machine.invKinematics( gCode.X, gCode.Y, gCode.Z, motor.x, motor.y, motor.z ); // convert from cartesian to machine coordinates 
             A_motor.setPosition( motor.x );
             B_motor.setPosition( motor.y );
@@ -160,6 +161,11 @@ void Group0()
             D_motor.setPosition( gCode.E );
 
             motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
+            motion.startMoving();
+            */
+
+            D_motor.setPosition( gCode.E );
+            motion.setPosE( gCode.E );
             motion.startMoving();
 
             display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" + String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n');
