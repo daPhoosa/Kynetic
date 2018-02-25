@@ -455,17 +455,16 @@ bool readNextProgramLine()
             endOfBlockFound = true;
             ch = getNextChar();
          }
-         else     // Parse to find letter & lumber pairs
+         else     // Parse to find letter & number pairs
          {
-
             if( ch >= 'A' && ch <= 'Z' ) // Get Letter (ignore all else)
             {
                bool negative   = false;
                bool validNum   = false;
                int decimal     = 0;
                int32_t iNumber = 0;
+
                char letter     = ch;    // save letter for later
- 
                ch = getNextChar();
  
                if( ch == '-' )  // check for negative
@@ -488,7 +487,7 @@ bool readNextProgramLine()
                   ch = getNextChar();
                }
 
-               while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t hold 9 dec digits - xxxx.xxxxx )
+               while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t holds 9 dec digits - xxxx.xxxxx )
                {
                   if( decimal < 5 )
                   {
@@ -504,18 +503,34 @@ bool readNextProgramLine()
  
                if( validNum )
                {
-                  float fNumber;
-                  static const float decTable[6] = { 1.0f, 0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f };
- 
                   if( negative ) iNumber = -iNumber;
- 
-                  if( decimal )
+
+                  float fNumber = float( iNumber );
+
+                  switch( decimal )
                   {
-                     fNumber = float( iNumber ) * decTable[decimal]; // decimal
-                  }
-                  else
-                  {
-                     fNumber = float( iNumber ); // integer
+                     case 0:
+                        break;
+
+                     case 1:
+                        fNumber *= 0.1f;
+                        break;
+
+                     case 2:
+                        fNumber *= 0.01f;
+                        break;
+
+                     case 3:
+                        fNumber *= 0.001f;
+                        break;
+
+                     case 4:
+                        fNumber *= 0.0001f;
+                        break;
+
+                     case 5:
+                        fNumber *= 0.00001f;
+                        break;
                   }
 
                   setState( letter, fNumber );
