@@ -53,6 +53,19 @@ void setPins()
 
 // **** OTHER FUNCTIONS ****
 
+void abortAll()
+{
+   motion.abortMotion();
+   KORE.runProgram = false;
+
+   KORE.bedTargetTemp = 0;
+   digitalWrite(BED_HEATER_PWM_PIN, LOW);
+
+   KORE.extrude1TargetTemp = 0;
+   digitalWrite(EXTRUDER1_PWM_PIN, LOW);
+}
+
+
 void motorController()
 {
    // moved to ISR
@@ -79,6 +92,7 @@ void motionRunner()
       KORE.runProgram = true;
 
       motionControl.resetStats();
+      blockRead.resetStats();
       
       motion.startMoving();
 
@@ -88,7 +102,7 @@ void motionRunner()
 }
 
 
-void blockFeeder()
+bool blockFeeder()
 {
    if( KORE.runProgram && motion.bufferVacancy() )
    {
@@ -104,8 +118,10 @@ void blockFeeder()
       {
          executeCodeNow();
          getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
+         return true;
       }
    }
+   return false;
 }
 
 
@@ -154,14 +170,18 @@ void programReader()
          fileComplete = true;
          if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
-            KORE.runProgram = false;
+            abortAll();
+
+            blockRead.displayStats();
 
             uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
-            display( "H:" + Stream( runTime / 3600) );
+            uint32_t t = runTime / 3600;
+            display( "H:" ); display( t );
             runTime = runTime % 3600;
-            display( " M:" + Stream( runTime / 60) );
+            t = runTime / 60;
+            display( " M:" ); display( t );
             runTime = runTime % 60;
-            display( " S:" + Stream( runTime) + '\n');
+            display( " S:" ); display( runTime ); display( "\n" );
          }
       }
 
@@ -180,7 +200,7 @@ void buttonWatcher()
       }
       else
       {
-         display("START" + '\n');
+         display("START\n");
          KORE.manualPauseActive = false;
          restartSD();
          
@@ -195,6 +215,20 @@ void buttonWatcher()
 void displayDriver()
 {
 
+}
+
+
+void watchDogChecks()
+{
+   if( KORE.heaterWatchDog++ > MOTION_CONTROL_HZ )
+   {
+      if( KORE.bedTargetTemp > 0 || KORE.extrude1TargetTemp > 0 )
+      {
+         display("HEATER ERROR - CONTROL LOOP FAILED TO EXECUTE\n");
+         abortAll();
+      }
+      KORE.heaterWatchDog = 0;
+   }
 }
 
 

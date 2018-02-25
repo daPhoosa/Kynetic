@@ -60,5 +60,7 @@ void heaterOperator()  // operate heaters
 
    //extruder1_PID.display();
    //bed_PID.display();
+
+   KORE.heaterWatchDog = 0; // reset counter
 }
 
