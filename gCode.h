@@ -36,18 +36,15 @@ char getNextChar()
    static int active    = 0;    // read from this buffer
    static int fill      = 1;    // fill this buffer
 
-   if( !buffer[fill].dataReady ) // check for empty buffer
+   if( !buffer[fill].dataReady && file.available() ) // check for empty buffer and if the file is available
    {
-      if( file.available() )
+      buffer[fill].dataCount = file.read( &buffer[fill].data , SD_BUFFER_SIZE );
+      if( buffer[fill].dataCount > 0 ) buffer[fill].dataReady = true;
+      if( !buffer[active].dataReady )  // insure read starts with this buffer if active is empty
       {
-         buffer[fill].dataCount = file.read( &buffer[fill].data , SD_BUFFER_SIZE );
-         if( buffer[fill].dataCount > 0 ) buffer[fill].dataReady = true;
-         if( !buffer[active].dataReady )  // insure read starts with this buffer if active is empty
-         {
-            active    =  fill;
-            fill      = !fill;
-            dataIndex = 0;
-         }
+         active    =  fill;
+         fill      = !fill;
+         dataIndex = 0;
       }
    }
 
