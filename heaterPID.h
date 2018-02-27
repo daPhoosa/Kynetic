@@ -29,6 +29,8 @@ class heaterPID
       int in( float setTemp, float probeTemp );
       int out();
 
+      int getSaturationTime();
+
       void  display();
    
 
@@ -44,10 +46,13 @@ class heaterPID
       
       float lastError, setPointTemp;
 
-      const float outputMax = 255.0f;
-      const float invOutputMax = 1.0f / outputMax;
+      const float OUTPUT_MAX = 255.0f;
+      const float INV_OUTPUT_MAX = 1.0f / OUTPUT_MAX;
       
       int output;
+
+      bool outputSaturated;
+      uint32_t saturationStartTime;
 };
 
 
@@ -84,17 +89,17 @@ int heaterPID::in( float set, float probe )
    float error = setTemp - probeTemp;
    float errorDelta = (error - lastError) * 0.25f; // smooth error change
 
-   p_Out = constrain( pGain * error, -outputMax, outputMax );   // proportional component
+   p_Out = constrain( pGain * error, -OUTPUT_MAX, OUTPUT_MAX );   // proportional component
 
-   if( abs(p_Out) < outputMax ) // only add I+D when P is not saturated
+   if( abs(p_Out) < OUTPUT_MAX ) // only add I+D when P is not saturated
    {
-      float scaleFactor = (outputMax - abs(p_Out)) * invOutputMax; // soft I+D effect at extreme error
+      float scaleFactor = (OUTPUT_MAX - abs(p_Out)) * INV_OUTPUT_MAX; // soften I+D effect at extreme error
 
       i_Out += iGain * error * scaleFactor;     // integral component 
-      i_Out = constrain( i_Out, -outputMax, outputMax );     
+      i_Out = constrain( i_Out, -OUTPUT_MAX, OUTPUT_MAX );     
 
       d_Out = dGain * errorDelta * scaleFactor; // derivative component
-      d_Out = constrain( d_Out, -outputMax, outputMax );
+      d_Out = constrain( d_Out, -OUTPUT_MAX, OUTPUT_MAX );
    }
    else
    {
@@ -104,6 +109,18 @@ int heaterPID::in( float set, float probe )
    lastError += errorDelta; 
    
    output = int( p_Out + i_Out + d_Out + fwd_Out );
+
+   if( output >= int(OUTPUT_MAX) )
+   {
+      outputSaturated = true;
+      if( !saturationStartTime ) saturationStartTime = millis(); // set start time the first time saturation is observed
+   }
+   else
+   {
+      outputSaturated = false;
+      saturationStartTime  = 0;
+   }
+   
    return output;
 }
 
@@ -111,6 +128,17 @@ int heaterPID::in( float set, float probe )
 int  heaterPID::out()
 {
    return output;
+}
+
+
+int heaterPID::getSaturationTime()
+{
+   if( outputSaturated )
+   {
+      return ( millis() - saturationStartTime ) / 1000; // return time in seconds
+   }
+
+   return 0;   
 }
 
 
