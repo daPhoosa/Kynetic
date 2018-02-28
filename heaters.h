@@ -66,12 +66,20 @@ bool heaterSafetyChecks()
       alarm = true;
    }
 
-   // thermistor not touching
    if( KORE.extrude1TargetTemp )
    {
-      if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME )
+      if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME )   // thermistor not touching, bad heating element
       {
          display("ALARM: EXTRUDER 1 EXCESSIVE HEAT TIME \n");
+         alarm = true;
+      }
+
+      int reading = extrude1Filter.getStDev();
+      if( reading > MAX_ERATIC_EXT_THERM )
+      {
+         display("ALARM: EXTRUDER 1 THERMISTOR ERATIC READINGS ");
+         display(reading);
+         display("\n");
          alarm = true;
       }
    }
@@ -83,27 +91,11 @@ bool heaterSafetyChecks()
          display("ALARM: BED EXCESSIVE HEAT TIME \n");
          alarm = true;
       }
-   }
 
-   // thermistor eratic readings
-   if( KORE.extrude1TargetTemp )
-   {
-      int reading = extrude1Filter.getStDev();
-      if( reading > MAX_ERATIC_EXT_THERM )
-      {
-         display("ALARM: EXTRUDER 1 ERATIC THERMISTOR READINGS ");
-         display(reading);
-         display("\n");
-         alarm = true;
-      }
-   }
-   
-   if( KORE.bedTargetTemp )
-   {
       int reading = bedFilter.getStDev();
       if( reading > MAX_ERATIC_BED_THERM )
       {
-         display("ALARM: BED ERATIC THERMISTOR READINGS ");
+         display("ALARM: BED THERMISTOR ERATIC READINGS ");
          display(reading);
          display("\n");
          alarm = true;

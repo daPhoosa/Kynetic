@@ -346,26 +346,26 @@ void mCodes()
          case 109:    // Hot end on, DO wait
             extStartTime = millis();
             KORE.extrude1_wait = true;
-            KORE.extrude1TargetTemp = int(gCode.S + 0.5f);
+            KORE.extrude1TargetTemp = min( int(gCode.S + 0.5f), MAX_EXTRUDER1_TEMP );
             gCode.S = 0.0f;
             break;
 
          case 104:    // Hot end on, NO wait
             KORE.extrude1_wait = false;
-            KORE.extrude1TargetTemp = int(gCode.S + 0.5f);
+            KORE.extrude1TargetTemp = min( int(gCode.S + 0.5f), MAX_EXTRUDER1_TEMP );
             gCode.S = 0.0f;
             break;
 
          case 190:    // Bed on, DO wait
             bedStartTime = millis();
             KORE.bed_wait = true;
-            KORE.bedTargetTemp = int(gCode.S + 0.5f);
+            KORE.bedTargetTemp = min( int(gCode.S + 0.5f), MAX_BED_TEMP );
             gCode.S = 0.0f;
             break;
 
          case 140:    // Bed on, NO wait
             KORE.bed_wait = false;
-            KORE.bedTargetTemp = int(gCode.S + 0.5f);
+            KORE.bedTargetTemp = min( int(gCode.S + 0.5f), MAX_BED_TEMP );
             gCode.S = 0.0f;
             break;
 

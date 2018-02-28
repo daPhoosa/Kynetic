@@ -30,6 +30,7 @@ const int MAINTENANCE_HZ        = 1;       // Hz
 const float MACHINE_VEL_STEP_XY = MACHINE_ACCEL_XY / float(MOTION_CONTROL_HZ); // [mm/s*step]  max vel change per step at max acceleration
 const float MACHINE_VEL_STEP_Z  = MACHINE_ACCEL_Z  / float(MOTION_CONTROL_HZ);
 
+
 // ***********************************
 // **** STEPPER TICK FREQUENCIES ****
 // *********************************
@@ -37,6 +38,10 @@ const int   STEPPER_TICK_PERIOD = 10;      // us
 const uint32_t STEPPER_TICK_HZ  = 1000000UL / STEPPER_TICK_PERIOD; // Hz
 
 
+// *************************
+// **** HEATER SETTING ****
+// ***********************
+const int MIN_HEATER_PERIOD  = 100;  // ms
 
 
 struct kynetic_operation_retention_enabler_t
