@@ -85,6 +85,31 @@ bool heaterSafetyChecks()
       }
    }
 
+   // thermistor eratic readings
+   if( KORE.extrude1TargetTemp )
+   {
+      int reading = extrude1Filter.getStDev();
+      if( reading > MAX_ERATIC_EXT_THERM )
+      {
+         display("ALARM: EXTRUDER 1 ERATIC THERMISTOR READINGS ");
+         display(reading);
+         display("\n");
+         alarm = true;
+      }
+   }
+   
+   if( KORE.bedTargetTemp )
+   {
+      int reading = bedFilter.getStDev();
+      if( reading > MAX_ERATIC_BED_THERM )
+      {
+         display("ALARM: BED ERATIC THERMISTOR READINGS ");
+         display(reading);
+         display("\n");
+         alarm = true;
+      }
+   }
+
    return alarm;
 }
 
