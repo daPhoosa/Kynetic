@@ -62,6 +62,8 @@ void setup()
    configMotion();
   
    startPollTimers();
+
+   display( "KYNETIC CNC CONTROLLER \n" );
 }
 
 
@@ -100,6 +102,8 @@ void loop()
    else if( heaterManager.check() )
    {
       heaterOperator(); // operate heaters
+
+      if( heaterSafetyChecks() ) abortAll();
    }
    else if ( buttonsAndUI.check() ) // check if any buttons are depressed and update Display
    {
@@ -131,6 +135,8 @@ void loop()
          //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
          
          //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
+
+         //Serial.print(KORE.extrude1TargetTemp);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
 
          //Serial.println(machine.allHomeCompleted());
          //Serial.print(motion.getExtrudeLocationMM());Serial.print("   ");Serial.println(D_motor.getPositionMM());

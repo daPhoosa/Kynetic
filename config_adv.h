@@ -63,3 +63,5 @@ struct kynetic_operation_retention_enabler_t
 
 
 volatile uint32_t funCounter = 0;
+
+uint32_t extStartTime, bedStartTime;

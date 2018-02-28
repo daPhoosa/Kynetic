@@ -56,7 +56,11 @@ void startSerial()
 
 void startSD()
 {
-   if( SD.begin() )
+   if( file.isOpen() ) 
+   {
+      file.rewind();
+   }
+   else if( SD.begin() )
    {
       file = SD.open("print.nc", O_READ);
       if(!file)

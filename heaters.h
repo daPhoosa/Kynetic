@@ -49,6 +49,46 @@ void heaterPWM()  // toogle heaters to get desired duty cycle
 }
 
 
+bool heaterSafetyChecks()
+{
+   bool alarm = false;
+
+   // broken wire on thermistor check
+   if( KORE.extrude1Temp < 0 ) 
+   {
+      display("ALARM: EXTRUDER 1 THERMISTOR CONNECTION FAILURE \n");
+      alarm = true;
+   }
+
+   if( KORE.bedTemp < 0 )      
+   {
+      display("ALARM: BED THERMISTOR CONNECTION FAILURE \n");
+      alarm = true;
+   }
+
+   // thermistor not touching
+   if( KORE.extrude1TargetTemp )
+   {
+      if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME )
+      {
+         display("ALARM: EXTRUDER 1 EXCESSIVE HEAT TIME \n");
+         alarm = true;
+      }
+   }
+   
+   if( KORE.bedTargetTemp )
+   {
+      if( bed_PID.getSaturationTime() > MAX_BED_HEAT_TIME )
+      {
+         display("ALARM: BED EXCESSIVE HEAT TIME \n");
+         alarm = true;
+      }
+   }
+
+   return alarm;
+}
+
+
 void heaterOperator()  // operate heaters
 {
    // do cool things... ha ha

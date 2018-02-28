@@ -164,11 +164,17 @@ void Group0()
             motion.startMoving();
             */
 
+            Serial.print("X:"); Serial.print(gCode.X - gCode.startX);Serial.print(" Y:"); Serial.print(gCode.Y - gCode.startY);Serial.print(" Z:"); Serial.println(gCode.Z - gCode.startZ);
+
+            gCode.workOffsetX += gCode.startX - gCode.X;
+            gCode.workOffsetY += gCode.startY - gCode.Y;
+            gCode.workOffsetZ += gCode.startZ - gCode.Z;
+
             D_motor.setPosition( gCode.E );
             motion.setPosE( gCode.E );
             motion.startMoving();
 
-            display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" + String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n');
+            //display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" + String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n');
             break;
          
          default:
@@ -338,6 +344,7 @@ void mCodes()
             break;
 
          case 109:    // Hot end on, DO wait
+            extStartTime = millis();
             KORE.extrude1_wait = true;
             KORE.extrude1TargetTemp = int(gCode.S + 0.5f);
             gCode.S = 0.0f;
@@ -350,6 +357,7 @@ void mCodes()
             break;
 
          case 190:    // Bed on, DO wait
+            bedStartTime = millis();
             KORE.bed_wait = true;
             KORE.bedTargetTemp = int(gCode.S + 0.5f);
             gCode.S = 0.0f;

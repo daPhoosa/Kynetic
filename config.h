@@ -23,10 +23,10 @@
 // **********************************
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
-const float MACHINE_ACCEL_XY = 5000.0f;  // mm/s^2
-const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
+const float MACHINE_ACCEL_XY = 4000.0f;  // mm/s^2
+const float MAX_VELOCITY_XY  = 240.0f;   // mm/s
 
-const float MACHINE_ACCEL_Z  = 5000.0f;  // mm/s^2
+const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
 
 const float CORNER_ROUNDING  = 0.04f;   // mm
@@ -38,9 +38,11 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 // **** PRINT SETTINGS ****
 // ********************************
 
-const float AUTO_Z_HOP_HEIGHT = 0.2f;     // adds a z-hop when a horizontal rapid move is detected ( detects slicer z-hops and does nothing )
-const float Z_HOP_MIN_DIST_SQ = 9.0f;     // increase this to reduce extra hops over small distances
+const float AUTO_Z_HOP_HEIGHT = 0.2f;     // adds a z-hop when a horizontal rapid move is detected ( ignores slicer z-hops )
+const float Z_HOP_MIN_DIST_SQ = 4.0f;     // increase this to reduce extra hops over small distances
 
+const int MAX_EXT1_HEAT_TIME = 300;       // max time in seconds for the heater to get to temp before alarming out
+const int MAX_BED_HEAT_TIME  =  90;
 
 
 // **************************
@@ -70,8 +72,8 @@ const int MAX_BED_TEMP = 150; // C
 // ***********************************************
 // **** HOME POSITION AND ENDSTOP PARAMETERS ****
 // *********************************************
-#define FAST_HOME_VEL  40.0f     // [mm/s]
-#define SLOW_HOME_VEL  4.0f      // [mm/s]
+#define FAST_HOME_VEL  30.0f     // [mm/s]
+#define SLOW_HOME_VEL  6.0f      // [mm/s]
 #define SLOW_HOME_DIST 3.0f      // [mm]
 
 #define X_HOME_OFFSET 0.0f
@@ -115,9 +117,9 @@ const int MAX_BED_TEMP = 150; // C
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 
-   #define A_MOTOR_HOME_OFFSET 484.9f    // 485.0f axis zero from home position [mm]
-   #define B_MOTOR_HOME_OFFSET 486.2f
-   #define C_MOTOR_HOME_OFFSET 486.3f  
+   #define A_MOTOR_HOME_OFFSET 485.0f    // 485.0f axis zero from home position [mm]
+   #define B_MOTOR_HOME_OFFSET 485.8f
+   #define C_MOTOR_HOME_OFFSET 486.1f  
 #endif
 
 
