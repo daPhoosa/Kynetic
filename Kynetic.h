@@ -55,14 +55,14 @@ void setPins()
 
 void abortAll()
 {
+   display("ABORT ALL EXECUTED \n");
    motion.abortMotion();
    KORE.runProgram = false;
 
-   KORE.bedTargetTemp = 0;
-   digitalWrite(BED_HEATER_PWM_PIN, LOW);
-
+   KORE.bedTargetTemp = 0;    // turn heaters off
    KORE.extrude1TargetTemp = 0;
-   digitalWrite(EXTRUDER1_PWM_PIN, LOW);
+   heaterOperator();
+   heaterPWM();
 }
 
 
@@ -91,8 +91,8 @@ void motionRunner()
 
       KORE.runProgram = true;
 
-      motionControl.resetStats();
-      blockRead.resetStats();
+      //motionControl.resetStats();
+      //blockRead.resetStats();
       
       motion.startMoving();
 
@@ -134,7 +134,9 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
       {
          KORE.extrude1_wait = false; // up to temp
-         display( "Extruder to Temp: " + String(KORE.extrude1Temp, 1) + '\n' );
+         display( "Extruder to Temp: " + String(KORE.extrude1Temp, 1) + "  Time:" );
+         display( (millis() - extStartTime) / 1000 );
+         display("\n");
          KORE.programStartTime = millis();
       }
       else
@@ -148,7 +150,9 @@ bool pauseManager() // return true if pause is active
       if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
       {
          KORE.bed_wait = false; // up to temp
-         display( "Bed to Temp: " + String(KORE.bedTemp, 1) + '\n' );
+         display( "Bed to Temp: " + String(KORE.bedTemp, 1) + "  Time:" );
+         display( (millis() - bedStartTime) / 1000 );
+         display("\n");
          KORE.programStartTime = millis();
       }
       else
