@@ -53,20 +53,29 @@ bool heaterSafetyChecks()
 {
    bool alarm = false;
 
-   // broken wire on thermistor check
-   if( KORE.extrude1Temp < 0 ) 
+   if( KORE.extrude1Temp < 0 ) // broken wire on thermistor check
    {
       display("ALARM: EXTRUDER 1 THERMISTOR CONNECTION FAILURE \n");
       alarm = true;
    }
+   else if( KORE.extrude1Temp > MAX_EXTRUDER1_TEMP ) // over max
+   {
+      display("ALARM: EXTRUDER 1 TEMPERATURE EXCEEDS MAX \n");
+      alarm = true;
+   }
 
-   if( KORE.bedTemp < 0 )      
+   if( KORE.bedTemp < 0 )    // broken wire on thermistor check  
    {
       display("ALARM: BED THERMISTOR CONNECTION FAILURE \n");
       alarm = true;
    }
+   else if( KORE.bedTemp > MAX_BED_TEMP )  // over max    
+   {
+      display("ALARM: BED TEMPERATURE EXCEEDS MAX \n");
+      alarm = true;
+   }
 
-   if( KORE.extrude1TargetTemp )
+   if( KORE.extrude1TargetTemp ) // only check these if temp has been set
    {
       if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME )   // thermistor not touching, bad heating element
       {
@@ -84,7 +93,7 @@ bool heaterSafetyChecks()
       }
    }
    
-   if( KORE.bedTargetTemp )
+   if( KORE.bedTargetTemp ) // only check these if temp has been set
    {
       if( bed_PID.getSaturationTime() > MAX_BED_HEAT_TIME )
       {
