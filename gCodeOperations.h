@@ -30,16 +30,14 @@ void addMovementBlock()
          {
             gCode.lastMoveRapid = true;
             motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
-            if( abs(gCode.startZ - gCode.Z) < AUTO_Z_HOP_HEIGHT ) // no vertical component
+
+            float dx  = gCode.startX - gCode.X;
+            float dy  = gCode.startY - gCode.Y;
+            rapidDist = sqrtf( dx*dx + dy*dy );
+            if( rapidDist > Z_HOP_MIN_DIST ) // first move is greater than min
             {
-               float dx  = gCode.startX - gCode.X;
-               float dy  = gCode.startY - gCode.Y;
-               rapidDist = sqrtf( dx*dx + dy*dy );
-               if( rapidDist > Z_HOP_MIN_DIST ) // first move is greater than min
-               {
-                  motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ + AUTO_Z_HOP_HEIGHT ); // lift up
-                  gCode.zHopActive = true;
-               }
+               motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ + AUTO_Z_HOP_HEIGHT ); // lift up
+               gCode.zHopActive = true;
             }
          }
          
