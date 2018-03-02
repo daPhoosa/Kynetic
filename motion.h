@@ -29,7 +29,7 @@ void configMotion()
    motion.setExtrudeRateOverride( 1.0f );
    motion.setMotionRateOverride(  1.0f );
    motion.setExrudeAccel( EXTRUDE_ACCEL );
-   motion.junctionSmoothingOff();
+   //motion.junctionSmoothingOff();
 }
 
 

@@ -38,8 +38,8 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 // **** PRINT SETTINGS ****
 // ********************************
 
-const float AUTO_Z_HOP_HEIGHT = 0.2f;  // adds a z-hop when a horizontal rapid move is detected ( ignores slicer z-hops )
-const float Z_HOP_MIN_DIST_SQ = 4.0f;  // increase this to reduce extra hops over small distances
+const float AUTO_Z_HOP_HEIGHT = 0.4f;  // adds a z-hop when a horizontal rapid move is detected ( ignores slicer z-hops )
+const float Z_HOP_MIN_DIST    = 2.0f;  // increase this to reduce extra hops over small distances
 
 
 // **************************
@@ -60,8 +60,8 @@ const int MAX_BED_TEMP       = 150;  // C
 const int MAX_EXT1_HEAT_TIME = 300;    // max time in seconds for the heater to get to temp before alarming out
 const int MAX_BED_HEAT_TIME  =  90;    //    - this will also trigger if the heater is ever on constantly over this amount of time
 
-const int MAX_ERATIC_BED_THERM = 10;   // max standard deviation of the raw ADC thermistor readings
-const int MAX_ERATIC_EXT_THERM = 10;   //    - Should catch thermistors that are touching intermittently 
+const int MAX_ERATIC_BED_THERM = 40;   // max standard deviation of the raw ADC thermistor readings
+const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are touching intermittently 
 
 
 // **************************
@@ -120,9 +120,9 @@ const int MAX_ERATIC_EXT_THERM = 10;   //    - Should catch thermistors that are
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 
-   #define A_MOTOR_HOME_OFFSET 485.0f    // 485.0f axis zero from home position [mm]
-   #define B_MOTOR_HOME_OFFSET 485.8f
-   #define C_MOTOR_HOME_OFFSET 486.1f  
+   #define A_MOTOR_HOME_OFFSET 485.1f    // 485.0f axis zero from home position [mm]
+   #define B_MOTOR_HOME_OFFSET 485.9f
+   #define C_MOTOR_HOME_OFFSET 486.2f  
 #endif
 
 
