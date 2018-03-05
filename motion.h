@@ -60,19 +60,19 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             deltaC = motor_C - C_motor.getPositionMM();
             
             if( abs(deltaA) > 0.5f / A_MOTOR_STEP_PER_MM ){
-               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
+               A_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaA );
             }else{
                A_motor.setSpeed( 0 );
             }
 
             if( abs(deltaB) > 0.5f / B_MOTOR_STEP_PER_MM ){
-               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
+               B_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaB );
             }else{
                B_motor.setSpeed( 0 );
             } 
 
             if( abs(deltaC) > 0.5f / C_MOTOR_STEP_PER_MM ){
-               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
+               C_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaC );
             }else{
                C_motor.setSpeed( 0 );
             }
@@ -82,7 +82,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
 
             if( abs(extrudeDelta) > 0.5f / D_MOTOR_STEP_PER_MM ){  
-               D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
+               D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * extrudeDelta );
             }else{
                D_motor.setSpeed( 0 );
             }
