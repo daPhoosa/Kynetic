@@ -18,8 +18,8 @@
 
 
 // **** GLOBAL VARIABLES ****
-bool getNextProgramBlock = false;
-bool executeNextBlock = false;
+//bool getNextProgramBlock = false;
+//bool executeNextBlock = false;
 bool fileComplete = true;
 
 
@@ -56,8 +56,12 @@ void setPins()
 void abortAll()
 {
    display("ABORT ALL EXECUTED \n");
+
    motion.abortMotion();
+   stopMotors();
+   
    KORE.runProgram = false;
+   KORE.manualPauseActive = false;
 
    KORE.bedTargetTemp = 0;    // turn heaters off
    KORE.extrude1TargetTemp = 0;
@@ -99,29 +103,6 @@ void motionRunner()
       display(String("Home Complete \n"));
    }
 
-}
-
-
-bool blockFeeder()
-{
-   if( KORE.runProgram && motion.bufferVacancy() )
-   {
-      if( KORE.delayedExecute ) 
-      {
-         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
-         {
-            //Serial.println("delayed execute!");
-            executeCodeDelayed();
-         }
-      }
-      else  
-      {
-         executeCodeNow();
-         getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
-         return true;
-      }
-   }
-   return false;
 }
 
 
@@ -174,6 +155,7 @@ void programReader()
          fileComplete = true;
          if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
+            display("File Complete \n");
             abortAll();
 
             blockRead.displayStats();
@@ -189,8 +171,32 @@ void programReader()
          }
       }
 
-      getNextProgramBlock = false;   
+      //getNextProgramBlock = false;   
    }
+}
+
+
+bool codeReader()
+{
+   if( KORE.runProgram && motion.bufferVacancy() )
+   {
+      if( KORE.delayedExecute ) 
+      {
+         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
+         {
+            //Serial.println("delayed execute!");
+            executeCodeDelayed();
+         }
+      }
+      else  
+      {
+         executeCodeNow();
+         programReader();
+         //getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
+         return true;
+      }
+   }
+   return false;
 }
 
 
@@ -205,9 +211,11 @@ void buttonWatcher()
       else
       {
          display("START\n");
-         KORE.manualPauseActive = false;
+         
          restartSD();
          
+         KORE.manualPauseActive = false;
+         fileComplete = false;
          KORE.runProgram = true;
 
          KORE.programStartTime = millis();

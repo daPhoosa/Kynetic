@@ -58,3 +58,17 @@ void setMotorTickRate()
    }
    stepperTickCount = 0;
 }
+
+
+void stopMotors()
+{
+   A_motor.setSpeed( 0 );
+   B_motor.setSpeed( 0 );
+   C_motor.setSpeed( 0 );
+   D_motor.setSpeed( 0 );
+
+   pinMode( A_MOTOR_ENBL_PIN, HIGH);
+   pinMode( B_MOTOR_ENBL_PIN, HIGH);
+   pinMode( C_MOTOR_ENBL_PIN, HIGH);
+   pinMode( D_MOTOR_ENBL_PIN, HIGH);
+}

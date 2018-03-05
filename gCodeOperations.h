@@ -29,7 +29,7 @@ void addMovementBlock()
          if( !gCode.lastMoveRapid )
          {
             gCode.lastMoveRapid = true;
-            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(1); // add delay when switching beteen rapids and feeds
 
             float dx  = gCode.startX - gCode.X;
             float dy  = gCode.startY - gCode.Y;
@@ -62,7 +62,7 @@ void addMovementBlock()
                gCode.zHopActive = false;
                motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
             }
-            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(1); // add delay when switching beteen rapids and feeds
          }
          motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
          break;
@@ -77,7 +77,7 @@ void addMovementBlock()
                gCode.zHopActive = false;
                motion.addRapid_Block( gCode.startX, gCode.startY, gCode.startZ ); // drop down
             }
-            motion.addDwell_Block(10); // add delay when switching beteen rapids and feeds
+            motion.addDwell_Block(1); // add delay when switching beteen rapids and feeds
          }
          arcCenterX = gCode.startX + gCode.I;
          arcCenterY = gCode.startY + gCode.J;

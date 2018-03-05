@@ -24,12 +24,12 @@
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
 const float MACHINE_ACCEL_XY = 4000.0f;  // mm/s^2
-const float MAX_VELOCITY_XY  = 240.0f;   // mm/s
+const float MAX_VELOCITY_XY  = 120.0f;   // mm/s
 
 const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
 
-const float CORNER_ROUNDING  = 0.04f;    // mm
+const float CORNER_ROUNDING  = 0.05f;    // mm
 
 const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 
@@ -38,8 +38,8 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 // **** PRINT SETTINGS ****
 // ********************************
 
-const float AUTO_Z_HOP_HEIGHT = 0.4f;  // adds a z-hop when a horizontal rapid move is detected ( ignores slicer z-hops )
-const float Z_HOP_MIN_DIST    = 2.0f;  // increase this to reduce extra hops over small distances
+const float AUTO_Z_HOP_HEIGHT = 0.2f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
+const float Z_HOP_MIN_DIST    = 0.7f;  // increase this to reduce extra hops over small distances
 
 
 // **************************

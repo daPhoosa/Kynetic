@@ -82,19 +82,19 @@ void loop()
    }
    else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
-      if( blockFeeder() )
+      if( codeReader() )
       {
          //blockExecute.collectStats();
       }
-   }
+   } /*
    else if( blockRead.check() ) // Read SD card and Parse G code
    {
       if( getNextProgramBlock )
       {
          programReader();
-         blockRead.collectStats();
+         if( machine.allHomeCompleted() ) blockRead.collectStats();
       }
-   }
+   } */
    else if( softPWM.check() )
    {
       heaterPWM();      // modulate heater power
@@ -126,13 +126,16 @@ void loop()
          
          funCounter = 0;
          
-         
+         //display( motion.getBlockCount() );display("\n");
+
          //motionControl.displayStats();
          //blockExecute.displayStats();
          //blockRead.displayStats();
 
          //blockRead.resetStats();
          //Serial.println( motionControl.getPctCPU() + 9.6f, 1);
+
+         //display(extrude1Filter.getStDev());display(" ");display(bedFilter.getStDev());display("\n");
          
          //Serial.print(KORE.bedTemp, 2);Serial.print("   ");Serial.println(KORE.extrude1Temp, 2);
 
