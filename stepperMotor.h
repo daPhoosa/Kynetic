@@ -48,10 +48,9 @@
 
          int directionPin, stepPin;
          int FORWARD, REVERSE;
-         bool stepPinOn;
 
+         volatile bool stepPinOn;
          volatile uint32_t ticksPerStep, tickCounter;
-
          volatile int32_t position;
 
          enum move_direction_t {
