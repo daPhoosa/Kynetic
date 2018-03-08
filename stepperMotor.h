@@ -53,10 +53,7 @@
          volatile uint32_t ticksPerStep, tickCounter;
          volatile int32_t position;
 
-         enum move_direction_t {
-            Positive,
-            Negative
-         } moveDirection;
+         bool moveDirectionPos;
 
    };
 
@@ -74,7 +71,7 @@
       pinMode(stepPin, OUTPUT);
       digitalWrite(stepPin, LOW);
       stepPinOn = false;
-      
+
       // Config Direction Pin
       directionPin = t_dirPin;
       pinMode(directionPin, OUTPUT);
@@ -88,7 +85,7 @@
       else
       {
          FORWARD = 0;
-         REVERSE = 1;      
+         REVERSE = 1;
       }
 
    }
@@ -96,26 +93,24 @@
 
    void stepperMotor::setSpeed( float t_feedRate )
    {
-      feedRate = constrain( t_feedRate, -maxFeedRate, maxFeedRate );
-
       if( feedRate < 0.0f )     // reverse
       {
-         uint32_t tps = uint32_t( stepperConstant * -feedRate );
+         if( feedRate < -maxFeedRate ) feedRate = -maxFeedRate;
 
          noInterrupts();
          digitalWrite(directionPin, REVERSE);
-         moveDirection = Negative;
-         ticksPerStep = tps;
+         moveDirectionPos = false;
+         ticksPerStep  = uint32_t( stepperConstant * -feedRate );
          interrupts();
       }
       else                     // forward
       {
-         uint32_t tps = uint32_t( stepperConstant * feedRate );
+         if( feedRate > maxFeedRate ) feedRate = maxFeedRate;
 
          noInterrupts();
          digitalWrite(directionPin, FORWARD);
-         moveDirection = Positive;
-         ticksPerStep = tps;
+         moveDirectionPos = true;
+         ticksPerStep  = uint32_t( stepperConstant * feedRate );
          interrupts();
       }
    }
@@ -141,7 +136,7 @@
       {
          posInt = int32_t( posFloat * stepsPerMM - 0.5f );
       }
-      
+
       noInterrupts();
       position = posInt;
       interrupts();
@@ -151,18 +146,18 @@
    float stepperMotor::getPositionMM()
    {
       int32_t temp;
-      
+
       noInterrupts();
       temp = position;
       interrupts();
-      
+
       return float(temp) * MMPerStep;
    }
 
 
    float stepperMotor::getSpeed()
    {
-      return feedRate;  // MM / s 
+      return feedRate;  // MM / s
    }
 
 
@@ -170,12 +165,17 @@
    {
       uint32_t next = tickCounter + ticksPerStep;
 
-      if( next < tickCounter ) // detect rollover
+      if( stepPinOn )
+      {
+         digitalWrite( stepPin, LOW );   // set pin low
+         stepPinOn = false;
+      }
+      else if( next < tickCounter ) // detect rollover
       {
          digitalWrite( stepPin, HIGH );
          stepPinOn = true;
-         
-         if( moveDirection == Positive )
+
+         if( moveDirectionPos )
          {
             position++;
          }
@@ -184,12 +184,8 @@
             position--;
          }
       }
-      else if( stepPinOn )
-      {
-         digitalWrite( stepPin, LOW );   // set pin low
-         stepPinOn = false;
-      }
-      tickCounter = next;      
+
+      tickCounter = next;
    }
 
 #endif
