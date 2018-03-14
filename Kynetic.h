@@ -158,7 +158,7 @@ void programReader()
             display("File Complete \n");
             abortAll();
 
-            blockRead.displayStats();
+            //blockRead.displayStats();
 
             uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
             uint32_t t = runTime / 3600;
@@ -207,6 +207,14 @@ void buttonWatcher()
       if( KORE.runProgram )
       {
          KORE.manualPauseActive = !KORE.manualPauseActive;
+         if( KORE.manualPauseActive )
+         {
+            display("PAUSE\n");
+         }
+         else
+         {
+            display("RESUME\n");
+         }
       }
       else
       {
