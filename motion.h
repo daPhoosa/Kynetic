@@ -48,42 +48,46 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
       switch( counter ) // split motion control over multiple ISR calls to avoid going over time
       {
          case 0:
-            motion.getTargetLocation( cart_X, cart_Y, cart_Z );  // get next position in cartesian space
+            motion.advancePostion();
             break;
 
          case 1:
+            motion.getTargetLocation( cart_X, cart_Y, cart_Z );  // get next position in cartesian space
+            break;
+
+         case 2:
             machine.invKinematics( cart_X, cart_Y, cart_Z, motor_A, motor_B, motor_C ); // convert position to motor coordinates 
             break;
 
-         case 2:                                            // set motion motor speeds
+         case 3:                                            // set motion motor speeds
             deltaA = motor_A - A_motor.getPositionMM();
             deltaB = motor_B - B_motor.getPositionMM();
             deltaC = motor_C - C_motor.getPositionMM();
             
             if( abs(deltaA) > 0.5f / A_MOTOR_STEP_PER_MM ){
-               A_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaA );
+               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
             }else{
                A_motor.setSpeed( 0 );
             }
 
             if( abs(deltaB) > 0.5f / B_MOTOR_STEP_PER_MM ){
-               B_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaB );
+               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
             }else{
                B_motor.setSpeed( 0 );
             } 
 
             if( abs(deltaC) > 0.5f / C_MOTOR_STEP_PER_MM ){
-               C_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaC );
+               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
             }else{
                C_motor.setSpeed( 0 );
             }
             break;
 
-         case 3:                                            // set extruder speed
+         case 4:                                            // set extruder speed
             extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
 
             if( abs(extrudeDelta) > 0.5f / D_MOTOR_STEP_PER_MM ){  
-               D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * extrudeDelta );
+               D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
             }else{
                D_motor.setSpeed( 0 );
             }

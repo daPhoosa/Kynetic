@@ -24,7 +24,7 @@
 // **** MACHINE MOTION SETTINGS ****
 // ********************************
 const float MACHINE_ACCEL_XY = 4000.0f;  // mm/s^2
-const float MAX_VELOCITY_XY  = 120.0f;   // mm/s
+const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
 
 const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
@@ -137,8 +137,8 @@ const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are
 #define C_MOTOR_STEP_PER_MM 80.0f
 #define C_MOTOR_DIRECTION   1
 
-#define D_MOTOR_STEP_PER_MM 160.0f
-#define D_MOTOR_DIRECTION   1
+#define D_MOTOR_STEP_PER_MM 475.0f
+#define D_MOTOR_DIRECTION   0
 
 #define E_MOTOR_STEP_PER_MM 80.0f
 #define E_MOTOR_DIRECTION   1
