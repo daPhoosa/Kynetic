@@ -53,7 +53,7 @@
          volatile uint32_t ticksPerStep, tickCounter;
          volatile int32_t position;
 
-         bool moveDirectionPos;
+         int moveDirection;
 
    };
 
@@ -95,21 +95,21 @@
    {
       if( feedRate < 0.0f )     // reverse
       {
-         if( feedRate < -maxFeedRate ) feedRate = -maxFeedRate;
+         if( feedRate < -maxFeedRate ) feedRate = -maxFeedRate;   // constrain
 
          noInterrupts();
          digitalWrite(directionPin, REVERSE);
-         moveDirectionPos = false;
+         moveDirection = -1;
          ticksPerStep  = uint32_t( stepperConstant * -feedRate );
          interrupts();
       }
       else                     // forward
       {
-         if( feedRate > maxFeedRate ) feedRate = maxFeedRate;
+         if( feedRate > maxFeedRate ) feedRate = maxFeedRate;   // constrain
 
          noInterrupts();
          digitalWrite(directionPin, FORWARD);
-         moveDirectionPos = true;
+         moveDirection = 1;
          ticksPerStep  = uint32_t( stepperConstant * feedRate );
          interrupts();
       }
@@ -126,32 +126,20 @@
 
    void stepperMotor::setPosition(const float & posFloat)
    {
-      int32_t posInt;
-
       if( posFloat > 0.0f )
       {
-         posInt = int32_t( posFloat * stepsPerMM + 0.5f );
+         position = int32_t( posFloat * stepsPerMM + 0.5f );
       }
       else
       {
-         posInt = int32_t( posFloat * stepsPerMM - 0.5f );
+         position = int32_t( posFloat * stepsPerMM - 0.5f );
       }
-
-      noInterrupts();
-      position = posInt;
-      interrupts();
    }
 
 
    float stepperMotor::getPositionMM()
    {
-      int32_t temp;
-
-      noInterrupts();
-      temp = position;
-      interrupts();
-
-      return float(temp) * MMPerStep;
+      return float(position) * MMPerStep;
    }
 
 
@@ -163,29 +151,20 @@
 
    inline void stepperMotor::step()
    {
-      uint32_t next = tickCounter + ticksPerStep;
+      uint32_t prev = tickCounter;
+      tickCounter += ticksPerStep;
 
       if( stepPinOn )
       {
          digitalWrite( stepPin, LOW );   // set pin low
          stepPinOn = false;
       }
-      else if( next < tickCounter ) // detect rollover
+      else if( tickCounter < prev ) // detect rollover
       {
          digitalWrite( stepPin, HIGH );
          stepPinOn = true;
-
-         if( moveDirectionPos )
-         {
-            position++;
-         }
-         else
-         {
-            position--;
-         }
+         position += moveDirection;
       }
-
-      tickCounter = next;
    }
 
 #endif
