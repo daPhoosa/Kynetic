@@ -93,24 +93,28 @@
 
    void stepperMotor::setSpeed( float t_feedRate )
    {
-      if( feedRate < 0.0f )     // reverse
+      if( t_feedRate < 0.0f )    // REVERSE
       {
-         if( feedRate < -maxFeedRate ) feedRate = -maxFeedRate;   // constrain
+         feedRate = max( -maxFeedRate, t_feedRate );  // constrain
+
+         uint32_t tps = uint32_t( stepperConstant * -feedRate );
 
          noInterrupts();
-         digitalWrite(directionPin, REVERSE);
+         digitalWrite( directionPin, REVERSE );
          moveDirection = -1;
-         ticksPerStep  = uint32_t( stepperConstant * -feedRate );
+         ticksPerStep  = tps;
          interrupts();
       }
-      else                     // forward
+      else                       // FORWARD
       {
-         if( feedRate > maxFeedRate ) feedRate = maxFeedRate;   // constrain
+         feedRate = min( maxFeedRate, t_feedRate );  // constrain
+
+         uint32_t tps = uint32_t( stepperConstant * feedRate );
 
          noInterrupts();
-         digitalWrite(directionPin, FORWARD);
+         digitalWrite( directionPin, FORWARD );
          moveDirection = 1;
-         ticksPerStep  = uint32_t( stepperConstant * feedRate );
+         ticksPerStep  = tps;
          interrupts();
       }
    }
