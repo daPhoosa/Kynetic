@@ -29,6 +29,7 @@ const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
 const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
 
+const float JUNCTION_VEL_RAD = 0.05f;    // mm
 const float CORNER_ROUNDING  = 0.05f;    // mm
 
 const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
@@ -41,6 +42,7 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 const float AUTO_Z_HOP_HEIGHT = 0.2f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
 const float Z_HOP_MIN_DIST    = 0.7f;  // increase this to reduce extra hops over small distances
 
+const float VEL_EXTRUDE_ADV   = 0.5f;
 
 // **************************
 // **** HEATER SETTINGS ****
@@ -120,9 +122,9 @@ const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are
    #define DELTA_MIN_ARM_ANGLE       10.0f // [deg]
    #define DELTA_CLEARANCE_FROM_HOME 25.0f
 
-   #define A_MOTOR_HOME_OFFSET 485.1f    // 485.0f axis zero from home position [mm]
-   #define B_MOTOR_HOME_OFFSET 485.9f
-   #define C_MOTOR_HOME_OFFSET 486.2f  
+   #define A_MOTOR_HOME_OFFSET 485.2f    // 485.0f axis zero from home position [mm]
+   #define B_MOTOR_HOME_OFFSET 486.0f
+   #define C_MOTOR_HOME_OFFSET 486.3f  
 #endif
 
 

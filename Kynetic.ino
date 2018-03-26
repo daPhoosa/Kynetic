@@ -86,15 +86,7 @@ void loop()
       {
          //blockExecute.collectStats();
       }
-   } /*
-   else if( blockRead.check() ) // Read SD card and Parse G code
-   {
-      if( getNextProgramBlock )
-      {
-         programReader();
-         if( machine.allHomeCompleted() ) blockRead.collectStats();
-      }
-   } */
+   }
    else if( softPWM.check() )
    {
       heaterPWM();      // modulate heater power
@@ -112,7 +104,10 @@ void loop()
    }
    else if( maintenance.check() ) // Lowest Priority
    {
+      //Serial.println(stepperTickCount);
       setMotorTickRate();
+
+      //Serial.println(KORE.runProgram);
 
       if( KORE.runProgram )
       {
@@ -120,11 +115,15 @@ void loop()
          /*
          if( funCounter )
          {
-         display( String(funCounter) );
+            display( String(funCounter) );
          //motionControl.displayStats();
-         } */
-         
+         } 
+         */
+
+         //display(funCounter);display("\n");
          funCounter = 0;
+
+         //display(A_motor.getSpeed());display(" ");display(B_motor.getSpeed());display(" ");display(C_motor.getSpeed());display("\n");
          
          //display( motion.getBlockCount() );display("\n");
 

@@ -185,7 +185,6 @@
 
    bool delta_machine_type::executeHome()
    {
-      
       if(homingActive)
       {
          if( A_homeIndex > 4 ) {

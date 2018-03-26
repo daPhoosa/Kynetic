@@ -78,6 +78,7 @@ void motorController()
 
 void motionRunner()
 {
+   //funCounter++;
    if( KORE.runProgram && machine.allHomeCompleted() ) // Normal operation
    {
       motorController();
@@ -102,7 +103,6 @@ void motionRunner()
 
       display(String("Home Complete \n"));
    }
-
 }
 
 

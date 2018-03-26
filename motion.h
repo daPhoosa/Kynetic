@@ -24,30 +24,34 @@ void configMotion()
 {
    motion.setParamXY( MACHINE_ACCEL_XY, MAX_VELOCITY_XY );
    motion.setParamZ( MACHINE_ACCEL_Z, MAX_VELOCITY_Z );
+
    motion.setCornerRounding( CORNER_ROUNDING );
+   motion.setJunctionVelRad( JUNCTION_VEL_RAD );
          
    motion.setExtrudeRateOverride( 1.0f );
    motion.setMotionRateOverride(  1.0f );
    motion.setExrudeAccel( EXTRUDE_ACCEL );
    motion.setLookAheadTime( 150 );
+   motion.setExtrudeVelocityAdvance( VEL_EXTRUDE_ADV );
    //motion.junctionSmoothingOff();
 }
 
 
 void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
-   uint32_t timeNow = micros();
+   //uint32_t timeNow = micros();
 
    static uint32_t counter = 0;
    static float  cart_X,  cart_Y,  cart_Z;
    static float motor_A, motor_B, motor_C;
    static float  deltaA,  deltaB,  deltaC, extrudeDelta;
-
+   
    if( KORE.runProgram && machine.allHomeCompleted() )
    {
       switch( counter ) // split motion control over multiple ISR calls to avoid going over time
       {
          case 0:
+            //funCounter++;
             motion.advancePostion();
             break;
 
@@ -65,19 +69,19 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             deltaC = motor_C - C_motor.getPositionMM();
             
             if( abs(deltaA) > 0.5f / A_MOTOR_STEP_PER_MM ){
-               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaA );
+               A_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaA );
             }else{
                A_motor.setSpeed( 0 );
             }
 
             if( abs(deltaB) > 0.5f / B_MOTOR_STEP_PER_MM ){
-               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaB );
+               B_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaB );
             }else{
                B_motor.setSpeed( 0 );
             } 
 
             if( abs(deltaC) > 0.5f / C_MOTOR_STEP_PER_MM ){
-               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * deltaC );
+               C_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * deltaC );
             }else{
                C_motor.setSpeed( 0 );
             }
@@ -87,7 +91,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             extrudeDelta = motion.getExtrudeLocationMM() - D_motor.getPositionMM();
 
             if( abs(extrudeDelta) > 0.5f / D_MOTOR_STEP_PER_MM ){  
-               D_motor.setSpeed( float(MOTION_CONTROL_HZ) * extrudeDelta );
+               D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * extrudeDelta );
             }else{
                D_motor.setSpeed( 0 );
             }
@@ -118,7 +122,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
    
    stepperTickCount++;
 
-   funCounter += micros() - timeNow;
+   //funCounter += micros() - timeNow;
 }
 
 void startStepperTickISR()

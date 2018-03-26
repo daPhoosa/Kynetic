@@ -61,7 +61,7 @@ char getNextChar()
          active    = !active;
          dataIndex = 0;
       }
-
+      //Serial.print(ch);
       return ch;
    }
    else // no more data in buffers ( file end has been found or read error )
@@ -580,6 +580,7 @@ void executeCodeNow()
 
 void executeCodeDelayed()
 {
+   //Serial.println("DELAYED EXECUTE");
    Group0();  // dwell, non-modal commands
 
    //Group2();  // Plane Selection
