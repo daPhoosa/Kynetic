@@ -239,12 +239,12 @@
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( C_motor.setPositionMM() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
+            if( C_motor.getPositionMM() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
             {
                speed -= MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
                if( speed * Z_HOME_DIRECTION < -velocity ) speed = -velocity * Z_HOME_DIRECTION;
                
-               C_motor.setPosition( speed );  // back away from switch
+               C_motor.setSpeed( speed );  // back away from switch
                break;
             }
             else
