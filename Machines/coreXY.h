@@ -176,7 +176,7 @@
             else
             {
                setPosY( Y_HOME_OFFSET ); // switched has been activated
-               Y_homeIndex --;
+               Y_homeIndex--;
             }
           
          case 5 : // fast retract
@@ -191,7 +191,7 @@
             }
             else
             {
-               Y_homeIndex --;
+               Y_homeIndex--;
             }
             
          case 2 : // decelerate to zero after slow retract
@@ -217,7 +217,7 @@
 
    void coreXY_machine_type::homeAxisZ( float velocity )
    {
-      float speed = getVelZ(); 
+      float speed = C_motor.getSpeed(); 
       
       switch( Z_homeIndex )
       {
@@ -228,28 +228,28 @@
                speed += MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
                if( speed * Z_HOME_DIRECTION > velocity ) speed = velocity * Z_HOME_DIRECTION;
                
-               setVelX( speed );  // move toward end stop if no contact is observed
+               C_motor.setSpeed( speed );  // move toward end stop if no contact is observed
                break;
             }
             else
             {
-               setPosX( Z_HOME_OFFSET ); // switched has been activated
-               Z_homeIndex --;
+               C_motor.setPosition( Z_HOME_OFFSET ); // switched has been activated
+               Z_homeIndex--;
             }
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( getPosZ() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
+            if( C_motor.setPositionMM() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
             {
                speed -= MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
                if( speed * Z_HOME_DIRECTION < -velocity ) speed = -velocity * Z_HOME_DIRECTION;
                
-               setVelZ( speed );  // back away from switch
+               C_motor.setPosition( speed );  // back away from switch
                break;
             }
             else
             {
-               Z_homeIndex --;
+               Z_homeIndex--;
             }
             
          case 2 : // decelerate to zero after slow retract
@@ -257,7 +257,7 @@
             
             if( speed * Z_HOME_DIRECTION < 0.0f )
             {
-               setVelZ( speed );  // decelerate
+               C_motor.setSpeed( speed );  // decelerate
                break;
             }
             else
@@ -267,7 +267,7 @@
 
          case 1 : // hold zero speed, home set
          case 0 : // hold zero speed, home not set
-            setVelZ( 0.0f );
+            C_motor.setSpeed( 0.0f );
             break;
       }
    }
