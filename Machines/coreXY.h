@@ -15,7 +15,7 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-
+#define MACHINE_TYPE_COREXY
 
 #ifdef MACHINE_TYPE_COREXY
 
@@ -39,13 +39,19 @@
 
          float getVelX();
          float getVelY();
+         float getVelZ();
+
          void  setVelX( float velX );
          void  setVelY( float velY );
+         void  setVelZ( float vel );
 
          float getPosX();
          float getPosY();
+         float getPosZ();
+
          void  setPosX( float pos );
          void  setPosY( float pos );
+         void  setPosZ( float pos );
 
          void homeAxisX( float velocity );
          void homeAxisY( float velocity );
@@ -217,7 +223,7 @@
 
    void coreXY_machine_type::homeAxisZ( float velocity )
    {
-      float speed = C_motor.getSpeed(); 
+      float speed = getVelZ(); 
       
       switch( Z_homeIndex )
       {
@@ -228,23 +234,23 @@
                speed += MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
                if( speed * Z_HOME_DIRECTION > velocity ) speed = velocity * Z_HOME_DIRECTION;
                
-               C_motor.setSpeed( speed );  // move toward end stop if no contact is observed
+               setVelZ( speed );  // move toward end stop if no contact is observed
                break;
             }
             else
             {
-               C_motor.setPosition( Z_HOME_OFFSET ); // switched has been activated
+               setPosZ( Z_HOME_OFFSET ); // switched has been activated
                Z_homeIndex--;
             }
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( C_motor.getPositionMM() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
+            if( getPosZ() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
             {
                speed -= MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
                if( speed * Z_HOME_DIRECTION < -velocity ) speed = -velocity * Z_HOME_DIRECTION;
                
-               C_motor.setSpeed( speed );  // back away from switch
+               setVelZ( speed );  // back away from switch
                break;
             }
             else
@@ -257,7 +263,7 @@
             
             if( speed * Z_HOME_DIRECTION < 0.0f )
             {
-               C_motor.setSpeed( speed );  // decelerate
+               setVelZ( speed );  // decelerate
                break;
             }
             else
@@ -267,7 +273,7 @@
 
          case 1 : // hold zero speed, home set
          case 0 : // hold zero speed, home not set
-            C_motor.setSpeed( 0.0f );
+            setVelZ( 0.0f );
             break;
       }
    }
@@ -329,18 +335,24 @@
    }
 
 
+   // GET VELOCITY
    float coreXY_machine_type::getVelX()
    {
       return ( A_motor.getSpeed() + B_motor.getSpeed() ) * 0.5f;
    }
-
 
    float coreXY_machine_type::getVelY()
    {
       return ( A_motor.getSpeed() - B_motor.getSpeed() ) * 0.5f;
    }
 
+   float coreXY_machine_type::getVelZ()
+   {
+      return C_motor.getSpeed();
+   }
 
+
+   // SET VELOCITY
    void  coreXY_machine_type::setVelX( float velX )
    {
       float velY = getVelY();
@@ -348,7 +360,6 @@
       A_motor.setSpeed( velX + velY );
       B_motor.setSpeed( velX - velY );
    }
-
 
    void  coreXY_machine_type::setVelY( float velY )
    {
@@ -358,19 +369,30 @@
       B_motor.setSpeed( velX - velY );
    }
 
+   void  coreXY_machine_type::setVelZ( float vel )
+   {
+      C_motor.setSpeed( vel );
+   }
 
+
+   // GET POSITION
    float coreXY_machine_type::getPosX()
    {
       return ( A_motor.getPositionMM() + B_motor.getPositionMM() ) * 0.5f;
    }
-
 
    float coreXY_machine_type::getPosY()
    {
       return ( A_motor.getPositionMM() - B_motor.getPositionMM() ) * 0.5f;
    }
 
+   float coreXY_machine_type::getPosZ()
+   {
+      return C_motor.getPositionMM();
+   }
 
+
+   // SET POSITION
    void coreXY_machine_type::setPosX( float posX )
    {
       float y = getPosY();
@@ -379,13 +401,17 @@
       B_motor.setPosition( posX - y );
    }
 
-
    void coreXY_machine_type::setPosY( float posY )
    {
       float x = getPosX();
 
       A_motor.setPosition( x + posY );
       B_motor.setPosition( x - posY );
+   }
+
+   void coreXY_machine_type::setPosZ( float pos )
+   {
+      C_motor.setPosition( pos );
    }
 
 
