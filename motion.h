@@ -20,6 +20,21 @@
 // **** MOVEMENT ENGINE ****
 SmoothMove motion;
 
+
+void resetPosition( const float & x, const float & y, const float & z )
+{
+   noInterrupts();
+   motion.setPosition( x, y, z );
+   gCodeSetPosition(   x, y, z ); 
+
+   float a, b, c;
+   machine.invKinematics( x, y, z, a, b, c ); // convert new position to motor coordinates 
+   A_motor.setPosition( a );  // set motor positions
+   B_motor.setPosition( b );
+   C_motor.setPosition( c );
+   interrupts();
+}
+
 void configMotion()
 {
    motion.setParamXY( MACHINE_ACCEL_XY, MAX_VELOCITY_XY );
@@ -34,6 +49,8 @@ void configMotion()
    motion.setLookAheadTime( 150 );
    motion.setExtrudeVelocityAdvance( VEL_EXTRUDE_ADV );
    //motion.junctionSmoothingOff();
+
+   resetPosition( 0.0f, 0.0f, 0.0f );
 }
 
 
@@ -42,16 +59,16 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
    //uint32_t timeNow = micros();
 
    static uint32_t counter = 0;
-   static float  cart_X,  cart_Y,  cart_Z;
-   static float motor_A, motor_B, motor_C;
-   static float  deltaA,  deltaB,  deltaC, extrudeDelta;
    
-   if( KORE.runProgram && machine.allHomeCompleted() )
+   if( !machine.homingActive() )
    {
+      static float  cart_X,  cart_Y,  cart_Z;
+      static float motor_A, motor_B, motor_C;
+      static float  deltaA,  deltaB,  deltaC, extrudeDelta;
+
       switch( counter ) // split motion control over multiple ISR calls to avoid going over time
       {
          case 0:
-            //funCounter++;
             motion.advancePostion();
             break;
 

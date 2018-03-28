@@ -40,8 +40,8 @@
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
 
+#include "gCodeStructure.h"
 #include "motion.h"
-
 #include "gCode.h"
 
 #include "kynetic.h"
@@ -56,8 +56,6 @@ void setup()
    startStepperTickISR();
 
    setPins();
-
-   armMotors();
 
    configMotion();
   

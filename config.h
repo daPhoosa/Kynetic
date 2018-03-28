@@ -83,7 +83,7 @@ const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are
 
 #define X_HOME_OFFSET 0.0f
 #define Y_HOME_OFFSET 0.0f
-#define Z_HOME_OFFSET -0.1f  
+#define Z_HOME_OFFSET 0.0f  
 
 #define X_HOME_DIRECTION 1.0f  // Set as either 1.0 or -1.0 for direction
 #define Y_HOME_DIRECTION 1.0f
@@ -113,9 +113,9 @@ const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are
 
 //#define MACHINE_TYPE_CARTESIAN
 
-//#define MACHINE_TYPE_COREXY
+#define MACHINE_TYPE_COREXY
 
-#define MACHINE_TYPE_DELTA
+//#define MACHINE_TYPE_DELTA
 #ifdef  MACHINE_TYPE_DELTA // delta arm geometry configuration
    #define DELTA_ARM_RADIUS         107.0f // 109.0 -- decrease if center is low, increase if outside is low
    #define DELTA_ARM_LENGTH         207.3f //   
