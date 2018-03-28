@@ -27,6 +27,11 @@ stepperMotor D_motor( D_MOTOR_STEP_PER_MM, D_MOTOR_DIRECTION, STEPPER_TICK_HZ, D
 
 void armMotors()
 {
+   A_motor.setSpeed( 0 );
+   B_motor.setSpeed( 0 );
+   C_motor.setSpeed( 0 );
+   D_motor.setSpeed( 0 );
+
    digitalWrite( A_MOTOR_ENBL_PIN, LOW );
    digitalWrite( B_MOTOR_ENBL_PIN, LOW );
    digitalWrite( C_MOTOR_ENBL_PIN, LOW );
@@ -50,7 +55,7 @@ void stopMotors()
 
 void setMotorTickRate()
 {
-   // update tick rate to account for unexpected ISR call rates at high Hz
+   // update tick rate to account for variation in expected ISR call rates at high Hz
    // this might not be needed, but some frequencies are not available, so this will mitigate the error
 
    static uint32_t startTime;

@@ -55,13 +55,15 @@ void setup()
 
    startStepperTickISR();
 
-   setPins();
+   setupPins();
+
+   stopMotors();
 
    configMotion();
   
    startPollTimers();
 
-   display( "KYNETIC CNC CONTROLLER \n" );
+   display( "\nKYNETIC CNC CONTROLLER\n" );
 }
 
 

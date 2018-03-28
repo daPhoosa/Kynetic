@@ -17,25 +17,14 @@
 */
 
 
-// **** GLOBAL VARIABLES ****
-//bool getNextProgramBlock = false;
-//bool executeNextBlock = false;
-bool fileComplete = true;
-
-
-
-
-
 // **** BUTTONS ****
 uButton SelectBtn(SELECT_BUTTON_PIN, SELECT_BUTTON_PRESSED);
 uButton UpBtn(    UP_BUTTON_PIN,     UP_BUTTON_PRESSED);
 uButton DnBtn(    DOWN_BUTTON_PIN,   DOWN_BUTTON_PRESSED);
 
 
-
-
 // **** STARTUP FUNCTIONS ****
-void setPins()
+void setupPins()
 {
    pinMode( X_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Y_ENDSTOP_PIN, INPUT_PULLUP );
@@ -147,7 +136,7 @@ void programReader()
    {
       if( !readNextProgramLine() )
       {
-         fileComplete = true;
+         KORE.fileComplete = true;
          if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
             display("File Complete \n");
@@ -222,7 +211,7 @@ void buttonWatcher()
          resetPosition( 0.0f, 0.0f, 0.0f );
          
          KORE.manualPauseActive = false;
-         fileComplete = false;
+         KORE.fileComplete = false;
          KORE.runProgram = true;
 
          KORE.programStartTime = millis();
