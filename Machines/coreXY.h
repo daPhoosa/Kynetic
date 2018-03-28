@@ -15,7 +15,6 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#define MACHINE_TYPE_COREXY
 
 #ifdef MACHINE_TYPE_COREXY
 
@@ -56,7 +55,11 @@
          void homeAxisX( float velocity );
          void homeAxisY( float velocity );
          void homeAxisZ( float velocity );
-      
+
+         float inline dX( const float & x );
+         float inline dY( const float & y );
+         float inline dZ( const float & z );
+ 
          int X_homeIndex, Y_homeIndex, Z_homeIndex;
          bool homingActive = false;
          bool homingComplete = false;
@@ -107,16 +110,16 @@
 
    void coreXY_machine_type::homeAxisX( float velocity )
    {
-      float speed = getVelX(); 
+      float speed = getVelX();
       
       switch( X_homeIndex )
       {
          case 6 : // fast advance
          case 4 : // slow advance
-            if( digitalRead( X_ENDSTOP_PIN ) == X_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
+            if( digitalRead( X_ENDSTOP_PIN ) == X_ENDSTOP_NO_CONTACT )
             {
-               speed += MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
-               if( speed * X_HOME_DIRECTION > velocity ) speed = velocity * X_HOME_DIRECTION;
+               speed += dX(MACHINE_VEL_STEP_XY);
+               if( dX(speed) > velocity ) speed = dX(velocity);
                
                setVelX( speed );  // move toward end stop if no contact is observed
                break;
@@ -124,39 +127,39 @@
             else
             {
                setPosX( X_HOME_OFFSET ); // switched has been activated
-               X_homeIndex --;
+               X_homeIndex--;
             }
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( getPosX() * X_HOME_DIRECTION > X_HOME_OFFSET - SLOW_HOME_DIST * X_HOME_DIRECTION )
+            if( dX(getPosX()) > X_HOME_OFFSET - dX(SLOW_HOME_DIST) )
             {
-               speed -= MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
-               if( speed * X_HOME_DIRECTION < -velocity ) speed = -velocity * X_HOME_DIRECTION;
+               speed -= dX(MACHINE_VEL_STEP_XY);
+               if( dX(speed) < -velocity ) speed = dX(-velocity);
                
                setVelX( speed );  // back away from switch
                break;
             }
             else
             {
-               X_homeIndex --;
+               X_homeIndex--;
             }
             
          case 2 : // decelerate to zero after slow retract
-            speed += MACHINE_VEL_STEP_XY * X_HOME_DIRECTION;
+            speed += dX(MACHINE_VEL_STEP_XY);
             
-            if( speed * X_HOME_DIRECTION < 0.0f )
+            if( dX(speed) < 0.0f )
             {
                setVelX( speed );  // decelerate
                break;
             }
             else
             {
-               X_homeIndex  = 1;
+               X_homeIndex = 1;
             }
 
-         case 1 : // hold zero speed, home set
-         case 0 : // hold zero speed, home not set
+         case 1 : // hold zero speed
+         case 0 : 
             setVelX( 0.0f );
             break;
       }
@@ -165,16 +168,16 @@
 
    void coreXY_machine_type::homeAxisY( float velocity )
    {
-      float speed = getVelY(); 
+      float speed = getVelY();
       
       switch( Y_homeIndex )
       {
          case 6 : // fast advance
          case 4 : // slow advance
-            if( digitalRead( Y_ENDSTOP_PIN ) == Y_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
+            if( digitalRead( Y_ENDSTOP_PIN ) == Y_ENDSTOP_NO_CONTACT )
             {
-               speed += MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
-               if( speed * Y_HOME_DIRECTION > velocity ) speed = velocity * Y_HOME_DIRECTION;
+               speed += dY(MACHINE_VEL_STEP_XY);
+               if( dY(speed) > velocity ) speed = dY(velocity);
                
                setVelY( speed );  // move toward end stop if no contact is observed
                break;
@@ -187,10 +190,10 @@
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( getPosX() * Y_HOME_DIRECTION > Y_HOME_OFFSET - SLOW_HOME_DIST * Y_HOME_DIRECTION )
+            if( dY(getPosY()) > Y_HOME_OFFSET - dY(SLOW_HOME_DIST) )
             {
-               speed -= MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
-               if( speed * Y_HOME_DIRECTION < -velocity ) speed = -velocity * Y_HOME_DIRECTION;
+               speed -= dY(MACHINE_VEL_STEP_XY);
+               if( dY(speed) < -velocity ) speed = dY(-velocity);
                
                setVelY( speed );  // back away from switch
                break;
@@ -201,20 +204,20 @@
             }
             
          case 2 : // decelerate to zero after slow retract
-            speed += MACHINE_VEL_STEP_XY * Y_HOME_DIRECTION;
+            speed += dY(MACHINE_VEL_STEP_XY);
             
-            if( speed * Y_HOME_DIRECTION < 0.0f )
+            if( dY(speed) < 0.0f )
             {
                setVelY( speed );  // decelerate
                break;
             }
             else
             {
-               Y_homeIndex  = 1;
+               Y_homeIndex = 1;
             }
 
-         case 1 : // hold zero speed, home set
-         case 0 : // hold zero speed, home not set
+         case 1 : // hold zero speed
+         case 0 : 
             setVelY( 0.0f );
             break;
       }
@@ -223,16 +226,16 @@
 
    void coreXY_machine_type::homeAxisZ( float velocity )
    {
-      float speed = getVelZ(); 
+      float speed = getVelZ();
       
-      switch( Z_homeIndex )
+      switch(Z_homeIndex)
       {
          case 6 : // fast advance
          case 4 : // slow advance
-            if( digitalRead( Z_ENDSTOP_PIN ) == Z_ENDSTOP_NO_CONTACT )  // check if endstop has NOT been touched
+            if( digitalRead( Z_ENDSTOP_PIN ) == Z_ENDSTOP_NO_CONTACT )
             {
-               speed += MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
-               if( speed * Z_HOME_DIRECTION > velocity ) speed = velocity * Z_HOME_DIRECTION;
+               speed += dZ(MACHINE_VEL_STEP_XY);
+               if( dZ(speed) > velocity ) speed = dZ(velocity);
                
                setVelZ( speed );  // move toward end stop if no contact is observed
                break;
@@ -245,10 +248,10 @@
           
          case 5 : // fast retract
          case 3 : // slow retract
-            if( getPosZ() * Z_HOME_DIRECTION > Z_HOME_OFFSET - SLOW_HOME_DIST * Z_HOME_DIRECTION )
+            if( dZ(getPosZ()) > Z_HOME_OFFSET - dZ(SLOW_HOME_DIST) )
             {
-               speed -= MACHINE_VEL_STEP_Z * Z_HOME_DIRECTION;
-               if( speed * Z_HOME_DIRECTION < -velocity ) speed = -velocity * Z_HOME_DIRECTION;
+               speed -= dZ(MACHINE_VEL_STEP_XY);
+               if( dZ(speed) < -velocity ) speed = dZ(-velocity);
                
                setVelZ( speed );  // back away from switch
                break;
@@ -259,20 +262,20 @@
             }
             
          case 2 : // decelerate to zero after slow retract
-            speed += MACHINE_VEL_STEP_XY * Z_HOME_DIRECTION;
+            speed += dZ(MACHINE_VEL_STEP_XY);
             
-            if( speed * Z_HOME_DIRECTION < 0.0f )
+            if( dZ(speed) < 0.0f )
             {
                setVelZ( speed );  // decelerate
                break;
             }
             else
             {
-               Z_homeIndex  = 1;
+               Z_homeIndex = 1;
             }
 
-         case 1 : // hold zero speed, home set
-         case 0 : // hold zero speed, home not set
+         case 1 : // hold zero speed
+         case 0 : 
             setVelZ( 0.0f );
             break;
       }
@@ -412,6 +415,22 @@
    void coreXY_machine_type::setPosZ( float pos )
    {
       C_motor.setPosition( pos );
+   }
+
+
+   float inline coreXY_machine_type::dX( const float & x )
+   {
+      return x * X_HOME_DIRECTION;
+   }
+
+   float inline coreXY_machine_type::dY( const float & y )
+   {
+      return y * Y_HOME_DIRECTION;
+   }
+
+   float inline coreXY_machine_type::dZ( const float & z )
+   {
+      return z * Z_HOME_DIRECTION;
    }
 
 
