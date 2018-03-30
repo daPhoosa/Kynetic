@@ -6,12 +6,12 @@
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-      
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-      
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
@@ -105,7 +105,7 @@ void setState( char letter, float number )
       {
          if( abs(number) > 0.0009f )
          {
-            gCode.X += number; 
+            gCode.X += number;
             gCode.newAxisMove = true;
          }
       }
@@ -143,7 +143,7 @@ void setState( char letter, float number )
       {
          if( abs(number) > 0.0009f )
          {
-            gCode.Y += number; 
+            gCode.Y += number;
             gCode.newAxisMove = true;
          }
       }
@@ -154,7 +154,7 @@ void setState( char letter, float number )
    if( letter == 'E' )
    {
       if( gCode.G[6] == 20 ) number *= 25.4f; // convert to mm
-      
+
       if( gCode.G[0] == 92 )  // set position
       {
          gCode.E = number;
@@ -173,7 +173,7 @@ void setState( char letter, float number )
       {
          if( abs(number) > 0.0009f )
          {
-            gCode.E += number; 
+            gCode.E += number;
             gCode.newExtruderMove = true;
          }
       }
@@ -185,7 +185,7 @@ void setState( char letter, float number )
       if( gCode.G[6] == 21 ) // metric
       {
          gCode.F = number * ( 1.0f / 60.0f); // convert: mm/min ==> mm/s
-      } 
+      }
       else if( gCode.G[6] == 20 ) // imperial
       {
          gCode.F = number * (25.4f / 60.0f); // convert: in/min ==> mm/s
@@ -223,7 +223,7 @@ void setState( char letter, float number )
       {
          if( abs(number) > 0.0009f )
          {
-            gCode.Z += number; 
+            gCode.Z += number;
             gCode.newAxisMove = true;
          }
       }
@@ -237,11 +237,12 @@ void setState( char letter, float number )
 
       switch( num )
       {
-         case 4 :    // Group 0 -- dwell, exact stop, Home
-         case 9 :
-         case 28:
+         case 28:    // Group 0 -- dwell, exact stop, Home
          case 29:
          case 92:    // set position
+            motion.addDwell_Block(100); // dwell before executing home, position set
+         case 4 :
+         case 9 :
             KORE.delayedExecute = true;
             gCode.G[0] = num;
             break;
@@ -257,7 +258,7 @@ void setState( char letter, float number )
          case 18:
          case 19:
             gCode.G[2] = num;
-            break;        
+            break;
 
          case 90:    // Group 3
          case 91:
@@ -266,7 +267,7 @@ void setState( char letter, float number )
             if( num == 91 ) gCode.extrudeAbsoluteMode = false;
             break;
 
-                  // No Group 4
+                     // No Group 4
 
          case 93:    // Group 5
          case 94:
@@ -312,6 +313,7 @@ void setState( char letter, float number )
       gCode.M = num;
       gCode.newMcode = true;
       KORE.delayedExecute = true;
+      motion.addDwell_Block(100); // dwell before executing
       return;
    }
 
@@ -320,21 +322,21 @@ void setState( char letter, float number )
       gCode.P = number;
       return;
    }
-   
+
    if( letter == 'I' )
    {
       if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
       gCode.I = number;
       return;
    }
-   
+
    if( letter == 'J' )
    {
       if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
       gCode.J = number;
       return;
    }
-   
+
    if( letter == 'K' )
    {
       if( gCode.G[1] == 2 || gCode.G[1] == 3 ) gCode.newAxisMove = true; // only flag new move if doing arc move
@@ -347,13 +349,13 @@ void setState( char letter, float number )
       gCode.A = number;
       return;
    }
-   
+
    if( letter == 'B' )
    {
       gCode.B = number;
       return;
    }
-   
+
    if( letter == 'C' )
    {
       gCode.C = number;
@@ -365,25 +367,25 @@ void setState( char letter, float number )
       gCode.U = number;
       return;
    }
-   
+
    if( letter == 'V' )
    {
       gCode.V = number;
       return;
    }
-   
+
    if( letter == 'W' )
    {
       gCode.W = number;
       return;
    }
-  
+
    if( letter == 'D' )
    {
       gCode.D = number;
       return;
    }
-   
+
    if( letter == 'H' )
    {
       gCode.H = number;
@@ -401,25 +403,25 @@ void setState( char letter, float number )
       gCode.N = number;
       return;
    }
-   
+
    if( letter == 'Q' )
    {
       gCode.Q = number;
       return;
    }
-   
+
    if( letter == 'R' )
    {
       gCode.R = number;
       return;
    }
-  
+
    if( letter == 'S' )
    {
       gCode.S = number;
       return;
    }
-   
+
    if( letter == 'T' )
    {
       gCode.T = number;
@@ -462,7 +464,7 @@ bool readNextProgramLine()
 
                char letter     = ch;    // save letter for later
                ch = getNextChar();
- 
+
                if( ch == '-' )  // check for negative
                {
                   negative = true;
@@ -488,15 +490,15 @@ bool readNextProgramLine()
                   if( decimal < 5 )
                   {
                      validNum = true; // at least one digit after the letter
-                     
+
                      iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
 
                      decimal++; // increment number of decimal places
                   }
-                  
+
                   ch = getNextChar();
                }
- 
+
                if( validNum )
                {
                   if( negative ) iNumber = -iNumber;
@@ -534,7 +536,7 @@ bool readNextProgramLine()
                else
                {
                   ch = getNextChar(); // if number is invalid, keep moving forward
-               } 
+               }
             }
             else
             {
@@ -545,7 +547,7 @@ bool readNextProgramLine()
    } // end of main while loop
 
    if( ch == 0 ) return false; // return false if at end of file
-   
+
    return true;
 }
 
@@ -585,7 +587,7 @@ void executeCodeDelayed()
    //Group2();  // Plane Selection
 
    //Group9();  // Canned cycles
-    
+
    mCodes();  // miscellaneous, delayed execute
 
    KORE.delayedExecute = false;

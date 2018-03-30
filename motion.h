@@ -82,9 +82,9 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             break;
 
          case 3:                                       // set motion motor speeds
-            dA = A - A_motor.getPositionMM();
-            dB = B - B_motor.getPositionMM();
-            dC = C - C_motor.getPositionMM();
+            dA = 0.5f * ( dA + A - A_motor.getPositionMM() );   // smooth by averaging new delta with previous delta
+            dB = 0.5f * ( dB + B - B_motor.getPositionMM() );
+            dC = 0.5f * ( dC + C - C_motor.getPositionMM() );
 
             if( abs(dA) > 0.5f / A_MOTOR_STEP_PER_MM ){
                A_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * dA );
