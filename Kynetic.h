@@ -17,25 +17,14 @@
 */
 
 
-// **** GLOBAL VARIABLES ****
-//bool getNextProgramBlock = false;
-//bool executeNextBlock = false;
-bool fileComplete = true;
-
-
-
-
-
 // **** BUTTONS ****
 uButton SelectBtn(SELECT_BUTTON_PIN, SELECT_BUTTON_PRESSED);
 uButton UpBtn(    UP_BUTTON_PIN,     UP_BUTTON_PRESSED);
 uButton DnBtn(    DOWN_BUTTON_PIN,   DOWN_BUTTON_PRESSED);
 
 
-
-
 // **** STARTUP FUNCTIONS ****
-void setPins()
+void setupPins()
 {
    pinMode( X_ENDSTOP_PIN, INPUT_PULLUP );
    pinMode( Y_ENDSTOP_PIN, INPUT_PULLUP );
@@ -43,6 +32,11 @@ void setPins()
 
    pinMode( BED_HEATER_PWM_PIN, OUTPUT );
    pinMode( EXTRUDER1_PWM_PIN,  OUTPUT );
+
+   pinMode( A_MOTOR_ENBL_PIN, OUTPUT);
+   pinMode( B_MOTOR_ENBL_PIN, OUTPUT);
+   pinMode( C_MOTOR_ENBL_PIN, OUTPUT);
+   pinMode( D_MOTOR_ENBL_PIN, OUTPUT);
 
    analogReadResolution(13);
 }
@@ -70,27 +64,17 @@ void abortAll()
 }
 
 
-void motorController()
-{
-   // moved to ISR
-}
-
-
 void motionRunner()
 {
    //funCounter++;
-   if( KORE.runProgram && machine.allHomeCompleted() ) // Normal operation
-   {
-      motorController();
-   }
-   else if( machine.executeHome() )  // Home operation
+   if( machine.executeHome() )  // Home operation
    {
       Vec3 cart;
 
       machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-      gCodeSetPosition(   cart.x, cart.y, cart.z );
       motion.setPosition( cart.x, cart.y, cart.z );
+      gCodeSetPosition(   cart.x, cart.y, cart.z ); 
 
       startPollTimers();
 
@@ -152,7 +136,7 @@ void programReader()
    {
       if( !readNextProgramLine() )
       {
-         fileComplete = true;
+         KORE.fileComplete = true;
          if( motion.blockQueueComplete() && !KORE.delayedExecute )
          {
             display("File Complete \n");
@@ -221,9 +205,13 @@ void buttonWatcher()
          display("START\n");
          
          restartSD();
+
+         armMotors();
+
+         resetPosition( 0.0f, 0.0f, 0.0f );
          
          KORE.manualPauseActive = false;
-         fileComplete = false;
+         KORE.fileComplete = false;
          KORE.runProgram = true;
 
          KORE.programStartTime = millis();

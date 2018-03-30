@@ -40,8 +40,8 @@
 #include "Machines\coreXY.h"
 #include "Machines\delta.h"
 
+#include "gCodeStructure.h"
 #include "motion.h"
-
 #include "gCode.h"
 
 #include "kynetic.h"
@@ -55,15 +55,15 @@ void setup()
 
    startStepperTickISR();
 
-   setPins();
+   setupPins();
 
-   armMotors();
+   stopMotors();
 
    configMotion();
   
    startPollTimers();
 
-   display( "KYNETIC CNC CONTROLLER \n" );
+   display( "\nKYNETIC CNC CONTROLLER\n" );
 }
 
 

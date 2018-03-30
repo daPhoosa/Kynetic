@@ -64,6 +64,8 @@ struct kynetic_operation_retention_enabler_t
 
    uint32_t heaterWatchDog = 0;
 
+   bool fileComplete = true;
+
 } KORE;
 
 

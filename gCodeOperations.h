@@ -154,19 +154,6 @@ void Group0()
             break;
 
          case 92: // set position
-            /*
-            machine.invKinematics( gCode.X, gCode.Y, gCode.Z, motor.x, motor.y, motor.z ); // convert from cartesian to machine coordinates 
-            A_motor.setPosition( motor.x );
-            B_motor.setPosition( motor.y );
-            C_motor.setPosition( motor.z );
-            D_motor.setPosition( gCode.E );
-
-            motion.setPosition( gCode.X, gCode.Y, gCode.Z, gCode.E );
-            motion.startMoving();
-            */
-
-            Serial.print("X:"); Serial.print(gCode.X - gCode.startX);Serial.print(" Y:"); Serial.print(gCode.Y - gCode.startY);Serial.print(" Z:"); Serial.println(gCode.Z - gCode.startZ);
-
             gCode.workOffsetX += gCode.startX - gCode.X;
             gCode.workOffsetY += gCode.startY - gCode.Y;
             gCode.workOffsetZ += gCode.startZ - gCode.Z;
@@ -174,8 +161,6 @@ void Group0()
             D_motor.setPosition( gCode.E );
             motion.setPosE( gCode.E );
             motion.startMoving();
-
-            //display("Set Position:  X:" + String(gCode.X, 2) + "  Y:" + String(gCode.Y, 2) + "  Z:" + String(gCode.Z, 2) + "  E:" + String(gCode.E, 2) + '\n');
             break;
          
          default:

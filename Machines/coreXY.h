@@ -6,12 +6,12 @@
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-      
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-      
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
@@ -23,16 +23,15 @@
    {
       public:
 
-         
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
-         
+
          void startHome( bool xHome, bool yHome, bool zHome );
          void abortHome();
          bool executeHome();
 
-         bool allHomeCompleted();
-         
+         bool homingActive();
+
 
       private:
 
@@ -59,29 +58,28 @@
          float inline dX( const float & x );
          float inline dY( const float & y );
          float inline dZ( const float & z );
- 
+
          int X_homeIndex, Y_homeIndex, Z_homeIndex;
          bool homingActive = false;
-         bool homingComplete = false;
 
    } machine;
-   
-   
+
+
    void coreXY_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
    {
       a = x + y;
       b = x - y;
       c = z;
    }
-   
-   
+
+
    void coreXY_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
    {
       x = ( a + b ) * 0.5f;
       y = ( a - b ) * 0.5f;
       z = c;
    }
-   
+
 
    void coreXY_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
@@ -89,21 +87,18 @@
       {
          X_homeIndex = 6;
          homingActive = true;
-         homingComplete = false;
-      } 
+      }
 
-      if( yHome && Y_homeIndex < 2 )  
+      if( yHome && Y_homeIndex < 2 )
       {
          Y_homeIndex = 6;
          homingActive = true;
-         homingComplete = false;
       }
 
-      if( zHome && Z_homeIndex < 2 ) 
+      if( zHome && Z_homeIndex < 2 )
       {
          Z_homeIndex = 6;
          homingActive = true;
-         homingComplete = false;
       }
    }
 
@@ -111,7 +106,7 @@
    void coreXY_machine_type::homeAxisX( float velocity )
    {
       float speed = getVelX();
-      
+
       switch( X_homeIndex )
       {
          case 6 : // fast advance
@@ -120,7 +115,7 @@
             {
                speed += dX(MACHINE_VEL_STEP_XY);
                if( dX(speed) > velocity ) speed = dX(velocity);
-               
+
                setVelX( speed );  // move toward end stop if no contact is observed
                break;
             }
@@ -129,14 +124,14 @@
                setPosX( X_HOME_OFFSET ); // switched has been activated
                X_homeIndex--;
             }
-          
+
          case 5 : // fast retract
          case 3 : // slow retract
             if( dX(getPosX()) > X_HOME_OFFSET - dX(SLOW_HOME_DIST) )
             {
                speed -= dX(MACHINE_VEL_STEP_XY);
                if( dX(speed) < -velocity ) speed = dX(-velocity);
-               
+
                setVelX( speed );  // back away from switch
                break;
             }
@@ -144,10 +139,10 @@
             {
                X_homeIndex--;
             }
-            
+
          case 2 : // decelerate to zero after slow retract
             speed += dX(MACHINE_VEL_STEP_XY);
-            
+
             if( dX(speed) < 0.0f )
             {
                setVelX( speed );  // decelerate
@@ -159,7 +154,7 @@
             }
 
          case 1 : // hold zero speed
-         case 0 : 
+         case 0 :
             setVelX( 0.0f );
             break;
       }
@@ -169,7 +164,7 @@
    void coreXY_machine_type::homeAxisY( float velocity )
    {
       float speed = getVelY();
-      
+
       switch( Y_homeIndex )
       {
          case 6 : // fast advance
@@ -178,7 +173,7 @@
             {
                speed += dY(MACHINE_VEL_STEP_XY);
                if( dY(speed) > velocity ) speed = dY(velocity);
-               
+
                setVelY( speed );  // move toward end stop if no contact is observed
                break;
             }
@@ -187,14 +182,14 @@
                setPosY( Y_HOME_OFFSET ); // switched has been activated
                Y_homeIndex--;
             }
-          
+
          case 5 : // fast retract
          case 3 : // slow retract
             if( dY(getPosY()) > Y_HOME_OFFSET - dY(SLOW_HOME_DIST) )
             {
                speed -= dY(MACHINE_VEL_STEP_XY);
                if( dY(speed) < -velocity ) speed = dY(-velocity);
-               
+
                setVelY( speed );  // back away from switch
                break;
             }
@@ -202,10 +197,10 @@
             {
                Y_homeIndex--;
             }
-            
+
          case 2 : // decelerate to zero after slow retract
             speed += dY(MACHINE_VEL_STEP_XY);
-            
+
             if( dY(speed) < 0.0f )
             {
                setVelY( speed );  // decelerate
@@ -217,7 +212,7 @@
             }
 
          case 1 : // hold zero speed
-         case 0 : 
+         case 0 :
             setVelY( 0.0f );
             break;
       }
@@ -227,32 +222,32 @@
    void coreXY_machine_type::homeAxisZ( float velocity )
    {
       float speed = getVelZ();
-      
+
       switch(Z_homeIndex)
       {
          case 6 : // fast advance
          case 4 : // slow advance
             if( digitalRead( Z_ENDSTOP_PIN ) == Z_ENDSTOP_NO_CONTACT )
             {
-               speed += dZ(MACHINE_VEL_STEP_XY);
+               speed += dZ(MACHINE_VEL_STEP_Z);
                if( dZ(speed) > velocity ) speed = dZ(velocity);
-               
+
                setVelZ( speed );  // move toward end stop if no contact is observed
                break;
             }
             else
             {
-               setPosZ( Z_HOME_OFFSET ); // switched has been activated
+               setPosZ( Z_HOME_OFFSET ); // switch has been activated
                Z_homeIndex--;
             }
-          
+
          case 5 : // fast retract
          case 3 : // slow retract
             if( dZ(getPosZ()) > Z_HOME_OFFSET - dZ(SLOW_HOME_DIST) )
             {
-               speed -= dZ(MACHINE_VEL_STEP_XY);
+               speed -= dZ(MACHINE_VEL_STEP_Z);
                if( dZ(speed) < -velocity ) speed = dZ(-velocity);
-               
+
                setVelZ( speed );  // back away from switch
                break;
             }
@@ -260,10 +255,10 @@
             {
                Z_homeIndex--;
             }
-            
+
          case 2 : // decelerate to zero after slow retract
             speed += dZ(MACHINE_VEL_STEP_XY);
-            
+
             if( dZ(speed) < 0.0f )
             {
                setVelZ( speed );  // decelerate
@@ -275,7 +270,7 @@
             }
 
          case 1 : // hold zero speed
-         case 0 : 
+         case 0 :
             setVelZ( 0.0f );
             break;
       }
@@ -307,12 +302,7 @@
          if( X_homeIndex < 2 && Y_homeIndex < 2 && Z_homeIndex < 2 ) // not done going home until all axis are done
          {
             homingActive = false;
-            homingComplete = true;
             return true; // returns true once all axis are at home
-         }
-         else
-         {
-            return false; // not at home
          }
       }
       return false;
@@ -327,14 +317,13 @@
          if( Y_homeIndex > 1 ) Y_homeIndex = 0;
          if( Z_homeIndex > 1 ) Z_homeIndex = 0;
          homingActive = true; // set to true to force a final execute that sets the motors to zero vel
-         homingComplete = false;
       }
    }
 
 
-   bool coreXY_machine_type::allHomeCompleted()
+   bool coreXY_machine_type::homingActive()
    {
-      return homingComplete;
+      return homingActive;
    }
 
 
@@ -418,6 +407,7 @@
    }
 
 
+   // HOMING DIRECTION
    float inline coreXY_machine_type::dX( const float & x )
    {
       return x * X_HOME_DIRECTION;

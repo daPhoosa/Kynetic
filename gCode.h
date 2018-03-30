@@ -17,7 +17,6 @@
 */
 
 
-#include "gCodeStructure.h"
 #include "gCodeOperations.h"
 
 
