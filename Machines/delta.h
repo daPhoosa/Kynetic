@@ -31,7 +31,7 @@
          void abortHome();
          bool executeHome();
 
-         bool allHomeCompleted();
+         bool homingActive();
          
 
       private:
@@ -42,12 +42,9 @@
          void homeAxis(int & index, stepperMotor & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
 
          int A_homeIndex, B_homeIndex, C_homeIndex;
-         bool homingActive = false;
-         bool homingComplete = false;
+         bool homingNow = false;
          
-         //float A_TowerX, A_TowerY, B_TowerX, B_TowerY, C_TowerX, C_TowerY;
-         //float minArmHeightSq, armLengthSq;
-         
+         // Machine Geometry
          const float sin60 = 0.86602540378f;
          const float cos60 = 0.5f;
          
@@ -159,14 +156,13 @@
       if( A_homeIndex < 2 ) A_homeIndex = 6; // for delta, allways home all motors at once.  Don't reset motors that are already homing
       if( B_homeIndex < 2 ) B_homeIndex = 6; // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is in process )
       if( C_homeIndex < 2 ) C_homeIndex = 6;
-      homingActive = true;
-      homingComplete = false;
+      homingNow = true;
    }
 
 
-   bool delta_machine_type::allHomeCompleted()
+   bool delta_machine_type::homingActive()
    {
-      return homingComplete;
+      return homingNow;
    }
 
 
@@ -177,15 +173,14 @@
          A_homeIndex = 0;
          B_homeIndex = 0;
          C_homeIndex = 0;
-         homingActive = true; // set to true to force a final execute that sets the motors to zero vel
-         homingComplete = false;
+         homingNow = true; // set to true to force a final execute that sets the motors to zero vel
       }
    }
 
 
    bool delta_machine_type::executeHome()
    {
-      if(homingActive)
+      if(homingNow)
       {
          if( A_homeIndex > 4 ) {
             homeAxis(A_homeIndex, A_motor, X_ENDSTOP_PIN, X_ENDSTOP_NO_CONTACT, A_MOTOR_HOME_OFFSET, FAST_HOME_VEL);
@@ -207,8 +202,7 @@
 
          if( A_homeIndex == 1 && B_homeIndex == 1 && C_homeIndex == 1 ) // not done going home until all axis are done
          {
-            homingActive = false;
-            homingComplete = true;
+            homingNow = false;
             return true; // returns true once all axis are at home
          }
          else

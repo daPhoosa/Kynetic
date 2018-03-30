@@ -58,9 +58,10 @@ void startSD()
 {
    if( file.isOpen() ) 
    {
-      file.rewind();
+      file.close();
    }
-   else if( SD.begin() )
+
+   if( SD.begin() )
    {
       file = SD.open("print.nc", O_READ);
       if(!file)

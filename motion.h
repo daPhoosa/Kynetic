@@ -35,6 +35,7 @@ void resetPosition( const float & x, const float & y, const float & z )
    interrupts();
 }
 
+
 void configMotion()
 {
    motion.setParamXY( MACHINE_ACCEL_XY, MAX_VELOCITY_XY );
