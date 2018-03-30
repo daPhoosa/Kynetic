@@ -60,7 +60,7 @@
          float inline dZ( const float & z );
 
          int X_homeIndex, Y_homeIndex, Z_homeIndex;
-         bool homingActive = false;
+         bool homingNow;
 
    } machine;
 
@@ -86,19 +86,19 @@
       if( xHome && X_homeIndex < 2 )   // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is already in process )
       {
          X_homeIndex = 6;
-         homingActive = true;
+         homingNow = true;
       }
 
       if( yHome && Y_homeIndex < 2 )
       {
          Y_homeIndex = 6;
-         homingActive = true;
+         homingNow = true;
       }
 
       if( zHome && Z_homeIndex < 2 )
       {
          Z_homeIndex = 6;
-         homingActive = true;
+         homingNow = true;
       }
    }
 
@@ -279,7 +279,7 @@
 
    bool coreXY_machine_type::executeHome()
    {
-      if(homingActive)
+      if(homingNow)
       {
          if( X_homeIndex > 4 ) {
             homeAxisX( FAST_HOME_VEL );
@@ -301,7 +301,7 @@
 
          if( X_homeIndex < 2 && Y_homeIndex < 2 && Z_homeIndex < 2 ) // not done going home until all axis are done
          {
-            homingActive = false;
+            homingNow = false;
             return true; // returns true once all axis are at home
          }
       }
@@ -316,14 +316,14 @@
          if( X_homeIndex > 1 ) X_homeIndex = 0; // invalidate any axis that is currenly homing
          if( Y_homeIndex > 1 ) Y_homeIndex = 0;
          if( Z_homeIndex > 1 ) Z_homeIndex = 0;
-         homingActive = true; // set to true to force a final execute that sets the motors to zero vel
+         homingNow = true; // set to true to force a final execute that sets the motors to zero vel
       }
    }
 
 
    bool coreXY_machine_type::homingActive()
    {
-      return homingActive;
+      return homingNow;
    }
 
 
