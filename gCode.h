@@ -313,7 +313,7 @@ void setState( char letter, float number )
       gCode.M = num;
       gCode.newMcode = true;
       KORE.delayedExecute = true;
-      motion.addDwell_Block(100); // dwell before executing
+      motion.addDwell_Block(10); // dwell before executing
       return;
    }
 

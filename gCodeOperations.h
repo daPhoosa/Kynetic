@@ -30,7 +30,7 @@ void addMovementBlock()
          {
             gCode.lastMoveRapid = true;
             motion.addDwell_Block(1); // add delay when switching beteen rapids and feeds
-
+            
             float dx  = gCode.startX - gCode.X;
             float dy  = gCode.startY - gCode.Y;
             rapidDist = sqrtf( dx*dx + dy*dy );

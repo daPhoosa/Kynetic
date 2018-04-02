@@ -53,7 +53,7 @@
          volatile uint32_t ticksPerStep, tickCounter;
          volatile int32_t position;
 
-         int moveDirection;
+         bool movePos;
 
    };
 
@@ -101,7 +101,7 @@
 
          noInterrupts();
          digitalWrite( directionPin, REVERSE );
-         moveDirection = -1;
+         movePos = false;
          ticksPerStep  = tps;
          interrupts();
       }
@@ -113,7 +113,7 @@
 
          noInterrupts();
          digitalWrite( directionPin, FORWARD );
-         moveDirection = 1;
+         movePos = true;
          ticksPerStep  = tps;
          interrupts();
       }
@@ -143,7 +143,7 @@
 
    float stepperMotor::getPositionMM()
    {
-      return float(position) * MMPerStep;
+      return (float(position) + float(tickCounter) * (1.0f / 4294967296.0f) ) * MMPerStep;
    }
 
 
@@ -156,18 +156,32 @@
    inline void stepperMotor::step()
    {
       uint32_t prev = tickCounter;
-      tickCounter += ticksPerStep;
 
       if( stepPinOn )
       {
          digitalWrite( stepPin, LOW );   // set pin low
          stepPinOn = false;
       }
-      else if( tickCounter < prev ) // detect rollover
+
+      if( movePos )  // POSITIVE
       {
-         digitalWrite( stepPin, HIGH );
-         stepPinOn = true;
-         position += moveDirection;
+         tickCounter += ticksPerStep;
+         if( tickCounter < prev )
+         {
+            digitalWrite( stepPin, HIGH );
+            stepPinOn = true;
+            position++;
+         }
+      }
+      else           // NEGATIVE
+      {
+         tickCounter -= ticksPerStep;
+         if( tickCounter > prev )
+         {
+            digitalWrite( stepPin, HIGH );
+            stepPinOn = true;
+            position--;
+         }
       }
    }
 
