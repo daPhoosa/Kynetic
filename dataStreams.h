@@ -63,7 +63,7 @@ void startSD()
 
    if( SD.begin() )
    {
-      file = SD.open("print.nc", O_READ);
+      file = SD.open("print.gcode", O_READ);
       if(!file)
       {
          display("Open File Failed! \n");
