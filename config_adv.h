@@ -60,7 +60,7 @@ struct kynetic_operation_retention_enabler_t
 
    uint32_t programStartTime;
 
-   uint32_t motionTickPerExecute = STEPPER_TICK_HZ / MOTION_CONTROL_HZ;
+   uint32_t motionTickPerExecute = 0;
 
    uint32_t heaterWatchDog = 0;
 

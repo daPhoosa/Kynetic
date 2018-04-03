@@ -62,10 +62,10 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
    //uint32_t timeNow = micros();
 
-   static uint32_t counter = 0;
-
    if( !machine.homingActive() )
    {
+      static uint32_t counter = 10;
+
       static float  X,  Y,  Z;      // cartesian coordinates
       static float  A,  B,  C;      // motor positions
 
@@ -96,15 +96,13 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
          default:
             break;
       }
+      counter++;
 
-      if( counter >= KORE.motionTickPerExecute )
-      {
-         counter = 0;
-      }
-      else
-      {
-         counter++;
-      }
+      static uint32_t bucket = 0;
+      uint32_t prev = bucket;
+      bucket += KORE.motionTickPerExecute;
+      if( bucket < prev ) counter = 0; // reset on rollover
+
    }
    else
    {
