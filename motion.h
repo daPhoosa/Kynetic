@@ -52,7 +52,7 @@ void configMotion()
    motion.setExrudeAccel( EXTRUDE_ACCEL );
    motion.setLookAheadTime( 150 );
    motion.setExtrudeVelocityAdvance( VEL_EXTRUDE_ADV );
-   //motion.junctionSmoothingOff();
+   motion.junctionSmoothingOff();
 
    resetPosition( 0.0f, 0.0f, 0.0f );
 }
@@ -98,15 +98,11 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
       }
       counter++;
 
-      static uint32_t bucket = 0;
+      static uint32_t bucket = 0; // use integer rollover to time motion control
       uint32_t prev = bucket;
       bucket += KORE.motionTickPerExecute;
       if( bucket < prev ) counter = 0; // reset on rollover
 
-   }
-   else
-   {
-      counter = 0;
    }
 
    A_motor.step();
