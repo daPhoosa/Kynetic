@@ -24,6 +24,7 @@ SmoothMove motion;
 void resetPosition( const float & x, const float & y, const float & z )
 {
    noInterrupts();
+   motion.abortMotion();
    motion.setPosition( x, y, z );
    gCodeSetPosition(   x, y, z );
 
@@ -32,6 +33,8 @@ void resetPosition( const float & x, const float & y, const float & z )
    A_motor.setPosition( a );  // set motor positions
    B_motor.setPosition( b );
    C_motor.setPosition( c );
+
+   motion.startMoving();
    interrupts();
 }
 
@@ -59,10 +62,10 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
    //uint32_t timeNow = micros();
 
-   static uint32_t counter = 0;
-
    if( !machine.homingActive() )
    {
+      static uint32_t counter = 10;
+
       static float  X,  Y,  Z;      // cartesian coordinates
       static float  A,  B,  C;      // motor positions
 
@@ -87,21 +90,19 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             break;
 
          case 4:                                       // set extruder motor speed
-            D_motor.setSpeed( float(MOTION_CONTROL_HZ) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
+            D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
             break;
 
          default:
             break;
       }
+      counter++;
 
-      if( counter >= KORE.motionTickPerExecute )
-      {
-         counter = 0;
-      }
-      else
-      {
-         counter++;
-      }
+      static uint32_t bucket = 0;
+      uint32_t prev = bucket;
+      bucket += KORE.motionTickPerExecute;
+      if( bucket < prev ) counter = 0; // reset on rollover
+
    }
    else
    {

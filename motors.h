@@ -73,7 +73,8 @@ void setMotorTickRate()
       C_motor.setTickRateHz( tickCount );
       D_motor.setTickRateHz( tickCount );
 
-      KORE.motionTickPerExecute = tickCount / MOTION_CONTROL_HZ - 1;
+      KORE.motionTickPerExecute = uint32_t( powf(2.0f, 32.0f) * float(MOTION_CONTROL_HZ) / float(tickCount) + 0.5f );
+      Serial.print(KORE.motionTickPerExecute); Serial.print("\t"); Serial.println( powf(2.0f, 32.0f) / float(KORE.motionTickPerExecute) );
    }
    stepperTickCount = 0;
 }
