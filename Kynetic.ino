@@ -123,6 +123,8 @@ void loop()
          //display(funCounter);display("\n");
          funCounter = 0;
 
+         display(gCode.Z); display("\t"); display(KORE.z); display("\t"); display(C_motor.getPositionMM()); display("\n"); // Z axis info: g-code, motion, motor
+
          //display(A_motor.getSpeed());display(" ");display(B_motor.getSpeed());display(" ");display(C_motor.getSpeed());display("\n");
          
          //display( motion.getBlockCount() );display("\n");

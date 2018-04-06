@@ -66,6 +66,8 @@ struct kynetic_operation_retention_enabler_t
 
    bool fileComplete = true;
 
+   volatile float x, y, z;
+
 } KORE;
 
 
