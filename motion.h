@@ -66,7 +66,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
    {
       static uint32_t counter = 10;
 
-      static float  X,  Y,  Z;      // cartesian coordinates
+      //static float  X,  Y,  Z;      // cartesian coordinates
       static float  A,  B,  C;      // motor positions
 
       switch( counter ) // split motion control over multiple ISR calls to avoid going over time
@@ -76,11 +76,13 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             break;
 
          case 1:
-            motion.getTargetLocation( X, Y, Z );  // get next position in cartesian space
+            //motion.getTargetLocation( X, Y, Z );  // get next position in cartesian space
+            motion.getTargetLocation( KORE.x, KORE.y, KORE.z );
             break;
 
          case 2:
-            machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
+            //machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
+            machine.invKinematics( KORE.x, KORE.y, KORE.z, A, B, C );
             break;
 
          case 3:                                       // set motion motor speeds
