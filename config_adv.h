@@ -21,7 +21,7 @@
 // **** CONTROL LOOP FREQUENCIES ****
 // *********************************
 const int MOTION_CONTROL_HZ     = 4000;    // Hz
-const int BLOCK_EXECUTE_HZ      = 500;     // Hz
+const int BLOCK_EXECUTE_HZ      = 1000;     // Hz
 const int SOFT_PWM_HZ           = 100;     // Hz
 const int HEATER_MANAGER_HZ     = 10;      // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz
@@ -66,7 +66,7 @@ struct kynetic_operation_retention_enabler_t
 
    bool fileComplete = true;
 
-   volatile float x, y, z;
+   float x, y, z;
 
 } KORE;
 
