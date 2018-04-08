@@ -487,7 +487,7 @@ bool readNextProgramLine()
 
                while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t holds 9 dec digits - xxxx.xxxxx )
                {
-                  if( decimal < 5 )
+                  if( decimal < 4 )
                   {
                      validNum = true; // at least one digit after the letter
 
