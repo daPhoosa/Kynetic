@@ -93,12 +93,14 @@
 
    void stepperMotor::setSpeed( float t_feedRate )
    {
+      /*
       if( abs(t_feedRate) < 1.0f )
       {
          feedRate = 0.0f;
          ticksPerStep = 0;
          return;
       }
+      */
 
       if( t_feedRate < 0.0f )    // REVERSE
       {
