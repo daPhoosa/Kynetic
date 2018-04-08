@@ -53,7 +53,12 @@
          volatile uint32_t ticksPerStep, tickCounter;
          volatile int32_t position;
 
-         bool movePos;
+         enum move_direction_t
+         {
+            positive,
+            negative,
+            stopped
+         } moveDirection;
 
    };
 
@@ -93,14 +98,14 @@
 
    void stepperMotor::setSpeed( float t_feedRate )
    {
-      /*
-      if( abs(t_feedRate) < 1.0f )
+
+      if( abs(t_feedRate) < 0.1f )
       {
          feedRate = 0.0f;
          ticksPerStep = 0;
+         moveDirection = stopped;
          return;
       }
-      */
 
       if( t_feedRate < 0.0f )    // REVERSE
       {
@@ -110,7 +115,7 @@
 
          noInterrupts();
          digitalWrite( directionPin, REVERSE );
-         movePos = false;
+         moveDirection = negative;
          ticksPerStep = tps;
          interrupts();
       }
@@ -122,7 +127,7 @@
 
          noInterrupts();
          digitalWrite( directionPin, FORWARD );
-         movePos = true;
+         moveDirection = positive;
          ticksPerStep = tps;
          interrupts();
       }
@@ -172,7 +177,7 @@
          stepPinOn = false;
       }
 
-      if( movePos )  // POSITIVE
+      if( moveDirection == positive )  // POSITIVE
       {
          tickCounter += ticksPerStep;
          if( tickCounter < prev )
@@ -182,7 +187,7 @@
             position++;
          }
       }
-      else           // NEGATIVE
+      else if( moveDirection == negative )          // NEGATIVE
       {
          tickCounter -= ticksPerStep;
          if( tickCounter > prev )
