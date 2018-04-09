@@ -83,20 +83,23 @@
 
    void coreXY_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
-      if( xHome && X_homeIndex < 2 )   // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is already in process )
+      if( xHome ) 
       {
+         Serial.println("START X HOME");
          X_homeIndex = 6;
          homingNow = true;
       }
 
-      if( yHome && Y_homeIndex < 2 )
+      if( yHome )
       {
+         Serial.println("START Y HOME");
          Y_homeIndex = 6;
          homingNow = true;
       }
 
-      if( zHome && Z_homeIndex < 2 )
+      if( zHome )
       {
+         Serial.println("START Z HOME");
          Z_homeIndex = 6;
          homingNow = true;
       }
@@ -121,6 +124,7 @@
             }
             else
             {
+               Serial.print(X_homeIndex); Serial.print(" X Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                setPosX( X_HOME_OFFSET ); // switched has been activated
                X_homeIndex--;
             }
@@ -137,6 +141,7 @@
             }
             else
             {
+               Serial.print(X_homeIndex); Serial.print(" X Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                X_homeIndex--;
             }
 
@@ -150,6 +155,7 @@
             }
             else
             {
+               Serial.print("X Home Done  t:"); Serial.println(millis());
                X_homeIndex = 1;
             }
 
@@ -179,6 +185,7 @@
             }
             else
             {
+               Serial.print(Y_homeIndex); Serial.print(" Y Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                setPosY( Y_HOME_OFFSET ); // switched has been activated
                Y_homeIndex--;
             }
@@ -195,6 +202,7 @@
             }
             else
             {
+               Serial.print(Y_homeIndex); Serial.print(" Y Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                Y_homeIndex--;
             }
 
@@ -208,6 +216,7 @@
             }
             else
             {
+               Serial.print("Y Home Done  t:"); Serial.println(millis());
                Y_homeIndex = 1;
             }
 
@@ -237,6 +246,7 @@
             }
             else
             {
+               Serial.print(Z_homeIndex); Serial.print(" Z Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                setPosZ( Z_HOME_OFFSET ); // switch has been activated
                Z_homeIndex--;
             }
@@ -253,6 +263,7 @@
             }
             else
             {
+               Serial.print(Z_homeIndex); Serial.print(" Z Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
                Z_homeIndex--;
             }
 
@@ -266,6 +277,7 @@
             }
             else
             {
+               Serial.print("Z Home Done  t:"); Serial.println(millis());
                Z_homeIndex = 1;
             }
 
@@ -279,7 +291,7 @@
 
    bool coreXY_machine_type::executeHome()
    {
-      if(homingNow)
+      if( homingNow )
       {
          if( X_homeIndex > 4 ) {
             homeAxisX( FAST_HOME_VEL );
@@ -302,7 +314,7 @@
          if( X_homeIndex < 2 && Y_homeIndex < 2 && Z_homeIndex < 2 ) // not done going home until all axis are done
          {
             homingNow = false;
-            return true; // returns true once all axis are at home
+            return true; // returns true a single time once all axis are at home
          }
       }
       return false;
