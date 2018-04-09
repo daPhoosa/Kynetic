@@ -44,7 +44,8 @@
          float tickRateHz;
          float stepsPerMM, MMPerStep;
 
-         float feedRate, maxFeedRate;
+         float maxFeedRate;
+         volatile float feedRate;
 
          int directionPin, stepPin;
          int FORWARD, REVERSE;
