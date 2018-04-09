@@ -60,53 +60,80 @@ void configMotion()
 
 void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
-   //uint32_t timeNow = micros();
+   uint32_t timeNow = micros();
 
-   if( !machine.homingActive() )
+   static bool runMotion = false;
+   static uint32_t bucket = 0; // use integer rollover to time motion control
+   uint32_t prev = bucket;
+   bucket += KORE.motionTickPerExecute;
+   if( bucket < prev ) runMotion = true; // reset on rollover
+
+   if( runMotion )
    {
-      static uint32_t counter = 10;
-
-      //static float  X,  Y,  Z;      // cartesian coordinates
-      static float  A,  B,  C;      // motor positions
-
-      switch( counter ) // split motion control over multiple ISR calls to avoid going over time
+      if( machine.homingActive() )  // *** HOMING
       {
-         case 0:
-            motion.advancePostion();
-            break;
+         if( machine.executeHome() )  // Home operation
+         {
+            Vec3 cart;
 
-         case 1:
-            //motion.getTargetLocation( X, Y, Z );  // get next position in cartesian space
-            motion.getTargetLocation( KORE.x, KORE.y, KORE.z );
-            break;
+            machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
 
-         case 2:
-            //machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
-            machine.invKinematics( KORE.x, KORE.y, KORE.z, A, B, C );
-            break;
+            motion.setPosition( cart.x, cart.y, cart.z );
+            gCodeSetPosition(   cart.x, cart.y, cart.z ); 
 
-         case 3:                                       // set motion motor speeds
-            A_motor.setSpeed( float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
-            B_motor.setSpeed( float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
-            C_motor.setSpeed( float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
-            break;
+            startPollTimers();
 
-         case 4:                                       // set extruder motor speed
-            D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
-            break;
+            KORE.runProgram = true;
 
-         default:
-            break;
+            //motionControl.resetStats();
+            //blockRead.resetStats();
+            
+            motion.startMoving();
+
+            display("Home Complete \n");
+         }
+         runMotion = false;
       }
-      counter++;
+      else                          // *** NORMAL MOTION
+      {
+         static int counter = 0;
 
-      static uint32_t bucket = 0; // use integer rollover to time motion control
-      uint32_t prev = bucket;
-      bucket += KORE.motionTickPerExecute;
-      if( bucket < prev ) counter = 0; // reset on rollover
+         static float  X,  Y,  Z;      // cartesian coordinates
+         static float  A,  B,  C;      // motor positions
 
+         switch( counter++ ) // split motion control over multiple ISR calls to avoid going over time
+         {
+            case 0:
+               motion.advancePostion();
+               break;
+
+            case 1:
+               motion.getTargetLocation( X, Y, Z );  // get next position in cartesian space
+               break;
+
+            case 2:
+               machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
+               break;
+
+            case 3:                                       // set motion motor speeds
+               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
+               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
+               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
+               break;
+
+            case 4:                                       // set extruder motor speed
+               D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
+               break;
+
+            default:
+               runMotion = false;
+               counter   = 0;
+               break;
+         }
+      }
    }
 
+   // GENERATE MOTOR STEPS
    A_motor.step();
    B_motor.step();
    C_motor.step();
@@ -114,7 +141,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 
    stepperTickCount++;
 
-   //funCounter += micros() - timeNow;
+   funCounter += micros() - timeNow;
 }
 
 void startStepperTickISR()

@@ -187,7 +187,7 @@
             position++;
          }
       }
-      else if( moveDirection == negative )          // NEGATIVE
+      else if( moveDirection == negative )// NEGATIVE
       {
          tickCounter -= ticksPerStep;
          if( tickCounter > prev )
