@@ -49,7 +49,7 @@ void setupPins()
 
 void abortAll()
 {
-   display("ABORT ALL EXECUTED \n");
+   //display("ABORT ALL EXECUTED \n");
 
    motion.abortMotion();
    stopMotors();
@@ -61,32 +61,6 @@ void abortAll()
    KORE.extrude1TargetTemp = 0;
    heaterOperator();
    heaterPWM();
-}
-
-
-void motionRunner()
-{
-   //funCounter++;
-   if( machine.executeHome() )  // Home operation
-   {
-      Vec3 cart;
-
-      machine.fwdKinematics( A_motor.getPositionMM(), B_motor.getPositionMM(), C_motor.getPositionMM(), cart.x, cart.y, cart.z ); // compute current cartesian start location
-
-      motion.setPosition( cart.x, cart.y, cart.z );
-      gCodeSetPosition(   cart.x, cart.y, cart.z ); 
-
-      startPollTimers();
-
-      KORE.runProgram = true;
-
-      //motionControl.resetStats();
-      //blockRead.resetStats();
-      
-      motion.startMoving();
-
-      display(String("Home Complete \n"));
-   }
 }
 
 

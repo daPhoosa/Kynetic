@@ -72,13 +72,7 @@ void loop()
    
    if( motionControl.check() )  // Highest Priority
    {
-      motionRunner();
-      //funCounter++;
-
-      //motionControl.collectStats();
-
       watchDogChecks();
-      
    }
    else if( blockExecute.check() ) // Execute G code, feed blocks to the motion controller 
    {
@@ -109,6 +103,9 @@ void loop()
 
       //Serial.println(KORE.runProgram);
 
+      //extruder1_PID.display();      // Monitor extrude PID values
+      //bed_PID.display();            // Monitor bed PID values
+
       if( KORE.runProgram )
       {
          //Serial.println( float(funCounter*100) / 1000000.0f, 1);  // interupt CPU usage
@@ -123,7 +120,7 @@ void loop()
          //display(funCounter);display("\n");
          funCounter = 0;
 
-         display(gCode.Z); display("\t"); display(KORE.z); display("\t"); display(C_motor.getPositionMM()); display("\n"); // Z axis info: g-code, motion, motor
+         //Serial.print(motion.currentBlockIndex); Serial.print("\t"); Serial.println(motion.moveBuffer[motion.currentBlockIndex].staticExtrude);
 
          //display(A_motor.getSpeed());display(" ");display(B_motor.getSpeed());display(" ");display(C_motor.getSpeed());display("\n");
          
