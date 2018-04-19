@@ -115,14 +115,14 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
                machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
                break;
 
-            case 3:                                       // set motion motor speeds
+            case 3:                                       // set extruder motor speed
+               D_motor.setSpeed( D_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
+               break;
+
+            case 4:                                       // set motion motor speeds
                A_motor.setSpeed( A_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
                B_motor.setSpeed( B_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
                C_motor.setSpeed( C_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
-               break;
-
-            case 4:                                       // set extruder motor speed
-               D_motor.setSpeed( D_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
                break;
 
             default:
