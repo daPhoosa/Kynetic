@@ -29,6 +29,8 @@
          stepperMotor( float t_stepsPerMM, int t_direction, uint32_t t_tickRateHz, int t_stepPin, int t_dirPin );
 
          void setSpeed( float feedRate );
+         void setSpeedByPostionMM( float targetPosMM, float Hz );
+
          void setTickRateHz( const uint32_t & t_tickRateHz );
          void setPosition( const float & posFloat );
 
@@ -43,6 +45,7 @@
          float stepperConstant;
          float tickRateHz;
          float stepsPerMM, MMPerStep;
+         float targetPosPrev;
 
          float maxFeedRate;
          volatile float feedRate;
@@ -135,6 +138,16 @@
    }
 
 
+   void stepperMotor::setSpeedByPostionMM( float targetPosMM, float Hz )
+   {
+      float newSpeed = ( targetPosMM + targetPosMM - targetPosPrev - getPositionMM() ) * Hz; //  = speed + error
+
+      setSpeed( newSpeed );
+
+      targetPosPrev  = targetPosMM;
+   }
+
+
    void stepperMotor::setTickRateHz( const uint32_t & t_tickRateHz )
    {
       tickRateHz = float(t_tickRateHz);
@@ -145,6 +158,8 @@
 
    void stepperMotor::setPosition(const float & posFloat)
    {
+      targetPosPrev = posFloat;
+      
       if( posFloat > 0.0f )
       {
          position = int32_t( posFloat * stepsPerMM + 0.5f );
