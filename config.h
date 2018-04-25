@@ -29,8 +29,8 @@ const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
 const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
 
-const float JUNCTION_VEL_RAD = 0.05f;    // mm
-const float CORNER_ROUNDING  = 0.05f;    // mm
+const float JUNCTION_VEL_RAD = 0.10f;    // mm
+const float CORNER_ROUNDING  = 0.10f;    // mm
 
 const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 
@@ -39,8 +39,8 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 // **** PRINT SETTINGS ****
 // ********************************
 
-const float AUTO_Z_HOP_HEIGHT = 0.2f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
-const float Z_HOP_MIN_DIST    = 0.7f;  // increase this to reduce extra hops over small distances
+const float AUTO_Z_HOP_HEIGHT = 0.20f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
+const float Z_HOP_MIN_DIST    = 0.75f;  // increase this to reduce extra hops over small distances
 
 const float VEL_EXTRUDE_ADV   = 0.5f;
 
@@ -54,13 +54,16 @@ const int MAX_BED_TEMP       = 150;  // C
 #define EXTRUDER1_SENSOR_TYPE 1
 #define BED_SENSOR_TYPE 1
 
-#define EXTRUDER1_PID   20.0f, 0.50f, 50.0f, 0.72f   // Prorotional, Integral, Derivative, FeedForward
+#define EXTRUDER1_PID   20.0f, 0.50f, 50.0f, 0.82f   // Prorotional, Integral, Derivative, FeedForward
 #define BED_HEATER_PID 100.0f, 0.25f, 50.0f, 1.50f
 
 #define OVER_SAMPLE_CNT 4
 
 const int MAX_EXT1_HEAT_TIME = 300;    // max time in seconds for the heater to get to temp before alarming out
 const int MAX_BED_HEAT_TIME  =  90;    //    - this will also trigger if the heater is ever on constantly over this amount of time
+
+const int EXT1_HEAT_TEMP_TOL = 10;     // excessive heat time error will not trigger if measured temp is within this tolerance
+const int BED_HEAT_TEMP_TOL  = 10;
 
 const int MAX_ERATIC_BED_THERM = 40;   // max standard deviation of the raw ADC thermistor readings
 const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are touching intermittently 
