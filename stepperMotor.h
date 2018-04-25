@@ -140,11 +140,9 @@
 
    void stepperMotor::setSpeedByPostionMM( float targetPosMM, float Hz )
    {
-      float newSpeed = ( targetPosMM + targetPosMM - targetPosPrev - getPositionMM() ) * Hz; //  = speed + error
-
-      setSpeed( newSpeed );
-
+      float newSpeed = ( targetPosMM + targetPosMM - targetPosPrev - getPositionMM() ) * Hz; //  = estimate speed + correct error
       targetPosPrev  = targetPosMM;
+      setSpeed( newSpeed );
    }
 
 
@@ -159,7 +157,7 @@
    void stepperMotor::setPosition(const float & posFloat)
    {
       targetPosPrev = posFloat;
-      
+
       if( posFloat > 0.0f )
       {
          position = int32_t( posFloat * stepsPerMM + 0.5f );
