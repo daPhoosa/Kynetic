@@ -84,6 +84,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             startPollTimers();
 
             KORE.runProgram = true;
+            KORE.heaterWatchDog = 0;
 
             //motionControl.resetStats();
             //blockRead.resetStats();
