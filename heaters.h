@@ -77,7 +77,8 @@ bool heaterSafetyChecks()
 
    if( KORE.extrude1TargetTemp ) // only check these if temp has been set
    {
-      if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME )   // thermistor not touching, bad heating element
+      if( extruder1_PID.getSaturationTime() > MAX_EXT1_HEAT_TIME &&           // thermistor not touching, bad heating element
+          KORE.extrude1TargetTemp - int(KORE.extrude1Temp) > EXT1_HEAT_TEMP_TOL )  // (if within tolerance, don't alarm)
       {
          display("ALARM: EXTRUDER 1 EXCESSIVE HEAT TIME \n");
          alarm = true;
@@ -95,7 +96,8 @@ bool heaterSafetyChecks()
    
    if( KORE.bedTargetTemp ) // only check these if temp has been set
    {
-      if( bed_PID.getSaturationTime() > MAX_BED_HEAT_TIME )
+      if( bed_PID.getSaturationTime() > MAX_BED_HEAT_TIME &&            // thermistor not touching, bad heating element
+          KORE.bedTargetTemp - int(KORE.bedTemp) > BED_HEAT_TEMP_TOL )       // (if within tolerance, don't alarm)
       {
          display("ALARM: BED EXCESSIVE HEAT TIME \n");
          alarm = true;

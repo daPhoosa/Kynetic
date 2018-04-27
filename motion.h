@@ -84,6 +84,7 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
             startPollTimers();
 
             KORE.runProgram = true;
+            KORE.heaterWatchDog = 0;
 
             //motionControl.resetStats();
             //blockRead.resetStats();
@@ -115,14 +116,18 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
                machine.invKinematics( X, Y, Z, A, B, C ); // convert position to motor coordinates
                break;
 
-            case 3:                                       // set motion motor speeds
-               A_motor.setSpeed( float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
-               B_motor.setSpeed( float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
-               C_motor.setSpeed( float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
+            case 3:                                       // set extruder motor speed
+               D_motor.setSpeedByPostionMM( motion.getExtrudeLocationMM(), float(MOTION_CONTROL_HZ) );
+               //D_motor.setSpeed( D_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
                break;
 
-            case 4:                                       // set extruder motor speed
-               D_motor.setSpeed( float(MOTION_CONTROL_HZ >> 1) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
+            case 4:                                       // set motion motor speeds
+               A_motor.setSpeedByPostionMM( A, float(MOTION_CONTROL_HZ) );
+               B_motor.setSpeedByPostionMM( B, float(MOTION_CONTROL_HZ) );
+               C_motor.setSpeedByPostionMM( C, float(MOTION_CONTROL_HZ) );
+               //A_motor.setSpeed( A_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
+               //B_motor.setSpeed( B_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
+               //C_motor.setSpeed( C_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
                break;
 
             default:
