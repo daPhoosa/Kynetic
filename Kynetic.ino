@@ -27,7 +27,7 @@
 #include <MedianFilter.h>        // https://github.com/daPhoosa/MedianFilter
 #include <PollTimer.h>           // https://github.com/daPhoosa/PollTimer 
 
-#include "stepperMotor.h"
+#include "src/stepperMotor/stepperMotor.h"
 #include "motors.h"
 
 #include "dataStreams.h"
