@@ -483,20 +483,19 @@ bool readNextProgramLine()
                if( ch == '.' || ch == ',' )  // catch decimal point
                {
                   ch = getNextChar();
-               }
 
-               while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t holds 9 dec digits - xxxx.xxxxx )
-               {
-                  if( decimal < 4 )
+                  while( ch >= '0' && ch <= '9' )  // Get digits for decimal portion up to 5 ( int32_t holds 9 dec digits - xxxx.xxxxx )
                   {
-                     validNum = true; // at least one digit after the letter
+                     if( decimal < 4 )
+                     {
+                        validNum = true; // at least one digit after the letter
 
-                     iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
+                        iNumber = iNumber * 10 + (ch - '0'); // move previous value over one dec place and add new number
 
-                     decimal++; // increment number of decimal places
+                        decimal++; // increment number of decimal places
+                     }
+                     ch = getNextChar();
                   }
-
-                  ch = getNextChar();
                }
 
                if( validNum )
