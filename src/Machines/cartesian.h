@@ -24,97 +24,404 @@
    {
       public:
 
-         
          void invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c );
          void fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z );
-         
+
          void startHome( bool xHome, bool yHome, bool zHome );
          void abortHome();
          bool executeHome();
 
-         bool allHomeCompleted();
-         
+         bool homingActive();
+
 
       private:
 
-         void homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity );
-      
-         int A_homeIndex, B_homeIndex, C_homeIndex;
-         bool homingActive = false;
-         bool homingComplete = false;
+         float getVelX();
+         float getVelY();
+         float getVelZ();
+
+         void  setVelX( float velX );
+         void  setVelY( float velY );
+         void  setVelZ( float vel );
+
+         float getPosX();
+         float getPosY();
+         float getPosZ();
+
+         void  setPosX( float pos );
+         void  setPosY( float pos );
+         void  setPosZ( float pos );
+
+         void homeAxisX( float velocity );
+         void homeAxisY( float velocity );
+         void homeAxisZ( float velocity );
+
+         float inline dX( const float & x );
+         float inline dY( const float & y );
+         float inline dZ( const float & z );
+
+         int X_homeIndex, Y_homeIndex, Z_homeIndex;
+         bool homingNow;
 
    } machine;
- 
-   
+
+
    void cartesian_machine_type::invKinematics( const float & x, const float & y, const float & z, float & a, float & b, float & c )
    {
       a = x;
       b = y;
       c = z;
    }
-   
-   
+
+
    void cartesian_machine_type::fwdKinematics( const float & a, const float & b, const float & c, float & x, float & y, float & z )
    {
       x = a;
       y = b;
       z = c;
    }
-   
-   
+
+
    void cartesian_machine_type::startHome( bool xHome, bool yHome, bool zHome )
    {
-      if( xHome && A_homeIndex < 2 )   // ( only reset if 0 (never home) or 1 (home complete), otherwise homing is already in process )
+      if( xHome ) 
       {
-         A_homeIndex = 6;
-         homingActive = true;
-         homingComplete = false;
-      } 
-
-      if( yHome && B_homeIndex < 2 )  
-      {
-         B_homeIndex = 6;
-         homingActive = true;
-         homingComplete = false;
+         Serial.println("START X HOME");
+         X_homeIndex = 6;
+         homingNow = true;
       }
 
-      if( zHome && C_homeIndex < 2 ) 
+      if( yHome )
       {
-         C_homeIndex = 6;
-         homingActive = true;
-         homingComplete = false;
+         Serial.println("START Y HOME");
+         Y_homeIndex = 6;
+         homingNow = true;
+      }
+
+      if( zHome )
+      {
+         Serial.println("START Z HOME");
+         Z_homeIndex = 6;
+         homingNow = true;
       }
    }
 
 
-   void cartesian_machine_type::homeAxis(int & index, dStepper & motor, int endStopPin, int switchNoContact, float homeOffset, float velocity )
+   void cartesian_machine_type::homeAxisX( float velocity )
    {
+      float speed = getVelX();
 
+      switch( X_homeIndex )
+      {
+         case 6 : // fast advance
+         case 4 : // slow advance
+            if( digitalRead( X_ENDSTOP_PIN ) == X_ENDSTOP_NO_CONTACT )
+            {
+               speed += dX(MACHINE_VEL_STEP_XY);
+               if( dX(speed) > velocity ) speed = dX(velocity);
+
+               setVelX( speed );  // move toward end stop if no contact is observed
+               break;
+            }
+            else
+            {
+               Serial.print(X_homeIndex); Serial.print(" X Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               setPosX( X_HOME_OFFSET ); // switched has been activated
+               X_homeIndex--;
+            }
+
+         case 5 : // fast retract
+         case 3 : // slow retract
+            if( dX(getPosX()) > X_HOME_OFFSET - dX(SLOW_HOME_DIST) )
+            {
+               speed -= dX(MACHINE_VEL_STEP_XY);
+               if( dX(speed) < -velocity ) speed = dX(-velocity);
+
+               setVelX( speed );  // back away from switch
+               break;
+            }
+            else
+            {
+               Serial.print(X_homeIndex); Serial.print(" X Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               X_homeIndex--;
+            }
+
+         case 2 : // decelerate to zero after slow retract
+            speed += dX(MACHINE_VEL_STEP_XY);
+
+            if( dX(speed) < 0.0f )
+            {
+               setVelX( speed );  // decelerate
+               break;
+            }
+            else
+            {
+               Serial.print("X Home Done  t:"); Serial.println(millis());
+               X_homeIndex = 1;
+            }
+
+         case 1 : // hold zero speed
+         case 0 :
+            setVelX( 0.0f );
+            break;
+      }
+   }
+
+
+   void cartesian_machine_type::homeAxisY( float velocity )
+   {
+      float speed = getVelY();
+
+      switch( Y_homeIndex )
+      {
+         case 6 : // fast advance
+         case 4 : // slow advance
+            if( digitalRead( Y_ENDSTOP_PIN ) == Y_ENDSTOP_NO_CONTACT )
+            {
+               speed += dY(MACHINE_VEL_STEP_XY);
+               if( dY(speed) > velocity ) speed = dY(velocity);
+
+               setVelY( speed );  // move toward end stop if no contact is observed
+               break;
+            }
+            else
+            {
+               Serial.print(Y_homeIndex); Serial.print(" Y Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               setPosY( Y_HOME_OFFSET ); // switched has been activated
+               Y_homeIndex--;
+            }
+
+         case 5 : // fast retract
+         case 3 : // slow retract
+            if( dY(getPosY()) > Y_HOME_OFFSET - dY(SLOW_HOME_DIST) )
+            {
+               speed -= dY(MACHINE_VEL_STEP_XY);
+               if( dY(speed) < -velocity ) speed = dY(-velocity);
+
+               setVelY( speed );  // back away from switch
+               break;
+            }
+            else
+            {
+               Serial.print(Y_homeIndex); Serial.print(" Y Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               Y_homeIndex--;
+            }
+
+         case 2 : // decelerate to zero after slow retract
+            speed += dY(MACHINE_VEL_STEP_XY);
+
+            if( dY(speed) < 0.0f )
+            {
+               setVelY( speed );  // decelerate
+               break;
+            }
+            else
+            {
+               Serial.print("Y Home Done  t:"); Serial.println(millis());
+               Y_homeIndex = 1;
+            }
+
+         case 1 : // hold zero speed
+         case 0 :
+            setVelY( 0.0f );
+            break;
+      }
+   }
+
+
+   void cartesian_machine_type::homeAxisZ( float velocity )
+   {
+      float speed = getVelZ();
+
+      switch(Z_homeIndex)
+      {
+         case 6 : // fast advance
+         case 4 : // slow advance
+            if( digitalRead( Z_ENDSTOP_PIN ) == Z_ENDSTOP_NO_CONTACT )
+            {
+               speed += dZ(MACHINE_VEL_STEP_Z);
+               if( dZ(speed) > velocity ) speed = dZ(velocity);
+
+               setVelZ( speed );  // move toward end stop if no contact is observed
+               break;
+            }
+            else
+            {
+               Serial.print(Z_homeIndex); Serial.print(" Z Advance - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               setPosZ( Z_HOME_OFFSET ); // switch has been activated
+               Z_homeIndex--;
+            }
+
+         case 5 : // fast retract
+         case 3 : // slow retract
+            if( dZ(getPosZ()) > Z_HOME_OFFSET - dZ(SLOW_HOME_DIST) )
+            {
+               speed -= dZ(MACHINE_VEL_STEP_Z);
+               if( dZ(speed) < -velocity ) speed = dZ(-velocity);
+
+               setVelZ( speed );  // back away from switch
+               break;
+            }
+            else
+            {
+               Serial.print(Z_homeIndex); Serial.print(" Z Retract - v:"); Serial.print(speed); Serial.print("  t:"); Serial.println(millis());
+               Z_homeIndex--;
+            }
+
+         case 2 : // decelerate to zero after slow retract
+            speed += dZ(MACHINE_VEL_STEP_XY);
+
+            if( dZ(speed) < 0.0f )
+            {
+               setVelZ( speed );  // decelerate
+               break;
+            }
+            else
+            {
+               Serial.print("Z Home Done  t:"); Serial.println(millis());
+               Z_homeIndex = 1;
+            }
+
+         case 1 : // hold zero speed
+         case 0 :
+            setVelZ( 0.0f );
+            break;
+      }
    }
 
 
    bool cartesian_machine_type::executeHome()
    {
+      if( homingNow )
+      {
+         if( X_homeIndex > 4 ) {
+            homeAxisX( FAST_HOME_VEL );
+         }else{
+            homeAxisX( SLOW_HOME_VEL );
+         }
 
+         if( Y_homeIndex > 4 ) {
+            homeAxisY( FAST_HOME_VEL );
+         }else{
+            homeAxisY( SLOW_HOME_VEL );
+         }
+
+         if( Z_homeIndex > 4 ) {
+            homeAxisZ( FAST_HOME_VEL );
+         }else{
+            homeAxisZ( SLOW_HOME_VEL );
+         }
+
+         if( X_homeIndex < 2 && Y_homeIndex < 2 && Z_homeIndex < 2 ) // not done going home until all axis are done
+         {
+            homingNow = false;
+            return true; // returns true a single time once all axis are at home
+         }
+      }
+      return false;
    }
 
 
    void cartesian_machine_type::abortHome()
    {
-      if( A_homeIndex > 1 || B_homeIndex > 1 || C_homeIndex > 1 ) // only abort if at least one axis is actively homing
+      if( X_homeIndex > 1 || Y_homeIndex > 1 || Z_homeIndex > 1 ) // only abort if at least one axis is actively homing
       {
-         A_homeIndex = 0;
-         B_homeIndex = 0;
-         C_homeIndex = 0;
-         homingActive = true; // set to true to force a final execute that sets the motors to zero vel
-         homingComplete = false;
+         if( X_homeIndex > 1 ) X_homeIndex = 0; // invalidate any axis that is currenly homing
+         if( Y_homeIndex > 1 ) Y_homeIndex = 0;
+         if( Z_homeIndex > 1 ) Z_homeIndex = 0;
+         homingNow = true; // set to true to force a final execute that sets the motors to zero vel
       }
    }
 
 
-   bool cartesian_machine_type::allHomeCompleted()
+   bool cartesian_machine_type::homingActive()
    {
-      return homingComplete;
-   }  
+      return homingNow;
+   }
+
+
+   // GET VELOCITY
+   float cartesian_machine_type::getVelX()
+   {
+      return A_motor.getSpeed();
+   }
+
+   float cartesian_machine_type::getVelY()
+   {
+      return B_motor.getSpeed();
+   }
+
+   float cartesian_machine_type::getVelZ()
+   {
+      return C_motor.getSpeed();
+   }
+
+
+   // SET VELOCITY
+   void  cartesian_machine_type::setVelX( float velX )
+   {
+      A_motor.setSpeed( velX );
+   }
+
+   void  cartesian_machine_type::setVelY( float velY )
+   {
+      B_motor.setSpeed( velY );
+   }
+
+   void  cartesian_machine_type::setVelZ( float vel )
+   {
+      C_motor.setSpeed( vel );
+   }
+
+
+   // GET POSITION
+   float cartesian_machine_type::getPosX()
+   {
+      return A_motor.getPositionMM();
+   }
+
+   float cartesian_machine_type::getPosY()
+   {
+      return B_motor.getPositionMM();
+   }
+
+   float cartesian_machine_type::getPosZ()
+   {
+      return C_motor.getPositionMM();
+   }
+
+
+   // SET POSITION
+   void cartesian_machine_type::setPosX( float posX )
+   {
+      A_motor.setPosition( posX );
+   }
+
+   void cartesian_machine_type::setPosY( float posY )
+   {
+      B_motor.setPosition( posY );
+   }
+
+   void cartesian_machine_type::setPosZ( float pos )
+   {
+      C_motor.setPosition( pos );
+   }
+
+
+   // HOMING DIRECTION
+   float inline cartesian_machine_type::dX( const float & x )
+   {
+      return x * X_HOME_DIRECTION;
+   }
+
+   float inline cartesian_machine_type::dY( const float & y )
+   {
+      return y * Y_HOME_DIRECTION;
+   }
+
+   float inline cartesian_machine_type::dZ( const float & z )
+   {
+      return z * Z_HOME_DIRECTION;
+   }
 
 #endif
