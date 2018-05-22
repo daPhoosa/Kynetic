@@ -42,7 +42,7 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 const float AUTO_Z_HOP_HEIGHT = 0.20f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
 const float Z_HOP_MIN_DIST    = 0.75f;  // increase this to reduce extra hops over small distances
 
-const float VEL_EXTRUDE_ADV   = 0.5f;
+const float VEL_EXTRUDE_ADV   = 0.05f;
 
 // **************************
 // **** HEATER SETTINGS ****
