@@ -169,6 +169,7 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
    if( blockCount > 1 && !moveBuffer[prevBlock].dwell )
    {
       float prevBlockDist = moveBuffer[prevBlock].length - junctionRadius;
+      float prevBlockVel  = moveBuffer[prevBlock].targetVel;
 
       int bCount = blockCount;
 
@@ -177,6 +178,7 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
          bCount--;
          prevBlock = previousBlockIndex(prevBlock);
          prevBlockDist = moveBuffer[prevBlock].length + prevBlockDist;
+         if( prevBlockVel > moveBuffer[prevBlock].targetVel ) prevBlockVel = moveBuffer[prevBlock].targetVel;
       }
 
       float x1, y1, z1;
@@ -188,28 +190,26 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
       x1 -= x2; // difference in positions
       y1 -= y2;
       z1 -= z2;
-      float pointDistSq = x1 * x1 + y1 * y1 + z1 * z1;
 
-      float radius = sqrtf( pointDistSq * junctionRadiusSq / ( 4.00001f * junctionRadiusSq - pointDistSq ));
-
+      float pointDistSq   = x1 * x1 + y1 * y1 + z1 * z1;
+      float radius        = sqrtf( pointDistSq * junctionRadiusSq / ( 4.00001f * junctionRadiusSq - pointDistSq ));
       float junctionVelSq = maxAccel * radius;
-
-      float minBlockVel = min( moveBuffer[index].targetVel, moveBuffer[prevBlock].targetVel );
+      float minBlockVel   = min( moveBuffer[index].targetVel, prevBlockVel );
 
       if( junctionVelSq < minBlockVel * minBlockVel )
       {
-         moveBuffer[index].maxStartVel = sqrtf(junctionVelSq);
+         moveBuffer[index].maxStartVel  = sqrtf(junctionVelSq);
          moveBuffer[index].fastJunction = false;
       }
       else
       {
-         moveBuffer[index].maxStartVel = minBlockVel;
+         moveBuffer[index].maxStartVel  = minBlockVel;
          moveBuffer[index].fastJunction = true;
       }
    }
    else
    {
-      moveBuffer[index].maxStartVel = 0.0f;  // first block always starts at zero vel and blocks after an exact stop
+      moveBuffer[index].maxStartVel  = 0.0f;  // first block always starts at zero vel and blocks after an exact stop
       moveBuffer[index].fastJunction = true; // no point in smoothing if coming from a dead stop
    }
 }
