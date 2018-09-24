@@ -60,7 +60,14 @@ void configMotion()
 
 void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
-   uint32_t timeNow = micros();
+   //uint32_t timeNow = micros();
+
+   // GENERATE MOTOR STEPS (execute first to reduce jitter)
+   A_motor.step();
+   B_motor.step();
+   C_motor.step();
+   D_motor.step();
+   stepperTickCount++;
 
    static bool runMotion = false;
    static uint32_t bucket = 0; // use integer rollover to time motion control
@@ -102,6 +109,8 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
          static float  X,  Y,  Z;      // cartesian coordinates
          static float  A,  B,  C;      // motor positions
 
+         float position, speed;
+
          switch( counter++ ) // split motion control over multiple ISR calls to avoid going over time
          {
             case 0:
@@ -117,36 +126,26 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
                break;
 
             case 3:                                       // set extruder motor speed
-               D_motor.setSpeedByPostionMM( motion.getExtrudeLocationMM(), float(MOTION_CONTROL_HZ) );
-               //D_motor.setSpeed( D_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (motion.getExtrudeLocationMM() - D_motor.getPositionMM()) );
+               speed    = D_motor.getSpeed();
+               position = motion.getExtrudeLocationMM() + speed * VEL_EXTRUDE_ADV;   // add velocity advance
+               D_motor.setSpeedByPostionMM( position, float(MOTION_CONTROL_HZ) );
                break;
 
             case 4:                                       // set motion motor speeds
                A_motor.setSpeedByPostionMM( A, float(MOTION_CONTROL_HZ) );
                B_motor.setSpeedByPostionMM( B, float(MOTION_CONTROL_HZ) );
                C_motor.setSpeedByPostionMM( C, float(MOTION_CONTROL_HZ) );
-               //A_motor.setSpeed( A_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (A - A_motor.getPositionMM()) );
-               //B_motor.setSpeed( B_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (B - B_motor.getPositionMM()) );
-               //C_motor.setSpeed( C_motor.getSpeed() + float(MOTION_CONTROL_HZ) * (C - C_motor.getPositionMM()) );
+               runMotion = false;
+               counter   = 0;
                break;
 
             default:
-               runMotion = false;
-               counter   = 0;
                break;
          }
       }
    }
 
-   // GENERATE MOTOR STEPS
-   A_motor.step();
-   B_motor.step();
-   C_motor.step();
-   D_motor.step();
-
-   stepperTickCount++;
-
-   funCounter += micros() - timeNow;
+   //funCounter += micros() - timeNow;
 }
 
 void startStepperTickISR()

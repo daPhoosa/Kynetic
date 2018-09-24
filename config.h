@@ -42,7 +42,7 @@ const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 const float AUTO_Z_HOP_HEIGHT = 0.20f;  // adds a z-hop when a horizontal rapid move is detected ( slicer z-hops unchanged )
 const float Z_HOP_MIN_DIST    = 0.75f;  // increase this to reduce extra hops over small distances
 
-const float VEL_EXTRUDE_ADV   = 0.5f;
+const float VEL_EXTRUDE_ADV   = 0.0f;
 
 // **************************
 // **** HEATER SETTINGS ****
@@ -116,9 +116,9 @@ const int MAX_ERATIC_EXT_THERM = 40;   //    - Should catch thermistors that are
 
 //#define MACHINE_TYPE_CARTESIAN
 
-#define MACHINE_TYPE_COREXY
+//#define MACHINE_TYPE_COREXY
 
-//#define MACHINE_TYPE_DELTA
+#define MACHINE_TYPE_DELTA
 #ifdef  MACHINE_TYPE_DELTA // delta arm geometry configuration
    #define DELTA_ARM_RADIUS         107.0f // 109.0 -- decrease if center is low, increase if outside is low
    #define DELTA_ARM_LENGTH         207.3f //   
