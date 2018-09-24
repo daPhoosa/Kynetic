@@ -49,7 +49,7 @@ void setupPins()
 
 void abortAll()
 {
-   //display("ABORT ALL EXECUTED \n");
+   display("ABORT ALL EXECUTED \n");
 
    motion.abortMotion();
    stopMotors();
@@ -104,7 +104,7 @@ bool pauseManager() // return true if pause is active
 }
 
 
-void programReader()
+bool programReader()
 {
    if( !pauseManager() )
    {
@@ -128,9 +128,9 @@ void programReader()
             display( " S:" ); display( runTime ); display( "\n" );
          }
       }
-
-      //getNextProgramBlock = false;   
+      return true;   
    }
+   return false;
 }
 
 
@@ -149,9 +149,7 @@ bool codeReader()
       else  
       {
          executeCodeNow();
-         programReader();
-         //getNextProgramBlock = true; // don't get the next program line until this one has been handed to the motion controller
-         return true;
+         return programReader();
       }
    }
    return false;

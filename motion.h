@@ -60,7 +60,14 @@ void configMotion()
 
 void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
 {
-   uint32_t timeNow = micros();
+   //uint32_t timeNow = micros();
+
+   // GENERATE MOTOR STEPS (execute first to reduce jitter)
+   A_motor.step();
+   B_motor.step();
+   C_motor.step();
+   D_motor.step();
+   stepperTickCount++;
 
    static bool runMotion = false;
    static uint32_t bucket = 0; // use integer rollover to time motion control
@@ -128,25 +135,17 @@ void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
                A_motor.setSpeedByPostionMM( A, float(MOTION_CONTROL_HZ) );
                B_motor.setSpeedByPostionMM( B, float(MOTION_CONTROL_HZ) );
                C_motor.setSpeedByPostionMM( C, float(MOTION_CONTROL_HZ) );
+               runMotion = false;
+               counter   = 0;
                break;
 
             default:
-               runMotion = false;
-               counter   = 0;
                break;
          }
       }
    }
 
-   // GENERATE MOTOR STEPS
-   A_motor.step();
-   B_motor.step();
-   C_motor.step();
-   D_motor.step();
-
-   stepperTickCount++;
-
-   funCounter += micros() - timeNow;
+   //funCounter += micros() - timeNow;
 }
 
 void startStepperTickISR()
