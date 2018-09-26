@@ -38,14 +38,14 @@
 
 
       private:
-         float minLineLength, maxLineLength;
+         float minLineLength, maxLineLength, feed, acceleration;
 
          int segmentCount, segmentNow;
 
          struct 3D_POINT_t
          {
             float x, y, z;
-         } s, e, d, n;
+         } s, e, d;
 
 
    } blockSplitter;
@@ -53,11 +53,16 @@
    blockSplitterObject::blockSplitterObject()
    {
       minLineLength = 1.0f;
+      acceleration = 1500.0f;
    }
 
    void blockSplitterObject::AddLine( float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate )
    {
       segmentNow = 0;
+
+      feed = feedRate;
+
+      float lengthTarget = max( (feed * feed) / (acceleration + acceleration), minLineLength );
       
       s.x = startX;
       s.y = startY;
@@ -93,6 +98,50 @@
    void blockSplitterObject::addArc(  float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate, float centerX, float centerY)
    {
 
+   }
+
+   bool blockSplitterObject::getNextSegment()
+   {
+      if( segmentNow < segmentCount )
+      {
+         segmentNow++;
+
+         if( segmentNow == segmentCount )
+         {
+            s.x += e.x; // use end point for last segement
+            s.y += e.y;
+            s.z += e.z;
+         }
+         else
+         {
+            s.x += d.x; // 
+            s.y += d.y;
+            s.z += d.z;
+         }
+         
+         return true;
+      }
+      return false;
+   }
+
+   float blockSplitterObject::x()
+   {
+      return s.x;
+   }
+
+   float blockSplitterObject::y()
+   {
+      return s.y;
+   }
+
+   float blockSplitterObject::z()
+   {
+      return s.z;
+   }
+
+   float blockSplitterObject::f()
+   {
+      return s.feed;
    }
 
 #endif
