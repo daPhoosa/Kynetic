@@ -26,7 +26,10 @@
       public:
          blockSplitterObject();
 
-         void addLine( float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate );
+         void setMinLength( float L );
+         void setAcceleration( float A );
+
+         void addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate );
          void addArc(  float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate, float centerX, float centerY);
 
          bool getNextSegment();
@@ -34,18 +37,19 @@
          float x();
          float y();
          float z();
+         float e();
          float f();
 
 
       private:
-         float minLineLength, maxLineLength, feed, acceleration;
+         float minLineLength, maxLineLength, feed, accelX2;
 
          int segmentCount, segmentNow;
 
-         struct 3D_POINT_t
+         struct POINT_4D_t
          {
-            float x, y, z;
-         } s, e, d;
+            float x, y, z, e;
+         } now, last, delta;
 
 
    } blockSplitter;
@@ -53,40 +57,54 @@
    blockSplitterObject::blockSplitterObject()
    {
       minLineLength = 1.0f;
-      acceleration = 1500.0f;
+      accelX2 = 3000.0f;
    }
 
-   void blockSplitterObject::AddLine( float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate )
+   void blockSplitterObject::setMinLength( float L )
+   {
+      minLineLength = L;
+   }
+
+   void blockSplitterObject::setAcceleration( float A )
+   {
+      accelX2 = 2.0f * A;
+   }
+
+   void blockSplitterObject::addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate )
    {
       segmentNow = 0;
 
       feed = feedRate;
 
-      float lengthTarget = max( (feed * feed) / (acceleration + acceleration), minLineLength );
+      float lengthTarget = max( (feed * feed) / accelX2, minLineLength );
       
-      s.x = startX;
-      s.y = startY;
-      s.z = startZ;
+      now.x = X0;
+      now.y = Y0;
+      now.z = Z0;
+      now.e = E0;
 
-      e.x = endX;
-      e.y = endY;
-      e.z = endZ;
+      last.x = X1;
+      last.y = Y1;
+      last.z = Z1;
+      last.e = E1;
 
-      d.x = e.x - s.x;
-      d.y = e.y - s.y;
-      d.z = e.z - s.z;
+      delta.x = X1 - X0;
+      delta.y = Y1 - Y0;
+      delta.z = Z1 - Z0;
+      delta.e = E1 - E0;
 
-      float length = sqrtf( d.x * d.x + d.y * d.y + d.z * d.z );
+      float length = sqrtf( delta.x * delta.x + delta.y * delta.y + delta.z * delta.z );
       
-      if( length > minLineLength )
+      if( length > lengthTarget )
       {
-         segmentCount = int(length / minLineLength + 0.5f);
+         segmentCount = int(length / lengthTarget + 0.5f);
 
          float invLength = 1.0f / float(segmentCount);
 
-         d.x *= invLength;
-         d.y *= invLength;
-         d.z *= invLength;
+         delta.x *= invLength;
+         delta.y *= invLength;
+         delta.z *= invLength;
+         delta.e *= invLength;
       }
       else
       {
@@ -108,17 +126,18 @@
 
          if( segmentNow == segmentCount )
          {
-            s.x += e.x; // use end point for last segement
-            s.y += e.y;
-            s.z += e.z;
+            now.x = last.x; // use end point for last segement
+            now.y = last.y;
+            now.z = last.z;
+            now.e = last.e;
          }
          else
          {
-            s.x += d.x; // 
-            s.y += d.y;
-            s.z += d.z;
+            now.x += delta.x; // increment position
+            now.y += delta.y;
+            now.z += delta.z;
+            now.e += delta.e;
          }
-         
          return true;
       }
       return false;
@@ -126,22 +145,27 @@
 
    float blockSplitterObject::x()
    {
-      return s.x;
+      return now.x;
    }
 
    float blockSplitterObject::y()
    {
-      return s.y;
+      return now.y;
    }
 
    float blockSplitterObject::z()
    {
-      return s.z;
+      return now.z;
+   }
+
+   float blockSplitterObject::e()
+   {
+      return now.e;
    }
 
    float blockSplitterObject::f()
    {
-      return s.feed;
+      return feed;
    }
 
 #endif
