@@ -28,9 +28,10 @@
 
          void setMinLength( float L );
          void setAcceleration( float A );
+         void setArcError( float E );
 
          void addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate );
-         void addArc(  float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate, float centerX, float centerY);
+         void addArc(  float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY);
 
          bool getNextSegment();
 
@@ -42,7 +43,10 @@
 
 
       private:
-         float minLineLength, maxLineLength, feed, accelX2;
+         float minLineLength,  feed, accel, invAccelX2;
+         float arcErrorX2, arcErrorSq;
+
+         float cx, cy, radius, angle, dA;
 
          int segmentCount, segmentNow;
 
@@ -56,8 +60,9 @@
 
    blockSplitterObject::blockSplitterObject()
    {
-      minLineLength = 1.0f;
-      accelX2 = 3000.0f;
+      setMinLength( 1.0f );
+      setAcceleration( 1500.0f );
+      setArcError( 0.01 );
    }
 
    void blockSplitterObject::setMinLength( float L )
@@ -67,8 +72,16 @@
 
    void blockSplitterObject::setAcceleration( float A )
    {
-      accelX2 = 2.0f * A;
+      accel = A - 1; // bias to insure length is slightly longer than accel distance
+      invAccelX2 = 1.0f / (2.0f * accel);
    }
+
+   void blockSplitterObject::setArcError( float E )
+   {
+      arcErrorX2 = E * 2.0f;
+      arcErrorSq = E * E;
+   }
+
 
    void blockSplitterObject::addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate )
    {
@@ -76,7 +89,7 @@
 
       feed = feedRate;
 
-      float lengthTarget = max( (feed * feed) / accelX2, minLineLength );
+      float lengthTarget = max( feed * feed * invAccelX2, minLineLength );
       
       now.x = X0;
       now.y = Y0;
@@ -113,9 +126,47 @@
 
    }
 
-   void blockSplitterObject::addArc(  float startX, float startY, float startZ, float endX, float endY, float endZ, float feedRate, float centerX, float centerY)
+   void blockSplitterObject::addArc( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY)
    {
+      segmentNow = 0;
 
+      cx = centerX;
+      cy = centerY;
+
+      last.x = X1;
+      last.y = Y1;
+      last.z = Z1;
+      last.e = E1;
+
+      delta.x = X1 - X0;
+      delta.y = Y1 - Y0;
+      delta.z = Z1 - Z0;
+      delta.e = E1 - E0;
+
+      float rx = X0 - cx;
+      float ry = Y0 - cy;
+
+      radius = sqrt( rx * rx + ry * ry );
+
+      feed = min( feedRate, sqrt( accel * radius )); // limit to radial acceleration
+
+      float lengthTarget = max( feed * feed * invAccelX2, minLineLength  );
+      lengthTarget = min( 2.0f * sqrt( radius * arcErrorX2 + arcErrorSq), lengthTarget );
+
+      angle = atan2( rx, ry );
+
+      float length;
+
+      if( delta.x * delta.x + delta.y * delta.y < 0.0001f ) // coincident start/stop points indicate full circle
+      {
+         length = PI * radius * 2.0f;
+      }
+      else
+      {  
+         rx = X1 - cx;
+         ry = Y1 - cy;
+         angleEnd = 
+      }
    }
 
    bool blockSplitterObject::getNextSegment()
