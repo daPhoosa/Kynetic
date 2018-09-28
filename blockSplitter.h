@@ -31,7 +31,7 @@
          void setArcError( float E );
 
          void addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate );
-         void addArc(  float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY);
+         void addArc(  float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY, int direction );
 
          bool getNextSegment();
 
@@ -126,7 +126,7 @@
 
    }
 
-   void blockSplitterObject::addArc( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY)
+   void blockSplitterObject::addArc( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate, float centerX, float centerY, int direction )
    {
       segmentNow = 0;
 
@@ -153,9 +153,10 @@
       float lengthTarget = max( feed * feed * invAccelX2, minLineLength  );
       lengthTarget = min( 2.0f * sqrt( radius * arcErrorX2 + arcErrorSq), lengthTarget );
 
-      angle = atan2( rx, ry );
+      angle = atan2f( rx, ry );
+      if( angle < 0.0f ) angle += 6.2831853f; // force positive
 
-      float length;
+      float length,angleEnd;
 
       if( delta.x * delta.x + delta.y * delta.y < 0.0001f ) // coincident start/stop points indicate full circle
       {
@@ -165,8 +166,50 @@
       {  
          rx = X1 - cx;
          ry = Y1 - cy;
-         angleEnd = 
+         angleEnd = atan2f( rx, ry );
+         if( angleEnd < 0.0f ) angleEnd += 6.2831853f; // force positive
+
+         if( direction == 2 )  // CW direction
+         {
+
+         }
+         else                 // CCW direction
+         {
+
+         }
       }
+
+
+      /*
+
+      moveBuffer[index].startAngle = atan2f(dYstart, dXstart);
+      if(moveBuffer[index].startAngle < 0.0f) moveBuffer[index].startAngle += 6.2831853f; // force positive
+
+      float dXend = X_end - centerX;
+      float dYend = Y_end - centerY;
+
+      float endAngle = atan2f(dYend, dXend);
+      if(endAngle < 0.0f) endAngle += 6.2831853f; // force positive
+
+      float arcAngle;
+
+      if(moveBuffer[index].moveType == ArcCW)
+      {
+         arcAngle = moveBuffer[index].startAngle - endAngle;
+      }
+      else
+      {
+         arcAngle = endAngle - moveBuffer[index].startAngle;
+      }
+
+      if(arcAngle < 0.0001f)     // must be positive also matching start and stop locations indicates full circle
+      {
+         arcAngle += 6.2831853f;
+      }
+      */
+
+
+
    }
 
    bool blockSplitterObject::getNextSegment()
