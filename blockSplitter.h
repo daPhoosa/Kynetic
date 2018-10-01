@@ -143,73 +143,44 @@
       delta.z = Z1 - Z0;
       delta.e = E1 - E0;
 
-      float rx = X0 - cx;
-      float ry = Y0 - cy;
+      float dX = X0 - cx;
+      float dY = Y0 - cy;
 
-      radius = sqrt( rx * rx + ry * ry );
+      radius = sqrt( dX * dX + dY * dY );
 
+      // add zero radius check here
+      
       feed = min( feedRate, sqrt( accel * radius )); // limit to radial acceleration
 
       float lengthTarget = max( feed * feed * invAccelX2, minLineLength  );
       lengthTarget = min( 2.0f * sqrt( radius * arcErrorX2 + arcErrorSq), lengthTarget );
 
-      angle = atan2f( rx, ry );
-      if( angle < 0.0f ) angle += 6.2831853f; // force positive
+      float startAngle = atan2f( dY, dX );
+      if(startAngle < 0.0f) startAngle += 6.2831853f; // force positive
 
-      float length,angleEnd;
+      dX = X1 - cx;
+      dY = Y1 - cy;
 
-      if( delta.x * delta.x + delta.y * delta.y < 0.0001f ) // coincident start/stop points indicate full circle
-      {
-         length = PI * radius * 2.0f;
-      }
-      else
-      {  
-         rx = X1 - cx;
-         ry = Y1 - cy;
-         angleEnd = atan2f( rx, ry );
-         if( angleEnd < 0.0f ) angleEnd += 6.2831853f; // force positive
-
-         if( direction == 2 )  // CW direction
-         {
-
-         }
-         else                 // CCW direction
-         {
-
-         }
-      }
-
-
-      /*
-
-      moveBuffer[index].startAngle = atan2f(dYstart, dXstart);
-      if(moveBuffer[index].startAngle < 0.0f) moveBuffer[index].startAngle += 6.2831853f; // force positive
-
-      float dXend = X_end - centerX;
-      float dYend = Y_end - centerY;
-
-      float endAngle = atan2f(dYend, dXend);
-      if(endAngle < 0.0f) endAngle += 6.2831853f; // force positive
+      float endAngle = atan2f( dY, dX );
+      if( endAngle < 0.0f ) endAngle += 6.2831853f; // force positive
 
       float arcAngle;
 
-      if(moveBuffer[index].moveType == ArcCW)
+      if( direction == 2 ) // CW arc
       {
-         arcAngle = moveBuffer[index].startAngle - endAngle;
+         arcAngle = startAngle - endAngle;
       }
-      else
+      else                 // CCW arc
       {
-         arcAngle = endAngle - moveBuffer[index].startAngle;
+         arcAngle = endAngle - startAngle;
       }
 
-      if(arcAngle < 0.0001f)     // must be positive also matching start and stop locations indicates full circle
+      if(arcAngle < 0.0001f) // must be positive (also matching start and stop locations indicates full circle)
       {
          arcAngle += 6.2831853f;
       }
-      */
 
-
-
+      length = arcAngle * radius;
    }
 
    bool blockSplitterObject::getNextSegment()
