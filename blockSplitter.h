@@ -1,7 +1,7 @@
 /*
    Kynetic CNC Control Software
    Copyright (C) 2017 Phillip Schmidt
-
+   
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -73,7 +73,7 @@
       setMinLength( 2.0f );
       setMaxLength( 10.0f );
       setAcceleration( 1500.0f );
-      setArcError( 0.01 );
+      setArcError( 0.02 );
    }
 
    void blockSplitterObject::setMinLength( float L )
@@ -164,17 +164,17 @@
       delta.z = Z1 - Z0;
       delta.e = E1 - E0;
 
-      float dX = X0 - cx;
-      float dY = Y0 - cy;
+      float rx = X0 - cx;
+      float ry = Y0 - cy;
 
       radius = sqrtf( rx * rx + ry * ry );
 
       feed = min( feedRate, sqrtf( accel * radius )); // limit to radial acceleration
 
-      // Length is the limited by both arc path deviation and acceleration.  Select the smaller one.
-      float pathDevitaionLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
+      // Length is limited by both arc path deviation and acceleration.  Selects the smaller one.
+      float pathDeviationLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
       float linearAccelDistance = max( feed * feed * invAccelX2, minLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
-      float lengthTarget = min( pathDevitaionLength, linearAccelDistance ); 
+      float lengthTarget        = min( pathDeviationLength, linearAccelDistance ); 
 
       angleStart = atan2f( ry, rx );
 
