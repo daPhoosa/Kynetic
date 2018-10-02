@@ -27,6 +27,7 @@
          blockSplitterObject();
 
          void setMinLength( float L );
+         void setMaxLength( float L );
          void setAcceleration( float A );
          void setArcError( float E );
 
@@ -41,12 +42,21 @@
          float e();
          float f();
 
+         enum MOVE_TYPE_t
+         {
+            RAPID,
+            LINEAR,
+            ARC_CW,
+            ARC_CCW
+         } moveType;
+
 
       private:
-         float minLineLength,  feed, accel, invAccelX2;
-         float arcErrorX2, arcErrorSq;
+         float minLineLength, maxLineLength;
+         float feed, accel, invAccelX2;
+         float arcDeviationX8;
 
-         float cx, cy, radius, angle, dA;
+         float cx, cy, radius, angleStart, dA;
 
          int segmentCount, segmentNow;
 
@@ -60,7 +70,8 @@
 
    blockSplitterObject::blockSplitterObject()
    {
-      setMinLength( 1.0f );
+      setMinLength( 2.0f );
+      setMaxLength( 10.0f );
       setAcceleration( 1500.0f );
       setArcError( 0.01 );
    }
@@ -70,21 +81,26 @@
       minLineLength = L;
    }
 
+   void blockSplitterObject::setMaxLength( float L )
+   {
+      maxLineLength = L;
+   }
+
    void blockSplitterObject::setAcceleration( float A )
    {
-      accel = A - 1; // bias to insure length is slightly longer than accel distance
+      accel = A * .98; // bias to insure length is slightly longer than accel distance
       invAccelX2 = 1.0f / (2.0f * accel);
    }
 
    void blockSplitterObject::setArcError( float E )
    {
-      arcErrorX2 = E * 2.0f;
-      arcErrorSq = E * E;
+      arcDeviationX8 = E * 8.0f;
    }
 
 
    void blockSplitterObject::addLine( float X0, float Y0, float Z0, float E0, float X1, float Y1, float Z1, float E1, float feedRate )
    {
+      moveType = LINEAR;
       segmentNow = 0;
 
       feed = feedRate;
@@ -133,6 +149,11 @@
       cx = centerX;
       cy = centerY;
 
+      now.x = X0;
+      now.y = Y0;
+      now.z = Z0;
+      now.e = E0;
+
       last.x = X1;
       last.y = Y1;
       last.z = Z1;
@@ -146,41 +167,56 @@
       float dX = X0 - cx;
       float dY = Y0 - cy;
 
-      radius = sqrt( dX * dX + dY * dY );
+      radius = sqrtf( rx * rx + ry * ry );
 
-      // add zero radius check here
-      
-      feed = min( feedRate, sqrt( accel * radius )); // limit to radial acceleration
+      feed = min( feedRate, sqrtf( accel * radius )); // limit to radial acceleration
 
-      float lengthTarget = max( feed * feed * invAccelX2, minLineLength  );
-      lengthTarget = min( 2.0f * sqrt( radius * arcErrorX2 + arcErrorSq), lengthTarget );
+      // Length is the limited by both arc path deviation and acceleration.  Select the smaller one.
+      float pathDevitaionLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
+      float linearAccelDistance = max( feed * feed * invAccelX2, minLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
+      float lengthTarget = min( pathDevitaionLength, linearAccelDistance ); 
 
-      float startAngle = atan2f( dY, dX );
-      if(startAngle < 0.0f) startAngle += 6.2831853f; // force positive
-
-      dX = X1 - cx;
-      dY = Y1 - cy;
-
-      float endAngle = atan2f( dY, dX );
-      if( endAngle < 0.0f ) endAngle += 6.2831853f; // force positive
+      angleStart = atan2f( ry, rx );
 
       float arcAngle;
 
-      if( direction == 2 ) // CW arc
+      if( delta.x * delta.x + delta.y * delta.y < 0.0001f ) // coincident start/stop points indicate full circle
       {
-         arcAngle = startAngle - endAngle;
+         if( direction == 2 )
+         {
+            moveType = ARC_CW;
+            arcAngle = -6.2831853f;  // CW - sign dictates direction
+         }
+         else
+         {
+            moveType = ARC_CCW;
+            arcAngle = 6.2831853f;  // ccw
+         }
       }
-      else                 // CCW arc
-      {
-         arcAngle = endAngle - startAngle;
-      }
+      else
+      {  
+         float angleEnd = atan2f( Y1 - cy, X1 - cx );
 
-      if(arcAngle < 0.0001f) // must be positive (also matching start and stop locations indicates full circle)
-      {
-         arcAngle += 6.2831853f;
-      }
+         arcAngle = angleEnd - angleStart;
 
-      length = arcAngle * radius;
+         if( direction == 2 )  // CW direction
+         {
+            moveType = ARC_CW;
+            if( arcAngle > 0.0f ) arcAngle -= 6.2831853f; // when rotating CW, start must be larger than end
+         }
+         else                 // CCW direction
+         {
+            moveType = ARC_CCW;
+            if( arcAngle < 0.0f ) arcAngle += 6.2831853f; // when rotating CCW, end must be larger than start
+         }
+      }
+      
+      segmentCount = int( abs(arcAngle) / (lengthTarget / radius) + 1.0f );
+      float invCount = 1.0f / float(segmentCount);
+
+      dA = arcAngle * invCount;
+      delta.z = (Z1 - Z0) * invCount;
+      delta.e = (E1 - E0) * invCount;
    }
 
    bool blockSplitterObject::getNextSegment()
@@ -198,10 +234,28 @@
          }
          else
          {
-            now.x += delta.x; // increment position
-            now.y += delta.y;
-            now.z += delta.z;
-            now.e += delta.e;
+            float angle;
+
+            switch( moveType )
+            {
+               case RAPID:
+               case LINEAR:
+                  now.x += delta.x; // increment position
+                  now.y += delta.y;
+                  now.z += delta.z;
+                  now.e += delta.e;
+                  break;
+
+               case ARC_CW:
+               case ARC_CCW:
+                  angle = angleStart + dA * float(segmentNow);
+                  now.x = radius * cosf( angle ) + cx;
+                  now.y = radius * sinf( angle ) + cy;
+                  now.z += delta.z;
+                  now.e += delta.e; 
+                  break;
+            }
+            
          }
          return true;
       }
