@@ -56,7 +56,7 @@
          float feed, accel, invAccelX2;
          float arcDeviationX8;
 
-         float cx, cy, radius, angleStart, dA;
+         float cx, cy, radius, angle, dA;
 
          int segmentCount, segmentNow;
 
@@ -171,14 +171,20 @@
 
       feed = min( feedRate, sqrtf( accel * radius )); // limit to radial acceleration
 
+      if( radius < 0.01 )  // make arcs with very small radius a straight line to avoid a divide by zero
+      {
+         segmentCount = 1;
+         return;
+      }
+
       // Length is limited by both arc path deviation and acceleration.  Selects the smaller one.
       float pathDeviationLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
       float linearAccelDistance = max( feed * feed * invAccelX2, minLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
       float lengthTarget        = min( pathDeviationLength, linearAccelDistance ); 
 
-      angleStart = atan2f( ry, rx );
-
       float arcAngle;
+
+      angle = atan2f( ry, rx ); // start angle
 
       if( delta.x * delta.x + delta.y * delta.y < 0.0001f ) // coincident start/stop points indicate full circle
       {
@@ -197,7 +203,7 @@
       {  
          float angleEnd = atan2f( Y1 - cy, X1 - cx );
 
-         arcAngle = angleEnd - angleStart;
+         arcAngle = angleEnd - angle;
 
          if( direction == 2 )  // CW direction
          {
@@ -217,6 +223,19 @@
       dA = arcAngle * invCount;
       delta.z = (Z1 - Z0) * invCount;
       delta.e = (E1 - E0) * invCount;
+
+      if( abs(delta.z) > 0.1f ) // verify helical moves do not exceed programmed feed rate
+      {
+         float flatLength    = abs( arcAngle * radius );
+         float totalLength   = sqrtf( flatLength * flatLength + delta.z * delta.z );
+         float idealMoveTime = totalLength / feedRate;
+         float flatMoveTime  = flatLength  / feed;
+
+         if( idealMoveTime > flatMoveTime )
+         {
+            feed = flatLength / idealMoveTime;
+         }
+      }
    }
 
    bool blockSplitterObject::getNextSegment()
@@ -234,8 +253,6 @@
          }
          else
          {
-            float angle;
-
             switch( moveType )
             {
                case RAPID:
@@ -248,7 +265,7 @@
 
                case ARC_CW:
                case ARC_CCW:
-                  angle = angleStart + dA * float(segmentNow);
+                  angle += dA;
                   now.x = radius * cosf( angle ) + cx;
                   now.y = radius * sinf( angle ) + cy;
                   now.z += delta.z;
