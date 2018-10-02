@@ -183,14 +183,15 @@ void SmoothMove::addArc_Block(int type, float _x, float _y, float _feed, float c
 
    moveBuffer[index].length = arcAngle * moveBuffer[index].radius;
 
-   float endRadiusSq = dXend * dXend + dYend * dYend;
-
+   /*     
    // check start and end point consistency
+   float endRadiusSq = dXend * dXend + dYend * dYend;
    if( abs( startRadiusSq - endRadiusSq ) > 0.000645f )  // both radii should match within .025mm (.001in)
    {
       SERIAL_PORT.println("ARC ERROR - Start-Center-End Radius Mismatch"); // length of the two radii are too different
       while(true); // hang - probably a better way to do this
    }
+   */
 
    moveBuffer[index].X_vector = centerX;
    moveBuffer[index].Y_vector = centerY;

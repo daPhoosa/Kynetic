@@ -394,7 +394,7 @@ void SmoothMove::getTargetLocation(float & x, float & y, float & z) // call to g
    Serial.print(d1, 3); Serial.print("\t");
    Serial.print(blockPosition,     3); Serial.print("\t");
    Serial.println(d2, 3);
-   
+   */
 
    /*
    float smoothingRadius = min( cornerRoundDist, velocityNow * velocityNow * moveBuffer[currentBlockIndex].accelInverseHalf - 0.001f );

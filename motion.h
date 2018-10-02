@@ -58,7 +58,7 @@ void configMotion()
 }
 
 
-void MotorControlISR() // at 60mm/s with 100k tick rate: xxxx CPU usage
+void MotorControlISR() // at 60mm/s with 100k tick rate: 32% CPU usage
 {
    //uint32_t timeNow = micros();
 
