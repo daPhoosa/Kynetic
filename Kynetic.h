@@ -148,7 +148,11 @@ bool codeReader()
       }
       else  
       {
-         executeCodeNow();          // add moves to queue
+         if( blockSplitter.getNextSegment() )
+         {
+            executeCodeNow(); // add moves to queue
+            return false;
+         }
          return programReader();    // get next line of code
       }
    }

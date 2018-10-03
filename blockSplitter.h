@@ -1,17 +1,17 @@
 /*
    Kynetic CNC Control Software
    Copyright (C) 2017 Phillip Schmidt
-   
+
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-      
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-      
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
@@ -106,7 +106,7 @@
       feed = feedRate;
 
       float lengthTarget = constrain( feed * feed * invAccelX2, minLineLength, maxLineLength );
-      
+
       now.x = X0;
       now.y = Y0;
       now.z = Z0;
@@ -123,7 +123,7 @@
       delta.e = E1 - E0;
 
       float length = sqrtf( delta.x * delta.x + delta.y * delta.y + delta.z * delta.z );
-      
+
       if( length > lengthTarget )
       {
          segmentCount = int(length / lengthTarget + 0.5f);
@@ -178,9 +178,9 @@
       }
 
       // Length is limited by both arc path deviation and acceleration.  Selects the smaller one.
-      float pathDeviationLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
+      float pathDeviationLength = sqrtf( radius * arcDeviationX8 ); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
       float linearAccelDistance = constrain( feed * feed * invAccelX2, minLineLength, maxLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
-      float lengthTarget        = min( pathDeviationLength, linearAccelDistance ); 
+      float lengthTarget        = min( pathDeviationLength, linearAccelDistance );
 
       float arcAngle;
 
@@ -200,7 +200,7 @@
          }
       }
       else
-      {  
+      {
          float angleEnd = atan2f( Y1 - cy, X1 - cx );
 
          arcAngle = angleEnd - angle;
@@ -216,7 +216,7 @@
             if( arcAngle < 0.0f ) arcAngle += 6.2831853f; // when rotating CCW, end must be larger than start
          }
       }
-      
+
       segmentCount = int( abs(arcAngle) / (lengthTarget / radius) + 1.0f );
       float invCount = 1.0f / float(segmentCount);
 
@@ -269,10 +269,10 @@
                   now.x = radius * cosf( angle ) + cx;
                   now.y = radius * sinf( angle ) + cy;
                   now.z += delta.z;
-                  now.e += delta.e; 
+                  now.e += delta.e;
                   break;
             }
-            
+
          }
          return true;
       }
