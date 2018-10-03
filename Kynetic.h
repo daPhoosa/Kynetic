@@ -148,8 +148,8 @@ bool codeReader()
       }
       else  
       {
-         executeCodeNow();
-         return programReader();
+         executeCodeNow();          // add moves to queue
+         return programReader();    // get next line of code
       }
    }
    return false;

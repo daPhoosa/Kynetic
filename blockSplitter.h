@@ -105,7 +105,7 @@
 
       feed = feedRate;
 
-      float lengthTarget = max( feed * feed * invAccelX2, minLineLength );
+      float lengthTarget = constrain( feed * feed * invAccelX2, minLineLength, maxLineLength );
       
       now.x = X0;
       now.y = Y0;
@@ -179,7 +179,7 @@
 
       // Length is limited by both arc path deviation and acceleration.  Selects the smaller one.
       float pathDeviationLength = sqrtf( radius * arcDeviationX8); // sqrt( radius * arcDev * 8 ) ~= 2 * sqrt( 2 * radius * arcDev + arcDev^2 ) -- simplification to reduce computation
-      float linearAccelDistance = max( feed * feed * invAccelX2, minLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
+      float linearAccelDistance = constrain( feed * feed * invAccelX2, minLineLength, maxLineLength ); // distance to come to a complete stop if at full speed (dont over populate at very low feed rates)
       float lengthTarget        = min( pathDeviationLength, linearAccelDistance ); 
 
       float arcAngle;

@@ -40,6 +40,7 @@
 #include "src/Machines/coreXY.h"
 #include "src/Machines/delta.h"
 
+#include "blockSplitter.h"
 #include "gCodeStructure.h"
 #include "motion.h"
 #include "gCode.h"
