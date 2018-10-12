@@ -29,8 +29,9 @@ const float MAX_VELOCITY_XY  = 300.0f;   // mm/s
 const float MACHINE_ACCEL_Z  = 2000.0f;  // mm/s^2
 const float MAX_VELOCITY_Z   = 100.0f;   // mm/s
 
-const float JUNCTION_VEL_RAD = 0.10f;    // mm
-const float CORNER_ROUNDING  = 0.10f;    // mm
+const float JUNCTION_DEVIATION = 0.02f;  // mm
+const float JUNCTION_VEL_RAD   = JUNCTION_DEVIATION / ( sqrtf(2.0f) - 1.0f ); // mm
+const float CORNER_ROUNDING    = 0.10f;  // mm
 
 const float EXTRUDE_ACCEL    = 10000.0f; // mm/s^2
 

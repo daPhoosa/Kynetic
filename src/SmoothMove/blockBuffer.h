@@ -50,7 +50,7 @@ void SmoothMove::addRapid_Block( float _x, float _y, float _z )
 
 void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
 {
-   // note to future self: zero length block must not be filtered out.  Bad things will happen.  You've tried twice already.  Dont do it again.
+   // Note to future self: zero length block must not be filtered out.  Bad things will happen.  You've tried twice already.  Don't do it again.
 
    int index = addBaseBlock( _x, _y, _z );
 
@@ -75,9 +75,19 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
    }
    else
    {
-      moveBuffer[index].X_vector = 0.0f;  // line unit vector
-      moveBuffer[index].Y_vector = 0.0f;
-      moveBuffer[index].Z_vector = 0.0f;
+      int prevBlock = previousBlockIndex(index); // very short blocks inherit the previous blocks vector
+      if( moveBuffer[prevBlock].moveType == Linear )
+      {
+         moveBuffer[index].X_vector = moveBuffer[prevBlock].X_vector;
+         moveBuffer[index].Y_vector = moveBuffer[prevBlock].Y_vector;
+         moveBuffer[index].Z_vector = moveBuffer[prevBlock].Z_vector;   
+      }
+      else
+      {
+         moveBuffer[index].X_vector = 0.0f; // no vector if the previous move was an arc
+         moveBuffer[index].Y_vector = 0.0f;
+         moveBuffer[index].Z_vector = 0.0f;
+      }
    }
 
    moveBuffer[index].targetVel_Sq = moveBuffer[index].targetVel * moveBuffer[index].targetVel;

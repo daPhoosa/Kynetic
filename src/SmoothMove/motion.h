@@ -168,33 +168,38 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
 
    if( blockCount > 1 && !moveBuffer[prevBlock].dwell )
    {
-      float prevBlockDist = moveBuffer[prevBlock].length - junctionRadius;
-      float prevBlockVel  = moveBuffer[prevBlock].targetVel;
+      float radius;
 
-      int bCount = blockCount;
-
-      while( prevBlockDist < 0.0f && bCount > 2 )  // look backwards past very short blocks
+      if( moveBuffer[index].moveType == Linear && moveBuffer[prevBlock].moveType == Linear ) // use junction deviation between lines
       {
-         bCount--;
-         prevBlock = previousBlockIndex(prevBlock);
-         prevBlockDist = moveBuffer[prevBlock].length + prevBlockDist;
-         if( prevBlockVel > moveBuffer[prevBlock].targetVel ) prevBlockVel = moveBuffer[prevBlock].targetVel;
+         float cos_theta = moveBuffer[index].X_vector * moveBuffer[prevBlock].X_vector + // dot product of unit vectors
+                           moveBuffer[index].Y_vector * moveBuffer[prevBlock].Y_vector + 
+                           moveBuffer[index].Z_vector * moveBuffer[prevBlock].Z_vector;
+
+         float sin_half_theta = sqrtf(0.5f * (1.000001f - cos_theta));
+
+         radius = JUNCTION_DEVIATION * sin_half_theta / (1.00001 - sin_half_theta);
+      }
+      else
+      {
+         float prevBlockDist = moveBuffer[prevBlock].length - junctionRadius; // use junction radius when either move is an arc
+
+         float x1, y1, z1;
+         float x2, y2, z2;
+         getPos( x1, y1, z1, index, junctionRadius );
+         getPos( x2, y2, z2, prevBlock, prevBlockDist );
+
+         x1 -= x2; // difference in positions
+         y1 -= y2;
+         z1 -= z2;
+
+         float pointDistSq = x1 * x1 + y1 * y1 + z1 * z1;
+         radius = sqrtf( pointDistSq * junctionRadiusSq / ( 4.00001f * junctionRadiusSq - pointDistSq ));
       }
 
-      float x1, y1, z1;
-      float x2, y2, z2;
-      getPos( x1, y1, z1, index, junctionRadius );
-      getPos( x2, y2, z2, prevBlock, prevBlockDist );
-      float maxAccel = min( moveBuffer[index].maxAccel, moveBuffer[prevBlock].maxAccel ); // use lower acceleration rate
-
-      x1 -= x2; // difference in positions
-      y1 -= y2;
-      z1 -= z2;
-
-      float pointDistSq   = x1 * x1 + y1 * y1 + z1 * z1;
-      float radius        = sqrtf( pointDistSq * junctionRadiusSq / ( 4.00001f * junctionRadiusSq - pointDistSq ));
-      float junctionVelSq = maxAccel * radius;
-      float minBlockVel   = min( moveBuffer[index].targetVel, prevBlockVel );
+      float maxAccel      = min( moveBuffer[index].maxAccel, moveBuffer[prevBlock].maxAccel ); // use lower acceleration rate
+      float junctionVelSq = radius * maxAccel;
+      float minBlockVel   = min( moveBuffer[index].targetVel, moveBuffer[prevBlock].targetVel );
 
       if( junctionVelSq < minBlockVel * minBlockVel )
       {
@@ -209,7 +214,7 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
    }
    else
    {
-      moveBuffer[index].maxStartVel  = 0.0f;  // first block always starts at zero vel and blocks after an exact stop
+      moveBuffer[index].maxStartVel  = 0.0f; // first block always starts at zero vel and blocks after an exact stop
       moveBuffer[index].fastJunction = true; // no point in smoothing if coming from a dead stop
    }
 }
