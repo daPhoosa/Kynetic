@@ -172,13 +172,24 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
 
       if( moveBuffer[index].moveType == Linear && moveBuffer[prevBlock].moveType == Linear ) // use junction deviation between lines
       {
-         float cos_theta = moveBuffer[index].X_vector * moveBuffer[prevBlock].X_vector + // dot product of unit vectors
-                           moveBuffer[index].Y_vector * moveBuffer[prevBlock].Y_vector + 
-                           moveBuffer[index].Z_vector * moveBuffer[prevBlock].Z_vector;
+         float cos_theta = -( moveBuffer[index].X_vector * moveBuffer[prevBlock].X_vector + // dot product of unit vectors
+                              moveBuffer[index].Y_vector * moveBuffer[prevBlock].Y_vector + // ( invert so that two parallel lines show as pointing opposite directions )
+                              moveBuffer[index].Z_vector * moveBuffer[prevBlock].Z_vector );
 
-         float sin_half_theta = sqrtf(0.5f * (1.000001f - cos_theta));
-
-         radius = junctionDeviation * sin_half_theta / (1.00001 - sin_half_theta);
+         // avoid negative sqrt or div by zero with checks at extreme conditions ( also saves a sqrt and float divide in these cases )
+         if( cos_theta < -0.99999f ) // straight line
+         {
+            radius = 1632.6f;
+         }
+         else if( cos_theta > 0.99999f  ) // double back
+         {
+            radius = 0.0f;
+         }
+         else
+         {
+            float sin_half_theta = sqrtf(0.5f * (1.0f - cos_theta));
+            radius = junctionDeviation * sin_half_theta / (1.0f - sin_half_theta);
+         }
       }
       else
       {
@@ -230,7 +241,7 @@ void SmoothMove::minJerkTrajectory()
 
       STRATEGY:
          - Use constant acceleration to compute time intervals and velocity changes
-            - Traverse block queue backwards and reduce velocities at block borders to insure adequate acc/dec time 
+            - Traverse block queue backwards and reduce velocities at block borders to insure adequate acc/dec time
             - Traverse block queue forward and compute acc/vel/dec times and distances
          - Compute minimum jerk s-curve transitions to fit the acceleration and deceleration intervals
    */
@@ -417,8 +428,8 @@ void SmoothMove::getTargetLocation(float & x, float & y, float & z) // call to g
    int smoothingIndexStart = currentBlockIndex;
    int smoothingIndexEnd   = currentBlockIndex;
 
-   
-   
+
+
    while( smoothingPosStart < 0.0f )   // find start point in previous blocks
    {
       int i = previousBlockIndex(smoothingIndexStart);
@@ -510,7 +521,7 @@ float SmoothMove::bwdPoint( float & pos, int & index, const float dist )   // ba
          return d;
       }
       else
-      {  
+      {
          index = i;
          pos += moveBuffer[index].length;    // position in next block
       }
