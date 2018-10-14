@@ -34,8 +34,8 @@ SmoothMove::SmoothMove()
    extrudeAccel   = 1000.0f; // [mm/s^2]
    setExtrudeVelocityAdvance( 0.0f );
    
-   setJunctionVelRad( 0.05f );
    setCornerRounding( 0.05f );
+   setJunctionDeviation( 0.02f );
 
    lookAheadTimeMin = 250000;  // [us]
 

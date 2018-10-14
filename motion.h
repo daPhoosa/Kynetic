@@ -20,7 +20,6 @@
 // **** MOVEMENT ENGINE ****
 SmoothMove motion;
 
-
 void resetPosition( const float & x, const float & y, const float & z )
 {
    noInterrupts();
@@ -45,7 +44,8 @@ void configMotion()
    motion.setParamZ( MACHINE_ACCEL_Z, MAX_VELOCITY_Z );
 
    motion.setCornerRounding( CORNER_ROUNDING );
-   motion.setJunctionVelRad( JUNCTION_VEL_RAD );
+   //motion.setJunctionVelRad( JUNCTION_VEL_RAD );JUNCTION_DEVIATION
+   motion.setJunctionDeviation( JUNCTION_DEVIATION );
 
    motion.setExtrudeRateOverride( 1.0f );
    motion.setMotionRateOverride(  1.0f );

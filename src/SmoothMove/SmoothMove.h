@@ -55,8 +55,7 @@
          void setParamXY( float accel, float maxVel );
          void setParamZ( float accel, float maxVel );
          void setCornerRounding( float _cornerRounding );
-         void setJunctionVelRad( float t_r );
-         void setLegacyJerk( float j );
+         void setJunctionDeviation( float junkDev );
 
          void startMoving();
          void abortMotion();
@@ -175,6 +174,7 @@
 
          float cornerRoundDist, cornerRoundDistSq;
          float junctionRadius,  junctionRadiusSq;
+         float junctionDeviation;
 
          float maxAccel_XY, accelInverse_XY, accelInverseHalf_XY, accelDouble_XY;
          float maxVel_XY;
@@ -210,6 +210,8 @@
 
          void setBlockAccel( int index );
          void setBlockFeed( int index );
+
+         void setJunctionVelRad( float t_r );
 
          void getTransCoef( const uint32_t & time, const float & pos_end, const float & vel_start, const float & vel_end, min_jerk_coeffients_t & X );
 

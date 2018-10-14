@@ -178,7 +178,7 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
 
          float sin_half_theta = sqrtf(0.5f * (1.000001f - cos_theta));
 
-         radius = JUNCTION_DEVIATION * sin_half_theta / (1.00001 - sin_half_theta);
+         radius = junctionDeviation * sin_half_theta / (1.00001 - sin_half_theta);
       }
       else
       {

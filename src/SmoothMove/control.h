@@ -153,15 +153,15 @@ void SmoothMove::setJunctionVelRad( float t_r )
    junctionRadiusSq   = t_r * t_r;
 }
 
+void SmoothMove::setJunctionDeviation( float junkDev )
+{
+   junctionDeviation = junkDev;
+
+   setJunctionVelRad( junkDev / 0.4f );
+}
+
 
 void SmoothMove::setExtrudeVelocityAdvance( float advance )  // units of (mm / mm/s x 1000)
 {
    extrudeVelocityAdvance = advance / 1000.0f;
-}
-
-
-void SmoothMove::setLegacyJerk( float j )    // approximates jerk functionality from Marlin, Reptier and Smoothieware 
-{
-   junctionRadius   = max( j * j * accelInverse_XY, 0.001f );
-   junctionRadiusSq = junctionRadius * junctionRadius;
 }

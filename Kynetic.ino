@@ -16,6 +16,8 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+#include "Arduino.h"
+
 #include "config.h"
 #include "config_adv.h"
 #include "Kynetic_pins.h"
