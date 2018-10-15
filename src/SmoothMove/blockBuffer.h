@@ -63,7 +63,7 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
    float dz = _z - moveBuffer[index].Z_start;
    moveBuffer[index].length = sqrtf(dx * dx + dy * dy + dz * dz);
 
-   if(moveBuffer[index].length > 0.001f)
+   if(moveBuffer[index].length > 0.0009f)
    {
       float inverseLength = 1.0f / moveBuffer[index].length;
       moveBuffer[index].X_vector = dx * inverseLength;  // line unit vector
@@ -80,7 +80,7 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
       {
          moveBuffer[index].X_vector = moveBuffer[prevBlock].X_vector;
          moveBuffer[index].Y_vector = moveBuffer[prevBlock].Y_vector;
-         moveBuffer[index].Z_vector = moveBuffer[prevBlock].Z_vector;   
+         moveBuffer[index].Z_vector = moveBuffer[prevBlock].Z_vector;
       }
       else
       {
@@ -95,7 +95,7 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
    setMaxStartVel(index);  // set cornering/start speed
 
    minJerkTrajectory();
-   
+
 }
 
 
@@ -193,7 +193,7 @@ void SmoothMove::addArc_Block(int type, float _x, float _y, float _feed, float c
 
    moveBuffer[index].length = arcAngle * moveBuffer[index].radius;
 
-   /*     
+   /*
    // check start and end point consistency
    float endRadiusSq = dXend * dXend + dYend * dYend;
    if( abs( startRadiusSq - endRadiusSq ) > 0.000645f )  // both radii should match within .025mm (.001in)
