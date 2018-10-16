@@ -24,7 +24,7 @@ struct gCode_state_machine_t
    
    float A, B, C, D, E, F, H, I, J, K, L, N, P, Q, R, S, T, U, V, W, X, Y, Z; // G, M, O intentionally omitted 
 
-   float startX, startY, startZ;
+   float startX, startY, startZ, startE;
 
    bool newAxisMove, newExtruderMove, newMcode, lastMoveRapid;
 

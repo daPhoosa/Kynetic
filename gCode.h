@@ -439,6 +439,7 @@ bool readNextProgramLine()
    gCode.startX = gCode.X; // save current location
    gCode.startY = gCode.Y;
    gCode.startZ = gCode.Z;
+   gCode.startE = gCode.E;
 
    while( ch != 10 && ch != 0 )  // iterate to end of the line
    {

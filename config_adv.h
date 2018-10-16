@@ -6,12 +6,12 @@
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-      
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-      
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
@@ -21,7 +21,7 @@
 // **** CONTROL LOOP FREQUENCIES ****
 // *********************************
 const int MOTION_CONTROL_HZ     = 4000;    // Hz
-const int BLOCK_EXECUTE_HZ      = 1000;     // Hz
+const int BLOCK_EXECUTE_HZ      = 1000;    // Hz
 const int SOFT_PWM_HZ           = 100;     // Hz
 const int HEATER_MANAGER_HZ     = 10;      // Hz
 const int BUTTONS_UI_HZ         = 50;      // Hz

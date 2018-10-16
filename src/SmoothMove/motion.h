@@ -191,9 +191,9 @@ void SmoothMove::setMaxStartVel(const int & index)  // Junction Velocity
             radius = junctionDeviation * sin_half_theta / (1.0f - sin_half_theta);
          }
       }
-      else
+      else  // use junction radius method when either move is an arc
       {
-         float prevBlockDist = moveBuffer[prevBlock].length - junctionRadius; // use junction radius when either move is an arc
+         float prevBlockDist = moveBuffer[prevBlock].length - junctionRadius;
 
          float x1, y1, z1;
          float x2, y2, z2;

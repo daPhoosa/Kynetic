@@ -6,12 +6,12 @@
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-      
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-      
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
@@ -53,7 +53,7 @@ void abortAll()
 
    motion.abortMotion();
    stopMotors();
-   
+
    KORE.runProgram = false;
    KORE.manualPauseActive = false;
 
@@ -64,11 +64,11 @@ void abortAll()
 }
 
 
-bool pauseManager() // return true if pause is active
+bool executionPaused() // return true if pause is active
 {
    bool pauseStatus = KORE.manualPauseActive;
 
-   if( KORE.extrude1_wait ) 
+   if( KORE.extrude1_wait )
    {
       if( float(KORE.extrude1TargetTemp) - KORE.extrude1Temp < 1.0f )
       {
@@ -84,7 +84,7 @@ bool pauseManager() // return true if pause is active
       }
    }
 
-   if( KORE.bed_wait ) 
+   if( KORE.bed_wait )
    {
       if( float(KORE.bedTargetTemp) - KORE.bedTemp < 1.0f )
       {
@@ -106,29 +106,30 @@ bool pauseManager() // return true if pause is active
 
 bool programReader()
 {
-   if( !pauseManager() )
+   if( readNextProgramLine() )
    {
-      if( !readNextProgramLine() )
+      executeCodeNow();
+      return true; // succesfully read the next line
+   }
+   else  // program end found
+   {
+      KORE.fileComplete = true;
+      if( motion.blockQueueComplete() && !KORE.delayedExecute )
       {
-         KORE.fileComplete = true;
-         if( motion.blockQueueComplete() && !KORE.delayedExecute )
-         {
-            display("File Complete \n");
-            abortAll();
+         display("File Complete \n");
+         abortAll();
 
-            //blockRead.displayStats();
+         //blockRead.displayStats();
 
-            uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
-            uint32_t t = runTime / 3600;
-            display( "H:" ); display( t );
-            runTime = runTime % 3600;
-            t = runTime / 60;
-            display( " M:" ); display( t );
-            runTime = runTime % 60;
-            display( " S:" ); display( runTime ); display( "\n" );
-         }
+         uint32_t runTime = (millis() - KORE.programStartTime) / 1000;  // time in seconds
+         uint32_t t = runTime / 3600;
+         display( "H:" ); display( t );
+         runTime = runTime % 3600;
+         t = runTime / 60;
+         display( " M:" ); display( t );
+         runTime = runTime % 60;
+         display( " S:" ); display( runTime ); display( "\n" );
       }
-      return true;   
    }
    return false;
 }
@@ -136,25 +137,35 @@ bool programReader()
 
 bool codeReader()
 {
-   if( KORE.runProgram && motion.bufferVacancy() )
+   if( KORE.runProgram )
    {
-      if( KORE.delayedExecute ) 
+      if( motion.bufferVacancy() )
       {
-         if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
+         if( !executionPaused() ) // only execute code if pause is off
          {
-            //Serial.println("delayed execute!");
-            executeCodeDelayed();
+            if( blockSplitter.getNextSegment() ) // get segments from block splitter
+            {
+               // add segment to movement queue
+               motion.addLinear_Block( blockSplitter.x(), blockSplitter.y(), blockSplitter.z(), blockSplitter.f() );
+               motion.addExtrudeMM( blockSplitter.e() );
+            }
+            else
+            {
+               if( KORE.delayedExecute )
+               {
+                  if( motion.blockQueueComplete() ) // don't execute delayed code until all queued moves are complete
+                  {
+                     executeCodeDelayed();
+                  }
+               }
+               else  // only read the next line if there is NOT a delayed execute in the queue
+               {
+                  //executeCodeNow(); // add moves to queue
+                  return programReader(); // get next line of code
+               }
+            }
          }
-      }
-      else  
-      {
-         if( blockSplitter.getNextSegment() )
-         {
-            executeCodeNow(); // add moves to queue
-            return false;
-         }
-         return programReader();    // get next line of code
-      }
+      }  
    }
    return false;
 }
@@ -179,13 +190,13 @@ void buttonWatcher()
       else
       {
          display("START\n");
-         
+
          restartSD();
 
          armMotors();
 
          resetPosition( 0.0f, 0.0f, 0.0f );
-         
+
          KORE.manualPauseActive = false;
          KORE.fileComplete = false;
          KORE.runProgram = true;

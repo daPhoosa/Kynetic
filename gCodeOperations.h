@@ -43,12 +43,16 @@ void addMovementBlock()
          
          if( gCode.zHopActive )
          {
-            motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z + AUTO_Z_HOP_HEIGHT, gCode.F);
+            //motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z + AUTO_Z_HOP_HEIGHT, gCode.F);
+            blockSplitter.addLine(  gCode.startX, gCode.startY, gCode.startZ + AUTO_Z_HOP_HEIGHT, gCode.startE,
+                                    gCode.X,      gCode.Y,      gCode.Z + AUTO_Z_HOP_HEIGHT,      gCode.E,      gCode.F );
          }
          else
          {
             //motion.addRapid_Block( gCode.X, gCode.Y, gCode.Z );
-            motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);  // 3D printer gCode assumes that rapids obey feed rate...
+            //motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);  // 3D printer gCode assumes that rapids obey feed rate...
+            blockSplitter.addLine(  gCode.startX, gCode.startY, gCode.startZ, gCode.startE,
+                                    gCode.X,      gCode.Y,      gCode.Z,      gCode.E,     gCode.F );
          }
          
          break;
@@ -64,7 +68,9 @@ void addMovementBlock()
             }
             motion.addDwell_Block(1); // add delay when switching beteen rapids and feeds
          }
-         motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
+         //motion.addLinear_Block( gCode.X, gCode.Y, gCode.Z, gCode.F);
+         blockSplitter.addLine(  gCode.startX, gCode.startY, gCode.startZ, gCode.startE,
+                                 gCode.X,      gCode.Y,      gCode.Z,      gCode.E,      gCode.F );
          break;
 
       case 2:
@@ -81,7 +87,10 @@ void addMovementBlock()
          }
          arcCenterX = gCode.startX + gCode.I;
          arcCenterY = gCode.startY + gCode.J;
-         motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
+         //motion.addArc_Block(gCode.G[1], gCode.X, gCode.Y, gCode.F, arcCenterX, arcCenterY);
+         blockSplitter.addArc(   gCode.startX, gCode.startY, gCode.startZ, gCode.startE,
+                                 gCode.X,      gCode.Y,      gCode.Z,      gCode.E,      gCode.F,
+                                 arcCenterX,   arcCenterY,   gCode.G[1] );
          break;
 
       default:
@@ -94,6 +103,7 @@ void addMovementBlock()
 
 void movementOperations()
 {
+   /*
    if( gCode.newAxisMove && gCode.newExtruderMove ) // extrude while moving
    {
       addMovementBlock();
@@ -104,6 +114,13 @@ void movementOperations()
    {
       addMovementBlock();
    }
+   */
+
+   if( gCode.newAxisMove )
+   {
+      addMovementBlock();
+      gCode.newExtruderMove = false;
+   }  
    else if ( gCode.newExtruderMove ) // extrude only
    {
       if( gCode.zHopActive )  // dummy block in current location to attach static extrude to
