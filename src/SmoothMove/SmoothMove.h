@@ -208,8 +208,7 @@
          void getPos( float & x, float & y, float & z, int index, float position );
          void computeExtrudeFactors( int index );
 
-         void setBlockAccel( int index );
-         void setBlockFeed( int index );
+         void setBlockAccelAndFeed( int index, float feed );
 
          void setJunctionVelRad( float t_r );
 

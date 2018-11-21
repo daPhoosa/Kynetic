@@ -56,8 +56,6 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
 
    moveBuffer[index].moveType = Linear;  // feed move G0/G1
 
-   moveBuffer[index].targetVel = constrain( feed * motionFeedOverride, 0.01f, maxVel_XY );  // constrain to reasonable limits
-
    float dx = _x - moveBuffer[index].X_start;
    float dy = _y - moveBuffer[index].Y_start;
    float dz = _z - moveBuffer[index].Z_start;
@@ -69,9 +67,6 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
       moveBuffer[index].X_vector = dx * inverseLength;  // line unit vector
       moveBuffer[index].Y_vector = dy * inverseLength;
       moveBuffer[index].Z_vector = dz * inverseLength;
-
-      setBlockAccel( index );
-      setBlockFeed(  index );
    }
    else
    {
@@ -90,60 +85,51 @@ void SmoothMove::addLinear_Block( float _x, float _y, float _z, float feed )
       }
    }
 
-   moveBuffer[index].targetVel_Sq = moveBuffer[index].targetVel * moveBuffer[index].targetVel;
+   setBlockAccelAndFeed( index, feed );
 
    setMaxStartVel(index);  // set cornering/start speed
 
    minJerkTrajectory();
-
 }
 
 
-void SmoothMove::setBlockAccel( int index )
+void SmoothMove::setBlockAccelAndFeed( int index, float feed )
 {
-   if( abs(moveBuffer[index].Z_vector * moveBuffer[index].maxAccel) > maxAccel_Z )  // Don't exceed max Z accel
+   float abs_z = abs(moveBuffer[index].Z_vector);
+   float vec_xy_sq = moveBuffer[index].X_vector * moveBuffer[index].X_vector + moveBuffer[index].Y_vector * moveBuffer[index].Y_vector;
+
+   feed = max( feed * motionFeedOverride, 0.01f);
+
+   if( abs_z < 0.01f ) // limited by XY
    {
-      if( abs(moveBuffer[index].Z_vector) > 0.99f )  // Z only move
-      {
-         moveBuffer[index].maxAccel         = maxAccel_Z;    //
-         moveBuffer[index].accelInverse     = accelInverse_Z;
-         moveBuffer[index].accelInverseHalf = accelInverseHalf_Z;
-         moveBuffer[index].accelDouble      = accelDouble_Z;
-      }
-      else  // oblique move
-      {
-         float inverseZ = abs(1.0f / moveBuffer[index].Z_vector);
-
-         float aX = moveBuffer[index].X_vector * inverseZ * maxAccel_Z;  // accel in X direction
-         float aY = moveBuffer[index].Y_vector * inverseZ * maxAccel_Z;  // accel in Y direction
-         float aZ = maxAccel_Z;  // accel in Z direction
-
-         float accel = sqrtf( aX * aX + aY * aY + aZ * aZ );
-
-         moveBuffer[index].maxAccel         = accel;
-         moveBuffer[index].accelInverse     = 1.0f / accel;
-         moveBuffer[index].accelInverseHalf = 0.5f * moveBuffer[index].accelInverse;
-         moveBuffer[index].accelDouble      = 2.0f * accel;
-      }
+      moveBuffer[index].targetVel = min( feed, maxVel_XY );
+      // do nothing with accel since addBaseBlock() already assumes XY 
    }
-}
-
-
-void SmoothMove::setBlockFeed( int index )
-{
-   float velZ = min(maxVel_Z * motionFeedOverride, maxVel_Z);
-
-   if( abs(moveBuffer[index].Z_vector * moveBuffer[index].targetVel) > velZ )
+   else if( vec_xy_sq < 0.0001f ) // limited by Z
    {
-      float inverseZ = abs(1.0f / moveBuffer[index].Z_vector);
+      moveBuffer[index].targetVel = min( feed, maxVel_Z );
 
-      float vX = moveBuffer[index].X_vector * inverseZ * velZ;  // Vel in X direction
-      float vY = moveBuffer[index].Y_vector * inverseZ * velZ;  // Vel in Y direction
-      float vZ = velZ;  // Vel in Z direction
-
-      moveBuffer[index].targetVel_Sq = vX * vX + vY * vY + vZ * vZ;
-      moveBuffer[index].targetVel = sqrtf(moveBuffer[index].targetVel_Sq);
+      moveBuffer[index].maxAccel         = maxAccel_Z;    // use precomputed Z values
+      moveBuffer[index].accelInverse     = accelInverse_Z;
+      moveBuffer[index].accelInverseHalf = accelInverseHalf_Z;
+      moveBuffer[index].accelDouble      = accelDouble_Z;
    }
+   else // oblique move
+   {
+      float vec_xy = sqrtf( vec_xy_sq );
+
+      if( feed * abs_z  > maxVel_Z  ) feed = maxVel_Z  / abs_z;   // scale to not exceed Z max vel
+      if( feed * vec_xy > maxVel_XY ) feed = maxVel_XY / vec_xy;  // scale to not exceed XY max vel
+      moveBuffer[index].targetVel = feed;
+
+      float accel = min( maxAccel_Z / abs(moveBuffer[index].Z_vector), maxAccel_XY / vec_xy );
+      moveBuffer[index].maxAccel         = accel;
+      moveBuffer[index].accelInverse     = 1.0f / accel;
+      moveBuffer[index].accelInverseHalf = 0.5f * moveBuffer[index].accelInverse;
+      moveBuffer[index].accelDouble      = 2.0f * accel;
+   }
+
+   moveBuffer[index].targetVel_Sq = moveBuffer[index].targetVel * moveBuffer[index].targetVel;
 }
 
 
