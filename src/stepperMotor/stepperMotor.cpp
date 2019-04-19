@@ -106,24 +106,25 @@ void stepperMotor::setTickRateHz( const uint32_t & t_tickRateHz )
 }
 
 
-void stepperMotor::setPosition(const float & posFloat)
+void stepperMotor::setPosition( float posFloat )
 {
    targetPosPrev = posFloat;
 
-   if( posFloat > 0.0f )
-   {
-      position = int32_t( posFloat * stepsPerMM + 0.5f );
-   }
-   else
-   {
-      position = int32_t( posFloat * stepsPerMM - 0.5f );
-   }
+   posFloat *= stepsPerMM; // convert to steps
+
+   int32_t posInt  = round(posFloat); // whole steps ( use round to deal with decimal truncation)
+   int32_t posFrac = (posFloat - float(posInt)) * MAX_UINT_32; // fractional step
+
+   noInterrupts();
+   position    = posInt;
+   tickCounter = posFrac;
+   interrupts();
 }
 
 
 float stepperMotor::getPositionMM()
 {
-   return (float(position) + float(tickCounter) * (1.0f / 4294967296.0f) ) * MMPerStep;
+   return (float(position) + float(tickCounter) * (1.0f / MAX_UINT_32) ) * MMPerStep;
 }
 
 

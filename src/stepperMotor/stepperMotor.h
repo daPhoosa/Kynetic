@@ -32,7 +32,7 @@
          void setSpeedByPostionMM( float targetPosMM, float Hz );
 
          void setTickRateHz( const uint32_t & t_tickRateHz );
-         void setPosition( const float & posFloat );
+         void setPosition( float posFloat );
 
          float getPositionMM();
          float getSpeed();
@@ -54,8 +54,10 @@
          int FORWARD, REVERSE;
 
          volatile bool stepPinOn;
-         volatile uint32_t ticksPerStep, tickCounter;
-         volatile int32_t position;
+         volatile uint32_t ticksPerStep;
+         volatile int32_t position, tickCounter;
+
+         const static float MAX_UINT_32 = powf( 2.0f, 32.0f ) - 1.0f;
 
          enum move_direction_t
          {
@@ -69,7 +71,7 @@
 
    inline void stepperMotor::step()
    {
-      uint32_t prev = tickCounter;
+      int32_t prev = tickCounter;
 
       if( stepPinOn )
       {
